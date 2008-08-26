@@ -253,7 +253,7 @@ CmdState YModeCommand::execCommand(YView *view, const YKeySequence &inputs,
             count = tmpCount;
             hadCount = true;
         }
-        else if ( *parsePos == YKey::Key_DblQuote ) {
+        else if ( *parsePos == Qt::Key_QuoteDbl ) {
             ++parsePos;
             if ( parsePos == inputs.end() )
                 break;
@@ -269,7 +269,7 @@ CmdState YModeCommand::execCommand(YView *view, const YKeySequence &inputs,
     
     //if regs is empty add the default register
     if ( regs.count() == 0 )
-        regs << YKey::Key_DblQuote;
+        regs << Qt::Key_QuoteDbl;
 
     if (parsePos == inputs.end())
         return CmdNotYetValid;
@@ -1328,7 +1328,7 @@ YInterval YModeCommand::interval(const YCommandArgs& args, CmdState *state)
     MotionType motionType;
     YCursor from( args.view->getBufferCursor() );
     bool entireLines = ( *args.parsePos != args.inputs->end() 
-                         && *(*args.parsePos) == YKey(YKey::Key_Quote) );
+                         && *(*args.parsePos) == YKey(Qt::Key_Apostrophe) );
 
     YMotion *m = parseMotion( *args.inputs, *args.parsePos, count, motionType );
 
@@ -1879,7 +1879,7 @@ CmdState YModeCommand::replace( const YCommandArgs &args )
     YCursor pos = args.view->getBufferCursor();
     if ( *args.parsePos == args.inputs->end() )
         return CmdOperatorPending;
-    if (*(*args.parsePos) == YKey::Key_Esc) {
+    if (*(*args.parsePos) == Qt::Key_Escape) {
         return CmdStopped;
     }
     if ( args.view->myBuffer()->action()->replaceChar( args.view, pos, (*args.parsePos)->toString() ) )
@@ -1909,7 +1909,7 @@ CmdState YModeCommand::indent( const YCommandArgs& args )
 {
     CmdState state;
     YInterval area;
-    int factor = ( *((*args.parsePos)-1) == YKey::Key_LessThan ? -1 : 1 ) * args.count;
+    int factor = ( *((*args.parsePos)-1) == Qt::Key_Less? -1 : 1 ) * args.count;
     // First check how we got here: via a command with motion, or <</>> type
     // No easy way unfortunately
     if ( args.cmd->keySeq().count() == 2 ) {

@@ -151,11 +151,11 @@ CmdState YModeEx::execCommand( YView* view, const YKeySequence &inputs,
         << endl;
     YKey key = *parsePos;
     CmdState ret = CmdOk;
-    if ( key != YKey::Key_Tab ) {
+    if ( key != Qt::Key_Tab ) {
         //clean up the whole completion stuff
         resetCompletion();
     }
-    if ( key == YKey::Key_Enter ) {
+    if ( key == Qt::Key_Enter || key == Qt::Key_Return ) {
         if ( view->guiGetCommandLineText().isEmpty()) {
             view->modePool()->pop();
         } else {
@@ -165,25 +165,25 @@ CmdState YModeEx::execCommand( YView* view, const YKeySequence &inputs,
             if ( ret != CmdQuit )
                 view->modePool()->pop( ModeCommand );
         }
-    } else if ( key == YKey::Key_Down ) {
+    } else if ( key == Qt::Key_Down ) {
         mHistory->goForwardInTime();
         view->guiSetCommandLineText( mHistory->getEntry() );
-    } else if ( key == YKey::Key_Left || key == YKey::Key_Right ) {}
-    else if ( key == YKey::Key_Up ) {
+    } else if ( key == Qt::Key_Left || key == Qt::Key_Right ) {}
+    else if ( key == Qt::Key_Up ) {
         mHistory->goBackInTime();
         view->guiSetCommandLineText( mHistory->getEntry() );
-    } else if ( key == YKey::Key_Esc || key == YKey(YKey::Key_c, YKey::Mod_Ctrl) ) {
+    } else if ( key == Qt::Key_Escape || key == YKey(Qt::Key_C, Qt::ControlModifier) ) {
         view->modePool()->pop( ModeCommand );
-    } else if ( key == YKey::Key_Tab ) {
+    } else if ( key == Qt::Key_Tab ) {
         completeCommandLine(view);
-    } else if ( key == YKey::Key_BackSpace ) {
+    } else if ( key == Qt::Key_Backspace ) {
         QString back = view->guiGetCommandLineText();
         if ( back.isEmpty() ) {
             view->modePool()->pop();            
         }
         else
             view->guiSetCommandLineText(back.remove(back.length() - 1, 1));
-    } else if ( key == YKey(YKey::Key_w, YKey::Mod_Ctrl) ) {
+    } else if ( key == YKey(Qt::Key_W, Qt::ControlModifier) ) {
         QString cmd = view->guiGetCommandLineText();
         dbg() << "YModeEx::execCommand(): " << "deleting word from: '"
             << cmd << "'" << endl;
@@ -195,7 +195,7 @@ CmdState YModeEx::execCommand( YView* view, const YKeySequence &inputs,
         } else {
             dbg() << "YModeEx::execCommand(): " << "didn't match" << endl;
         }
-    } else if ( key == YKey(YKey::Key_u, YKey::Mod_Ctrl) ) {
+    } else if ( key == YKey(Qt::Key_U, Qt::ControlModifier) ) {
         view->guiSetCommandLineText(QString::null);
     } else {
         view->guiSetCommandLineText(view->guiGetCommandLineText() + key.toString());

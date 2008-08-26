@@ -86,7 +86,7 @@ CmdState YModeSearch::execCommand( YView* view, const YKeySequence& keys, YKeySe
 {
     YSelection* searchSelection = view->getSelectionPool()->search();
 
-    if ( *parsePos == YKey::Key_Enter ) {
+    if ( *parsePos == Qt::Key_Enter || *parsePos == Qt::Key_Return) {
         QString what = view->guiGetCommandLineText();
         dbg() << "Current search: " << what;
 
@@ -110,25 +110,25 @@ CmdState YModeSearch::execCommand( YView* view, const YKeySequence& keys, YKeySe
         view->modePool()->pop();
         ++parsePos;
         return CmdOk;
-    } else if ( *parsePos == YKey::Key_Down ) {
+    } else if ( *parsePos == Qt::Key_Down ) {
         mHistory->goForwardInTime();
         view->guiSetCommandLineText( mHistory->getEntry() );
         ++parsePos;
         return CmdOk;
-    } else if ( *parsePos == YKey::Key_Left || *parsePos == YKey::Key_Right ) {
+    } else if ( *parsePos == Qt::Key_Left || *parsePos == Qt::Key_Right ) {
         ++parsePos;
         return CmdOk;
-    } else if ( *parsePos == YKey::Key_Up ) {
+    } else if ( *parsePos == Qt::Key_Up ) {
         mHistory->goBackInTime();
         view->guiSetCommandLineText( mHistory->getEntry() );
         ++parsePos;
         return CmdOk;
-    } else if ( *parsePos == YKey(YKey::Key_Colon, YKey::Mod_Alt) ) {
+    } else if ( *parsePos == YKey(Qt::Key_Colon, Qt::AltModifier) ) {
         view->modePool()->change( ModeEx );
         ++parsePos;
         return CmdOk;
-    } else if ( *parsePos == YKey::Key_Esc 
-                || *parsePos == YKey(YKey::Key_c, YKey::Mod_Ctrl) ) {
+    } else if ( *parsePos == Qt::Key_Escape
+                || *parsePos == YKey(Qt::Key_C, Qt::ControlModifier) ) {
         if ( view->getLocalBooleanOption( "incsearch" ) ) {
             view->gotoxy(mSearchBegin.x(), mSearchBegin.y());
             view->setPaintAutoCommit( false );
@@ -140,7 +140,7 @@ CmdState YModeSearch::execCommand( YView* view, const YKeySequence& keys, YKeySe
         view->modePool()->pop();
         ++parsePos;
         return CmdOk;
-    } else if ( *parsePos == YKey::Key_BackSpace ) {
+    } else if ( *parsePos == Qt::Key_Backspace ) {
         QString back = view->guiGetCommandLineText();
         if ( back.isEmpty() ) {
             view->modePool()->pop();

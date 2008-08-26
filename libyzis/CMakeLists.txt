@@ -11,13 +11,11 @@ include_directories(${YZIS_INCLUDES})
 set(yzis_LIB_SRCS 
    drawbuffer.cpp 
    view.cpp 
-   buffer.cpp 
    action.cpp 
    buffer.cpp 
    color.cpp 
    cursor.cpp 
    debug.cpp 
-   drawbuffer.cpp 
    events.cpp 
    luaengine.cpp 
    luaregexp.cpp 
@@ -49,7 +47,6 @@ set(yzis_LIB_SRCS
    tags_interface.cpp 
    tags_stack.cpp 
    undo.cpp 
-   view.cpp 
    viewcursor.cpp 
    yzisinfo.cpp 
    yzisinfojumplistrecord.cpp 

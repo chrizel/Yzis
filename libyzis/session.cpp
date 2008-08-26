@@ -651,10 +651,11 @@ CmdState YSession::sendMultipleKeys( YView * view, YKeySequence & inputs, YKeySe
 
     for(; parsePos != inputs.end() && state != CmdStopped && state != CmdError; ++parsePos ) {
         if ( view->modePool()->current()->mapMode() & MapCmdline ) {
-            if ( *parsePos == YKey::Key_Esc
-                 || *parsePos == YKey::Key_Enter
-                 || *parsePos == YKey::Key_Up
-                 || *parsePos == YKey::Key_Down ) {
+            if ( *parsePos == Qt::Key_Escape
+                 || *parsePos == Qt::Key_Enter
+                 || *parsePos == Qt::Key_Return
+                 || *parsePos == Qt::Key_Up
+                 || *parsePos == Qt::Key_Down ) {
                 state = sendKey( view, *parsePos );
                 continue;
             }
@@ -675,8 +676,8 @@ CmdState YSession::sendKey( YView * view, YKey _key)
     CmdState state;
 
     // Don't respond to pure modifier keys
-    if ( _key.key() == YKey::Key_Shift || _key.key() == YKey::Key_Ctrl 
-         || _key.key() == YKey::Key_Alt )
+    if ( _key.key() == Qt::Key_Shift || _key.key() == Qt::Key_Control
+         || _key.key() == Qt::Key_Alt )
         return CmdOk;
 
     QList<QChar> reg = view->registersRecorded();
@@ -696,8 +697,8 @@ CmdState YSession::sendKey( YView * view, YKey _key)
 #define SWITCH_KEY( a, b ) \
     if ( _key == a ) _key.setKey( b );        \
     else if ( _key == b ) _key.setKey( a );
-    SWITCH_KEY( YKey::Key_Right, YKey::Key_Left );
-    SWITCH_KEY( YKey::Key_H, YKey::Key_L );
+    SWITCH_KEY( Qt::Key_Right, Qt::Key_Left );
+    SWITCH_KEY( Qt::Key_H, Qt::Key_L );
     }
 
 //    if ( modifiers.contains ("<SHIFT>")) { //useful?

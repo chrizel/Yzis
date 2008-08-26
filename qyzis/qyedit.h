@@ -79,9 +79,6 @@ public :
     // update text area
     void updateArea( );
 
-
-    const YKey& convertKey( int key );
-
     unsigned int spaceWidth;
 
     void registerModifierKeys( const QString& keys );
@@ -138,8 +135,7 @@ protected:
     void inputMethodEvent ( QInputMethodEvent * );
 
 private :
-    void initKeys();
-    QSignalMapper* signalMapper;
+    QSignalMapper signalMapper;
     QString keysToShortcut( const QString& keys );
 
     /* area to use */
@@ -149,8 +145,6 @@ private :
     QYCursor* mCursor;
 
     bool isFontFixed;
-
-    static QMap<int, YKey> keys;
 
     friend class QYCursor;
     friend class QYView;

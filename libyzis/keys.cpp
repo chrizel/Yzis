@@ -17,20 +17,25 @@
 *  Boston, MA 02110-1301, USA.
 **/
 
+/* System */
+#include <iostream>
+
+/* Qt */
+#include <QRegExp>
+
+/* Project */
 #include "keys.h"
 #include "debug.h"
-#include <QRegExp>
-#include <iostream>
 
 #define dbg()    yzDebug("YKeySequence")
 #define err()    yzError("YKeySequence")
 
 using namespace std;
 
-QMap<QString, int> YKey::keyTable;
-QMap<QString, int> YKey::aliasTable;
+QMap<QString, Qt::Key> YKey::keyTable;
+QMap<QString, Qt::Key> YKey::aliasTable;
 
-YKey::YKey(QChar rep, int modifiers)
+YKey::YKey(QChar rep, Qt::KeyboardModifiers modifiers)
     : mModifiers(modifiers)
 {
     initKeyTable();
@@ -44,71 +49,65 @@ void YKey::initKeyTable()
     if ( !  keyTable.empty() )
         return;
     
-    keyTable["UP"] = Key_Up;
-    keyTable["DOWN"] = Key_Down;
-    keyTable["LEFT"] = Key_Left;
-    keyTable["RIGHT"] = Key_Right;
+    keyTable["UP"] = Qt::Key_Up;
+    keyTable["DOWN"] = Qt::Key_Down;
+    keyTable["LEFT"] = Qt::Key_Left;
+    keyTable["RIGHT"] = Qt::Key_Right;
 
-    keyTable["SPACE"] = Key_Space;
-    keyTable["TAB"] = Key_Tab;
-    keyTable["BS"] = Key_BackSpace;
-    keyTable["ENTER"] = Key_Enter;
-    keyTable["ESC"] = Key_Esc;
+    keyTable["SPACE"] = Qt::Key_Space;
+    keyTable["TAB"] = Qt::Key_Tab;
+    keyTable["BS"] = Qt::Key_Backspace;
+    keyTable["ENTER"] = Qt::Key_Enter;
+    keyTable["RETURN"] = Qt::Key_Return;
+    keyTable["ESC"] = Qt::Key_Escape;
     
-    keyTable["INSERT"] = Key_Insert;
-    keyTable["DEL"] = Key_Delete;
-    keyTable["HOME"] = Key_Home;
-    keyTable["END"] = Key_End;
-    keyTable["PAGEUP"] = Key_PageUp;
-    keyTable["PAGEDOWN"] = Key_PageDown;
-    keyTable["LT"] = Key_LessThan;
+    keyTable["INSERT"] = Qt::Key_Insert;
+    keyTable["DEL"] = Qt::Key_Delete;
+    keyTable["HOME"] = Qt::Key_Home;
+    keyTable["END"] = Qt::Key_End;
+    keyTable["PAGEUP"] = Qt::Key_PageUp;
+    keyTable["PAGEDOWN"] = Qt::Key_PageDown;
+    keyTable["LT"] = Qt::Key_Less;
 
     
     for(int i = 1; i <= 35; ++i)
-        keyTable[QString("F%1").arg(i)] = Key_F1 + i - 1;
+        keyTable[QString("F%1").arg(i)] = (Qt::Key) (Qt::Key_F1 + i - 1);
     
-    keyTable["PAUSE"] = Key_Pause;
-    keyTable["PRSCR"] = Key_PrintScreen;
-    keyTable["BREAK"] = Key_Break;
-    keyTable["CLEAR"] = Key_Clear;
-    keyTable["PRIOR"] = Key_Prior;
-    keyTable["BTAB"] = Key_BTab;
-    keyTable["NEXT"] = Key_Next;
-    keyTable["SYSREQ"] = Key_SysReq;
+    keyTable["PAUSE"] = Qt::Key_Pause;
+    keyTable["PRSCR"] = Qt::Key_Print;
+//    keyTable["BREAK"] = Qt::Key_Break;
+    keyTable["CLEAR"] = Qt::Key_Clear;
+//    keyTable["PRIOR"] = Qt::Key_Prior;
+    keyTable["BTAB"] = Qt::Key_Backtab;
+//    keyTable["NEXT"] = Qt::Key_Next;
+    keyTable["SYSREQ"] = Qt::Key_SysReq;
     
-    keyTable["ALT"] = Key_Alt;
-    keyTable["CTRL"] = Key_Ctrl;
-    keyTable["SHIFT"] = Key_Shift;
-    keyTable["META"] = Key_Meta;
-    keyTable["INVALID"] = Key_Invalid;
+    keyTable["ALT"] = Qt::Key_Alt;
+    keyTable["CTRL"] = Qt::Key_Control;
+    keyTable["SHIFT"] = Qt::Key_Shift;
+    keyTable["META"] = Qt::Key_Meta;
+    keyTable["INVALID"] = Qt::Key_unknown;
 
     // Now the non-canonical aliases
-    aliasTable["RETURN"] = Key_Enter;
-    aliasTable["CR"] = Key_Enter;
-    aliasTable["GT"] = Key_GreaterThan;
-    aliasTable["PUP"] = Key_PageUp;
-    aliasTable["PDOWN"] = Key_PageDown;
-    aliasTable["DELETE"] = Key_Delete;
+    aliasTable["CR"] = Qt::Key_Enter;
+    aliasTable["GT"] = Qt::Key_Greater;
+    aliasTable["PUP"] = Qt::Key_PageUp;
+    aliasTable["PDOWN"] = Qt::Key_PageDown;
+    aliasTable["DELETE"] = Qt::Key_Delete;
 }
 
 
 QString YKey::toBasicRep() const
 {
-    QString repr("NO_REP");
-    
-    if ( mKey <= 0xffff && mKey != '<') { // Just a unicode char
-        repr = QString(QChar(mKey));
-        return repr;        
-    }
+    if ( (mKey <= 0xffff) && (mKey != '<') ) // Just a unicode char
+        return QString(QChar(mKey));
 
-    QMap<QString, int>::const_iterator i = keyTable.constBegin();
-    for(; i != keyTable.end(); ++i) {
-        if ( mKey == i.value() )
-            repr =  i.key();
-    }
-    
+    // reverse lookup
+    QString s = keyTable.key(mKey);
+    if (!s.isNull())
+        return s;
 
-    return repr;
+    return QString("NO_REP");
 }
 
 bool YKey::parseBasicRep(QString rep)
@@ -116,9 +115,9 @@ bool YKey::parseBasicRep(QString rep)
     // First deal with as-is characters
     if ( rep.length() == 1 ) {
         QChar c(rep.at(0));
-        mKey = c.unicode();
+        mKey = (Qt::Key) c.unicode();
         // Assume single unicode keys might be obtained by shift, so no extra info there
-        mModifiers &= ~Mod_Shift;
+        mModifiers &= ~Qt::ShiftModifier;
         return true;
     }
     
@@ -135,7 +134,7 @@ bool YKey::parseBasicRep(QString rep)
         return true;
     }
     
-    mKey = Key_Invalid;
+    mKey = Qt::Key_unknown;
     return false;
 }
 
@@ -148,13 +147,13 @@ bool YKey::parseModifiers(const QString &mods)
     
     while ( (pos = modPattern.indexIn(mods, pos+1)) != -1 ) {
         if ( mods.at(pos) == 'C' )
-            mModifiers |= Mod_Ctrl;
+            mModifiers |= Qt::ControlModifier;
 //      else if ( mods.at(pos) == 'S' )
-//          mModifiers |= Mod_Shift;
+//          mModifiers |= Qt::ShiftModifier;
         else if ( mods.at(pos) == 'M' )
-            mModifiers |= Mod_Meta;
+            mModifiers |= Qt::MetaModifier;
         else if ( mods.at(pos) == 'A' )
-            mModifiers |= Mod_Alt;
+            mModifiers |= Qt::AltModifier;
         else
             success = false;
     }
@@ -166,17 +165,17 @@ bool YKey::parseModifiers(const QString &mods)
 /* Encode key event into vim form. */
 QString YKey::toString() const
 {
-    QChar c(mKey);
+//    QChar c(mKey);
     QString repr = toBasicRep();
     QString mod;
 
-    if ( mModifiers & Mod_Ctrl )
+    if ( mModifiers & Qt::ControlModifier)
         mod += "C-";
-    if ( mModifiers & Mod_Meta )
+    if ( mModifiers & Qt::MetaModifier)
         mod += "M-";
-    if ( mModifiers & Mod_Alt )
+    if ( mModifiers & Qt::AltModifier)
         mod += "A-";
-//    if ( mModifiers & Mod_Shift && ! (c.isUpper() || c.isLower() ) )
+//    if ( mModifiers & Qt::ShiftModifier && ! (c.isUpper() || c.isLower() ) )
 //            mod += "S-";
 
     if ( mod.length() || repr.length() > 1 )
@@ -192,30 +191,30 @@ int YKey::fromString(const QString &key)
     
     QString basicKey;
     
-    mKey = Key_Invalid;
-    mModifiers = Mod_None;
+    mKey = Qt::Key_unknown;
+    mModifiers = Qt::NoModifier;
     
     charFormat.indexIn(key);
 
     if ( charFormat.matchedLength() == -1 ) {
-        mKey = Key_Invalid;
+        mKey = Qt::Key_unknown;
         return -1;
     }
 
     if ( charFormat.matchedLength() == 1 ) { // Have single char
-        mModifiers = Mod_None;
+        mModifiers = Qt::NoModifier;
         basicKey = charFormat.cap(3);
     }
     else {
         basicKey = charFormat.cap(2);
         if ( ! parseModifiers(charFormat.cap(1)) ) {
-            mKey = Key_Invalid;
+            mKey = Qt::Key_unknown;
             return -1;
         }
     }
     
     if ( ! parseBasicRep(basicKey) ) {
-        mKey = Key_Invalid;
+        mKey = Qt::Key_unknown;
         return -1;
     }
 

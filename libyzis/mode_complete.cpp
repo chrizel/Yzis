@@ -151,12 +151,12 @@ CmdState YModeCompletion::execCommand( YView* view, const YKeySequence &keys,
     YKey _key = *parsePos;
 
     // if we're to cycle through the potential matches, do the cycling
-    if ( _key == YKey(YKey::Key_n, YKey::Mod_Ctrl) || _key == YKey(YKey::Key_p, YKey::Mod_Ctrl) ) {
+    if ( _key == YKey(Qt::Key_N, Qt::ControlModifier) || _key == YKey(Qt::Key_P, Qt::ControlModifier) ) {
         // check if we need to generated the matches
         if ( mPrefix.isEmpty() ) {
             mLastKey = _key;
             bool forward = true; // this is different than mForward and indicates the direction of user search
-            if ( _key == YKey(YKey::Key_p, YKey::Mod_Ctrl ) ) {
+            if ( _key == YKey(Qt::Key_P, Qt::ControlModifier) ) {
                 forward = false;
             }
 
@@ -180,7 +180,7 @@ CmdState YModeCompletion::execCommand( YView* view, const YKeySequence &keys,
         }
         // Have used key, so advance pointer
         ++parsePos;
-    } else if ( _key == YKey(YKey::Key_x, YKey::Mod_Ctrl) ) {
+    } else if ( _key == YKey(Qt::Key_X, Qt::ControlModifier) ) {
         dbg() << "Skip CTRLx in completion mode" << endl;
         ++parsePos;
         return CmdOk;

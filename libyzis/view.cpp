@@ -1145,7 +1145,9 @@ YDrawLine YView::drawLineFromYLine( const YLine* yl, int start_column ) {
 	QChar fillChar;
 	YColor fg, bg, outline;
 	YFont font;
+	YzisAttribute* last_at = NULL;
 	YzisAttribute* at = NULL;
+	bool last_is_listchar = false;
 	bool is_listchar;
 	int drawLength;
 	int column = start_column;
@@ -1191,35 +1193,38 @@ YDrawLine YView::drawLineFromYLine( const YLine* yl, int start_column ) {
 			++hl;
 		}
 
-		if ( at ) {
-			fg = at->textColor();
-			bg = at->bgColor();
-			font.setWeight(at->bold() ? YFont::Bold : YFont::Normal);
-			font.setItalic(at->italic());
-			font.setUnderline(at->underline());
-			font.setOverline(at->overline());
-			font.setStrikeOut(at->strikeOut());
-			outline = at->outline();
-		} else {
-			fg = color_null;
-			bg = color_null;
-			font.setWeight(YFont::Normal);
-			font.setItalic(false);
-			font.setUnderline(false);
-			font.setOverline(false);
-			font.setStrikeOut(false);
-			outline = color_null;
+		if ( i == 0 || last_at != at || is_listchar != last_is_listchar ) {
+			if ( at ) {
+				fg = at->textColor();
+				bg = at->bgColor();
+				font.setWeight(at->bold() ? YFont::Bold : YFont::Normal);
+				font.setItalic(at->italic());
+				font.setUnderline(at->underline());
+				font.setOverline(at->overline());
+				font.setStrikeOut(at->strikeOut());
+				outline = at->outline();
+			} else {
+				fg = color_null;
+				bg = color_null;
+				font.setWeight(YFont::Normal);
+				font.setItalic(false);
+				font.setUnderline(false);
+				font.setOverline(false);
+				font.setStrikeOut(false);
+				outline = color_null;
+			}
+			if ( is_listchar ) {
+				fg = blue; // TODO: make custom
+				outline = color_null; // TODO: make custom
+			}
+			dl.setColor(fg);
+			dl.setBackgroundColor(bg);
+			// TODO: setSelection
+			// TODO: setOutline
+			dl.setFont(font);
+			last_at = at;
+			last_is_listchar = is_listchar;
 		}
-		if ( is_listchar ) {
-			fg = blue; // TODO: make custom
-			outline = color_null; // TODO: make custom
-		}
-
-		dl.setColor(fg);
-		dl.setBackgroundColor(bg);
-		// TODO: setSelection
-		// TODO: setOutline
-		dl.setFont(font);
 		column += dl.push(text);
 	}
 

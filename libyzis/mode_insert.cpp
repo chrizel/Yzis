@@ -113,7 +113,7 @@ CmdState YModeInsert::execCommand( YView* mView, const YKeySequence& inputs,
 
     if ( c != NULL ) { // We have a special command
         QList<QChar> regs;
-        regs << YKey::Key_DblQuote;
+        regs << Qt::Key_QuoteDbl;
         // 1 is for count, false for hadCount
 //        dbg() << ((void * )(&YModeCommand::deleteChar));
 //        dbg() << HERE() << " got a special command : "<< c->describe() << " with address " << (long int)(c->poolMethod())  << ", executing it" << endl;
@@ -132,7 +132,7 @@ CmdState YModeInsert::execCommand( YView* mView, const YKeySequence& inputs,
 
     // As all insert mode commands are one key, we know parsePos hasn't changed if we're here
     QString text;
-    if ( *parsePos == YKey::Key_Tab ) {
+    if ( *parsePos == Qt::Key_Tab ) {
         // expand a tab to [tabstop] spaces if 'expandtab' is set
         if (mView->getLocalBooleanOption("expandtab"))
             text.fill(' ', mView->getLocalIntegerOption("tabstop"));

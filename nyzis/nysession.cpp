@@ -127,12 +127,12 @@ bool NYSession::processInput(int /*fd*/)
     case 0x18:  // ^x // important, tested
     case 0x19:  // ^y
     case 0x1a:  // ^z
-        sendKey( currentView(), YKey( 0x60 + c, YKey::Mod_Ctrl));
+        sendKey( currentView(), YKey( 0x60 + c, Qt::ControlModifier));
         return true;
     } // switch
 
     if ( c == 0x1d ) {
-        sendKey( currentView(), YKey( YKey::Key_RightSBracket, YKey::Mod_Ctrl ) );
+        sendKey( currentView(), YKey( Qt::Key_BracketRight, Qt::ControlModifier) );
     }
 
     if (keycodes.contains(c)) {
@@ -145,7 +145,7 @@ bool NYSession::processInput(int /*fd*/)
         "ncurses key code, please report : " << (int) c << endl;
         return true;
     }
-    int modifiers = YKey::Mod_None;
+    Qt::KeyboardModifiers modifiers = Qt::NoModifier;
     /* if ( c & 0200 ) {
       // heuristic, alt-x is x|0200..
       modifiers += "<ALT>";
@@ -157,11 +157,11 @@ bool NYSession::processInput(int /*fd*/)
         return true;
     }
     if ( iscntrl( c ) ) {
-        modifiers |= YKey::Mod_Ctrl;
+        modifiers |= Qt::ControlModifier;
         c += 96;
     }
     if ( isupper( c ) ) {
-        modifiers |= YKey::Mod_Shift;
+        modifiers |= Qt::ShiftModifier;
     }
     //yzDebug() << "sendKey < " << c << " (" << QString( QChar( c ) ) << ") modifiers=" << modifiers << endl;
     //TODO: META
@@ -311,69 +311,69 @@ void NYSession::initialiseKeycodes()
     keycodes.clear();
 
     // ascii stuff
-    keycodes[ 9] = YKey(YKey::Key_Tab);
-    keycodes[ 10] = YKey(YKey::Key_Enter);   // enter
-    keycodes[ 13] = YKey(YKey::Key_Enter);   // return
-    keycodes[ 27] = YKey(YKey::Key_Esc);
-    keycodes[ 127] = YKey(YKey::Key_BackSpace);
+    keycodes[ 9] = YKey(Qt::Key_Tab);
+    keycodes[ 10] = YKey(Qt::Key_Enter);   // enter
+    keycodes[ 13] = YKey(Qt::Key_Return);   // return
+    keycodes[ 27] = YKey(Qt::Key_Escape);
+    keycodes[ 127] = YKey(Qt::Key_Backspace);
 
 
     //keycodes[ KEY_CODE_YES ] = ;
     //keycodes[ KEY_MIN ] = ;
-    keycodes[ KEY_BREAK ] = YKey(YKey::Key_Break);
+//    keycodes[ KEY_BREAK ] = YKey(Qt::Key_Break);
     //keycodes[ KEY_SRESET ] = ;
     //keycodes[ KEY_RESET ] = ;
-    keycodes[ KEY_DOWN ] = YKey(YKey::Key_Down);
-    keycodes[ KEY_UP ] = YKey(YKey::Key_Up);
-    keycodes[ KEY_LEFT ] = YKey(YKey::Key_Left);
-    keycodes[ KEY_RIGHT ] = YKey(YKey::Key_Right);
-    keycodes[ KEY_HOME ] = YKey(YKey::Key_Home);
-    keycodes[ KEY_BACKSPACE ] = YKey(YKey::Key_BackSpace);
+    keycodes[ KEY_DOWN ] = YKey(Qt::Key_Down);
+    keycodes[ KEY_UP ] = YKey(Qt::Key_Up);
+    keycodes[ KEY_LEFT ] = YKey(Qt::Key_Left);
+    keycodes[ KEY_RIGHT ] = YKey(Qt::Key_Right);
+    keycodes[ KEY_HOME ] = YKey(Qt::Key_Home);
+    keycodes[ KEY_BACKSPACE ] = YKey(Qt::Key_Backspace);
     //keycodes[ KEY_F0 ] = Qt::Key_F0;
-    keycodes[ KEY_F(1) ] = YKey(YKey::Key_F1);
-    keycodes[ KEY_F(2) ] = YKey(YKey::Key_F2);
-    keycodes[ KEY_F( 3 ) ] = YKey(YKey::Key_F3);
-    keycodes[ KEY_F( 4 ) ] = YKey(YKey::Key_F4);
-    keycodes[ KEY_F( 5 ) ] = YKey(YKey::Key_F5);
-    keycodes[ KEY_F( 6 ) ] = YKey(YKey::Key_F6);
-    keycodes[ KEY_F( 7 ) ] = YKey(YKey::Key_F7);
-    keycodes[ KEY_F( 8 ) ] = YKey(YKey::Key_F8);
-    keycodes[ KEY_F( 9 ) ] = YKey(YKey::Key_F9);
-    keycodes[ KEY_F( 10 ) ] = YKey(YKey::Key_F10);
-    keycodes[ KEY_F( 11 ) ] = YKey(YKey::Key_F11);
-    keycodes[ KEY_F( 12 ) ] = YKey(YKey::Key_F12);
+    keycodes[ KEY_F(1) ] = YKey(Qt::Key_F1);
+    keycodes[ KEY_F(2) ] = YKey(Qt::Key_F2);
+    keycodes[ KEY_F( 3 ) ] = YKey(Qt::Key_F3);
+    keycodes[ KEY_F( 4 ) ] = YKey(Qt::Key_F4);
+    keycodes[ KEY_F( 5 ) ] = YKey(Qt::Key_F5);
+    keycodes[ KEY_F( 6 ) ] = YKey(Qt::Key_F6);
+    keycodes[ KEY_F( 7 ) ] = YKey(Qt::Key_F7);
+    keycodes[ KEY_F( 8 ) ] = YKey(Qt::Key_F8);
+    keycodes[ KEY_F( 9 ) ] = YKey(Qt::Key_F9);
+    keycodes[ KEY_F( 10 ) ] = YKey(Qt::Key_F10);
+    keycodes[ KEY_F( 11 ) ] = YKey(Qt::Key_F11);
+    keycodes[ KEY_F( 12 ) ] = YKey(Qt::Key_F12);
     //keycodes[ KEY_DL ] = ;
     //keycodes[ KEY_IL ] = ;
-    keycodes[ KEY_DC ] = YKey(YKey::Key_Delete);
-    keycodes[ KEY_IC ] = YKey(YKey::Key_Insert);
-    keycodes[ Qt::Key_Insert ] = YKey(YKey::Key_Insert);
+    keycodes[ KEY_DC ] = YKey(Qt::Key_Delete);
+    keycodes[ KEY_IC ] = YKey(Qt::Key_Insert);
+    keycodes[ Qt::Key_Insert ] = YKey(Qt::Key_Insert);
     //keycodes[ KEY_EIC ] = ;
-    keycodes[ KEY_CLEAR ] = YKey(YKey::Key_Clear);
+    keycodes[ KEY_CLEAR ] = YKey(Qt::Key_Clear);
     //keycodes[ KEY_EOS ] = ;
     //keycodes[ KEY_EOL ] = ;
     //keycodes[ KEY_SF ] = ;
     //keycodes[ KEY_SR ] = ;
-    keycodes[ KEY_NPAGE ] = YKey(YKey::Key_PageDown);
-    keycodes[ KEY_PPAGE ] = YKey(YKey::Key_PageUp);
+    keycodes[ KEY_NPAGE ] = YKey(Qt::Key_PageDown);
+    keycodes[ KEY_PPAGE ] = YKey(Qt::Key_PageUp);
     //keycodes[ KEY_STAB ] = ;
     //keycodes[ KEY_CTAB ] = ;
     //keycodes[ KEY_CATAB ] = ;
-    keycodes[ KEY_ENTER ] = YKey(YKey::Key_Enter);;
-    keycodes[ KEY_PRINT ] = YKey(YKey::Key_PrintScreen);
+    keycodes[ KEY_ENTER ] = YKey(Qt::Key_Enter);;
+    keycodes[ KEY_PRINT ] = YKey(Qt::Key_Print);
     //keycodes[ KEY_LL ] = ;
-    keycodes[ KEY_A1 ] = YKey(YKey::Key_Home);
-    keycodes[ KEY_A3 ] = YKey(YKey::Key_Prior);
+    keycodes[ KEY_A1 ] = YKey(Qt::Key_Home);
+//    keycodes[ KEY_A3 ] = YKey(Qt::Key_Prior);
     //keycodes[ KEY_B2 ] = ;
-    keycodes[ KEY_C1 ] = YKey(YKey::Key_End);
-    keycodes[ KEY_C3 ] = YKey(YKey::Key_Next);
-    keycodes[ KEY_BTAB ] = YKey(YKey::Key_BTab);
+    keycodes[ KEY_C1 ] = YKey(Qt::Key_End);
+//    keycodes[ KEY_C3 ] = YKey(Qt::Key_Next);
+    keycodes[ KEY_BTAB ] = YKey(Qt::Key_Backtab);
     //keycodes[ KEY_BEG ] = ;
     //keycodes[ KEY_CANCEL ] = ;
     //keycodes[ KEY_CLOSE ] = ;
     //keycodes[ KEY_COMMAND ] = ;
     //keycodes[ KEY_COPY ] = ;
     //keycodes[ KEY_CREATE ] = ;
-    keycodes[ KEY_END ] = YKey(YKey::Key_End);
+    keycodes[ KEY_END ] = YKey(Qt::Key_End);
     //keycodes[ KEY_EXIT ] = ;
     //keycodes[ KEY_FIND ] = ;
     //keycodes[ KEY_HELP ] = ;

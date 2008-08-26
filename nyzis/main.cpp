@@ -127,7 +127,7 @@ static void sigint(int /*sig*/)
 {
     dbg() << "^C caught" << endl;
     // ^c caught -> sends an escape char..
-    NYSession::self()->sendKey( NYSession::self()->currentView(), YKey::Key_Esc );
+    NYSession::self()->sendKey( NYSession::self()->currentView(), Qt::Key_Escape );
 }
 
 

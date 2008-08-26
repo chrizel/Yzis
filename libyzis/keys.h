@@ -29,105 +29,23 @@
 class YZIS_EXPORT YKey
 {
 public:
-    enum 
-    {
-        // If this is changed, be sure to alter the representation functions too
-        Key_Invalid = -1,
-        // Next, printable characters represent themselves in ASCII for now.
-        // Might be possible to extend to unicode later
-        // Numeric
-        Key_0 = '0',
-        Key_1,Key_2,Key_3,Key_4,Key_5,Key_6,Key_7,Key_8,Key_9,
-        // Latin alphabetic: represents self in ASCII
-        Key_A = 'A',
-        Key_B,Key_C,Key_D,Key_E,Key_F,Key_G,Key_H,Key_I,Key_J,Key_K,Key_L,
-        Key_M,Key_N,Key_O,Key_P,Key_Q,Key_R,Key_S,Key_T,Key_U,Key_V,Key_W,
-        Key_X,Key_Y,Key_Z,
-        Key_a = 'a',
-        Key_b,Key_c,Key_d,Key_e,Key_f,Key_g,Key_h,Key_i,Key_j,Key_k,Key_l,
-        Key_m,Key_n,Key_o,Key_p,Key_q,Key_r,Key_s,Key_t,Key_u,Key_v,Key_w,
-        Key_x,Key_y,Key_z,
-        // Others
-        Key_BackTick = '`',
-        Key_Exclamation = '!',
-        Key_DblQuote = '"',
-        Key_Dollar = '$',
-        Key_Percent = '%',
-        Key_Caret = '^',
-        Key_Ampersand = '&',
-        Key_Asterisk = '*',
-        Key_LeftParen = '(',
-        Key_RightParen = ')',
-        Key_Hyphen = '-',
-        Key_UnderScore = '_',
-        Key_Equals = '=',
-        Key_Plus = '+',
-        Key_LeftSBracket = '[',
-        Key_RightSBracket = ']',
-        Key_LeftCBracket = '{',
-        Key_RightCBracket = '}',
-        Key_Colon = ':',
-        Key_SemiColon = ';',
-        Key_At = '@',
-        Key_Quote = '\'',
-        Key_Hash = '#',
-        Key_Tilde = '~',
-        Key_BackSlash = '\\',
-        Key_VBar = '|',
-        Key_Comma = ',',
-        Key_Period = '.',
-        Key_GreaterThan = '>',
-        Key_ForwardSlash = '/',
-        Key_QuestionMark = '?',
-        Key_Space = ' ',
-        Key_Tab = '\t',
-        Key_LessThan = '<',
-
-        // F Keys
-        Key_F1 = 0x100000,
-        Key_F2, Key_F3, Key_F4, Key_F5, Key_F6, Key_F7, Key_F8,
-        Key_F9, Key_F10, Key_F11, Key_F12,Key_F13,Key_F14,Key_F15,
-        Key_F16,Key_F17,Key_F18,Key_F19,Key_F20,Key_F21,Key_F22,
-        Key_F23,Key_F24,Key_F25,Key_F26,Key_F27,Key_F28,Key_F29,
-        Key_F30,Key_F31,Key_F32,Key_F33,Key_F34,Key_F35,
-
-        Key_Up, Key_Down, Key_Left, Key_Right, Key_Insert, Key_Delete, 
-        Key_Home, Key_End, Key_PageUp, Key_PageDown,Key_Break,Key_Clear,
-        Key_PrintScreen,Key_Prior,Key_BTab,Key_SysReq,Key_Next,
-
-        Key_Esc, Key_BackSpace, Key_Enter, Key_Pause,
-
-        Key_Alt, Key_Ctrl, Key_Shift,Key_Meta,
-    };
-    enum
-    {
-        Mod_None = 0,
-        Mod_Shift = 0x1,
-        Mod_Ctrl = 0x2,
-        Mod_Alt = 0x8,
-        Mod_Meta = 0x4,
-    };
-    
-    YKey(int key = Key_Invalid, int modifiers=Mod_None)
+    YKey(Qt::Key key = Qt::Key_unknown, Qt::KeyboardModifiers modifiers=Qt::NoModifier)
         : mKey(key), mModifiers(modifiers) 
-    { initKeyTable(); if ( isUnicode() ) mModifiers &= ~Mod_Shift; }
-    YKey(QChar rep, int modifiers=Mod_None);
+    { initKeyTable(); if ( isUnicode() ) mModifiers &= ~Qt::ShiftModifier; }
+
+    YKey(QChar rep, Qt::KeyboardModifiers modifiers=Qt::NoModifier);
 
 
     QString toString() const;
     int fromString(const QString &);
 
-    int modifiers() const
-        { return mModifiers; }
-    void addModifier(int m) 
-        { mModifiers |= m; }
-    void setKey(int key) 
-        { mKey = key; }
-    int key() const {
-      return mKey;
-    }
-    void setKey(QChar ch) 
-    { mKey = ch.unicode(); mModifiers &= ~Mod_Shift; }
+    int modifiers() const { return mModifiers; }
+
+    void addModifier(Qt::KeyboardModifier m) { mModifiers |= m; }
+    void setKey(Qt::Key key) { mKey = key; }
+    void setKey(QChar ch) { mKey = (Qt::Key) ch.unicode(); mModifiers &= ~Qt::ShiftModifier; }
+
+    int key() const { return mKey; }
 
     YKey & operator=(const YKey &oth) {
         mKey = oth.mKey;
@@ -135,9 +53,7 @@ public:
         return *this;
     }
     
-    bool isUnicode() const {
-        return mKey <= 0xffff && mKey >= 0;
-    }
+    bool isUnicode() const { return mKey <= 0xffff && mKey >= 0; }
 
     operator QChar() const {
         if ( mKey <= 0xffff && mKey >= 0)
@@ -161,11 +77,11 @@ private:
     static void initKeyTable();
     
 private:
-    int mKey;
-    char mModifiers;
+    Qt::Key mKey;
+    Qt::KeyboardModifiers mModifiers; 
 
-    static QMap<QString, int> keyTable;
-    static QMap<QString, int> aliasTable;
+    static QMap<QString, Qt::Key> keyTable;
+    static QMap<QString, Qt::Key> aliasTable;
 };
 
 class YZIS_EXPORT YKeySequence

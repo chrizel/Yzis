@@ -182,9 +182,9 @@ void KYEditor::keyPressEvent ( QKeyEvent * e )
     if ( st & Qt::ControlModifier )
         modifiers |= YKey::Mod_Ctrl;
 
-    YKey key( YKey::Key_Invalid, modifiers );
+    YKey key( Qt::Key_unknown, modifiers );
     if ( !mParent->containsKey( e->key() ) ) {
-        if ( e->key() >= Qt::Key_A && e->key() <= Qt::Key_Z && modifiers & YKey::Mod_Ctrl )
+        if ( e->key() >= Qt::Key_A && e->key() <= Qt::Key_Z && modifiers & Qt::ControlModifier )
              key.setKey( QChar(e->key()).toLower() );
         else
              key.setKey( e->text()[0] );

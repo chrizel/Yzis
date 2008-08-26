@@ -1068,13 +1068,14 @@ void YView::saveInputBuffer()
     // Only have special cases for length 1
     if ( mPreviousChars.count() == 1 ) {
         // We don't need to remember ENTER or ESC or CTRL-C
-        if ( *mPreviousChars.begin() == YKey::Key_Enter
-             || *mPreviousChars.begin() == YKey::Key_Esc
-             || *mPreviousChars.begin() == YKey(YKey::Key_C, YKey::Mod_Ctrl) )
+        if ( *mPreviousChars.begin() == Qt::Key_Enter
+             || *mPreviousChars.begin() == Qt::Key_Return
+             || *mPreviousChars.begin() == Qt::Key_Escape
+             || *mPreviousChars.begin() == YKey(Qt::Key_C, Qt::ControlModifier) )
             return;
 
         // Provided we are not repeating the command don't overwrite
-        if ( *mPreviousChars.begin() == YKey::Key_Period ) 
+        if ( *mPreviousChars.begin() == Qt::Key_Period ) 
             return;
     }
 

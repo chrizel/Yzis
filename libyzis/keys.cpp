@@ -101,12 +101,10 @@ QString YKey::toBasicRep() const
         return repr;        
     }
 
-    QMap<QString, int>::const_iterator i = keyTable.constBegin();
-    for(; i != keyTable.end(); ++i) {
-        if ( mKey == i.value() )
-            repr =  i.key();
-    }
-    
+    // reverse lookup
+    QString s = keyTable.key(mKey);
+    if (!s.isNull())
+        return s;
 
     return repr;
 }

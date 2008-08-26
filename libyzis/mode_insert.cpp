@@ -81,6 +81,7 @@ void YModeInsert::initCommandPool()
     commands.append( new YCommand(YKeySequence("<BS>"), (PoolMethod)&YModeInsert::backspace) );
     commands.append( new YCommand(YKeySequence("<C-h>"), (PoolMethod)&YModeInsert::backspace) );
     commands.append( new YCommand(YKeySequence("<ENTER>"), (PoolMethod)&YModeInsert::commandEnter) );
+    commands.append( new YCommand(YKeySequence("<RETURN>"), (PoolMethod)&YModeInsert::commandEnter) );
     commands.append( new YCommand(YKeySequence("<DELETE>"), (PoolMethod)&YModeInsert::deleteChar) );
     
     // Motions don't need special processing in insert mode, so shove them

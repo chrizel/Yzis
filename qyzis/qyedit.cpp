@@ -228,7 +228,7 @@ void QYEdit::keyPressEvent ( QKeyEvent * e )
         else
             key.setKey ( e->text()[0] );
     } else {
-        key.setKey ( keys[ e->key() ] );
+        key = keys[e->key()];
     }
     dbg().SPrintf("Event transferred to YSession");
     YSession::self()->sendKey( static_cast<YView*>( mView ), key);

@@ -128,7 +128,12 @@ public:
     }
     void setKey(QChar ch) 
     { mKey = ch.unicode(); mModifiers &= ~Mod_Shift; }
-        
+
+    YKey & operator=(const YKey &oth) {
+        mKey = oth.mKey;
+        mModifiers = oth.mModifiers;
+        return *this;
+    }
     
     bool isUnicode() const {
         return mKey <= 0xffff && mKey >= 0;

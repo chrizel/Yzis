@@ -135,8 +135,7 @@ protected:
     void inputMethodEvent ( QInputMethodEvent * );
 
 private :
-    void initKeys();
-    QSignalMapper* signalMapper;
+    QSignalMapper signalMapper;
     QString keysToShortcut( const QString& keys );
 
     /* area to use */

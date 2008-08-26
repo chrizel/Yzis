@@ -48,6 +48,7 @@ using namespace std;
 
 QYEdit::QYEdit(QYView * view )
         : QWidget( view )
+        , signalMapper(this)
 {
     mView = view;
 
@@ -65,14 +66,13 @@ QYEdit::QYEdit(QYView * view )
 
     mCursor = new QYCursor( mView, this, QYCursor::CursorFilledRect );
 
-    initKeys();
+    connect( &signalMapper, SIGNAL( mapped( const QString& ) ), this, SLOT( sendMappedKey( const QString& ) ) );
 }
 
 
 QYEdit::~QYEdit()
 {
     dbg() << "~QYEdit()" << endl;
-    delete signalMapper;
     dbg() << "~QYEdit() done" << endl;
 }
 
@@ -385,12 +385,6 @@ void QYEdit::guiDrawClearToEOL( YCursor pos , const YDrawCell& clearCell, QPaint
 	*/
 }
 
-void QYEdit::initKeys()
-{
-    signalMapper = new QSignalMapper( this );
-    connect( signalMapper, SIGNAL( mapped( const QString& ) ), this, SLOT( sendMappedKey( const QString& ) ) );
-}
-
 QString QYEdit::keysToShortcut( const QString& keys )
 {
     QString ret = keys;
@@ -405,8 +399,8 @@ void QYEdit::registerModifierKeys( const QString& keys )
 {
     Q_UNUSED(keys);
     /*
-    KAction* k = new KAction( "", KShortcut( keysToShortcut( keys ) ), signalMapper, SLOT( map() ), actionCollection, keys.ascii() );
-    signalMapper->setMapping( k, keys );
+    KAction* k = new KAction( "", KShortcut( keysToShortcut( keys ) ), &signalMapper, SLOT( map() ), actionCollection, keys.ascii() );
+    signalMapper.setMapping( k, keys );
     */
 }
 void QYEdit::unregisterModifierKeys( const QString& keys )
@@ -425,7 +419,7 @@ void QYEdit::unregisterModifierKeys( const QString& keys )
      accel->remove( keys );
      accel->updateConnections();
     }
-    signalMapper->removeMappings( k );
+    signalMapper.removeMappings( k );
     delete k;
     */
 }

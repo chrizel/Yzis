@@ -153,6 +153,10 @@ void recalcView( YBuffer*, YView* v )
     if ( v )
         v->recalcScreen();
 }
+void setupView( YBuffer*, YView* v )
+{
+	if ( v ) v->guiSetup();
+}
 void viewUpdateListChars( YBuffer*, YView* v )
 {
     if ( v && v->getLocalBooleanOption("list") )
@@ -188,7 +192,7 @@ void YInternalOptionPool::init()
     options.append(new YOptionBoolean("hlsearch", false, ContextSession, ScopeGlobal, &updateHLSearch, QStringList("hls")));
     options.append(new YOptionList("indentkeys", QStringList(), ContextBuffer, ScopeLocal, &doNothing, QStringList("indk"), QStringList()));
     options.append(new YOptionBoolean("incsearch", false, ContextSession, ScopeGlobal, &doNothing, QStringList("is")));
-    options.append(new YOptionBoolean("list", false, ContextView, ScopeLocal, &refreshView, QStringList()));
+    options.append(new YOptionBoolean("list", false, ContextView, ScopeLocal, &recalcView, QStringList()));
     MapOption lc;
     lc["trail"] = "-";
     lc["space"] = ".";
@@ -198,11 +202,11 @@ void YInternalOptionPool::init()
     lc["extends"] = ">";
     options.append(new YOptionMap("listchars", lc, ContextView, ScopeGlobal, &viewUpdateListChars, QStringList("lcs"), lc.keys(), QStringList()));
     options.append(new YOptionString("matchpairs", "(){}[]", ContextBuffer, ScopeLocal, &doNothing, QStringList("mps"), QStringList()));
-    options.append(new YOptionBoolean("number", false, ContextView, ScopeLocal, &refreshView, QStringList("nu")));
+    options.append(new YOptionBoolean("number", false, ContextView, ScopeLocal, &recalcView, QStringList("nu")));
     options.append(new YOptionString("printer", "qtprinter", ContextView, ScopeLocal, &doNothing, QStringList(), QStringList("qtprinter" ) << "pslib"));
     options.append(new YOptionBoolean("rightleft", false, ContextView, ScopeLocal, &recalcView, QStringList("rl")));
     options.append(new YOptionBoolean("expandtab", false, ContextView, ScopeLocal, &recalcView, QStringList("et")));
-    options.append(new YOptionInteger("schema", 0, ContextBuffer, ScopeLocal, &refreshView, QStringList(), 0));
+    options.append(new YOptionInteger("schema", 0, ContextBuffer, ScopeLocal, &recalcView, QStringList(), 0));
     options.append(new YOptionString("syntax", "", ContextBuffer, ScopeLocal, &setSyntax, QStringList("syn"), QStringList())); // XXX put all name ofsyntaxes here
     options.append(new YOptionInteger("tabstop", 8, ContextView, ScopeLocal, &recalcView, QStringList("ts"), 1));
     options.append(new YOptionInteger("updatecount", 200, ContextSession, ScopeGlobal, &doNothing, QStringList("uc"), 1));

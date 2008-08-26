@@ -171,11 +171,15 @@ void YView::recalcScreen( )
     mainCursor.reset();
 
 	setPaintAutoCommit(false);
+
 	updateBufferInterval(YInterval(YCursor(0,0), YBound(YCursor(0, mBuffer->lineCount()), true)));
 	sendRefreshEvent();
-	commitPaintEvent();
 
     gotoxy( &mainCursor, old_pos );
+
+	guiSetup();
+
+	commitPaintEvent();
 }
 
 void YView::displayIntro()

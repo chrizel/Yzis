@@ -153,7 +153,7 @@ private:
     bool parseBasicRep(QString rep);
     bool parseModifiers(const QString &mods);
 
-    void initKeyTable();
+    static void initKeyTable();
     
 private:
     int mKey;

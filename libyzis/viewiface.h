@@ -141,6 +141,9 @@ public:
     //-------------------------------------------------------
     //                  GUI Painting
     //-------------------------------------------------------
+	
+	/** setup user interface using options */
+	virtual void guiSetup() = 0;
 
     /** Notify gui that the following content has changed.
       *

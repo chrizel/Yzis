@@ -123,9 +123,6 @@ public:
         { mModifiers |= m; }
     void setKey(int key) 
         { mKey = key; }
-    void setKey(const YKey &k) {
-      mKey = k.mKey;
-    }
     int key() const {
       return mKey;
     }

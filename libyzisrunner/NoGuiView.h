@@ -74,6 +74,7 @@ public:
     virtual void guiDisplayInfo(const QString&);
 
     virtual void guiHighlightingChanged();
+	virtual void guiSetup();
     void guiPreparePaintEvent();
     void guiEndPaintEvent();
     void guiDrawCell(YCursor, const YDrawCell&);

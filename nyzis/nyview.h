@@ -65,7 +65,7 @@ public:
         return commandline;
     }
     virtual void guiSetCommandLineText( const QString& );
-    virtual void refreshScreen();
+    virtual void guiSetup();
     virtual void guiPaintEvent( const YSelection& drawMap );
 
     void guiScroll( int dx, int dy );

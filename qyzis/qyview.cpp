@@ -143,13 +143,12 @@ void QYView::setVisibleArea( int columns, int lines )
     YView::setVisibleArea( columns, lines );
 }
 
-void QYView::refreshScreen()
+void QYView::guiSetup()
 {
     bool o_number = getLocalBooleanOption("number");
     if ( o_number != mLineNumbers->isVisible() ) {
         mLineNumbers->setVisible(o_number);
     }
-    YView::refreshScreen();
 }
 
 void QYView::guiNotifyContentChanged( const YSelection& s )

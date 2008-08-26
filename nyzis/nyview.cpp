@@ -348,11 +348,10 @@ void NYView::initialiseAttributesMap()
 
 }
 
-void NYView::refreshScreen()
+void NYView::guiSetup()
 {
     if ( marginLeft > 0 && !getLocalBooleanOption("number") )
         marginLeft = 0;
-    YView::refreshScreen();
     refresh();
     updateCursor();
 }

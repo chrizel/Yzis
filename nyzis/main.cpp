@@ -139,7 +139,7 @@ static void sigwinch(int /*sig*/)
     NYView *view = static_cast<NYView*>(NYSession::self()->currentView());
     view->unmap();
     view->map();
-    view->refreshScreen();
+    view->recalcScreen();
 }
 
 

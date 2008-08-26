@@ -81,7 +81,7 @@ public:
     virtual void registerModifierKeys( const QString& keys );
     virtual void unregisterModifierKeys( const QString& keys );
 
-    void refreshScreen();
+    void guiSetup();
 
     bool guiPopupFileSaveAs();
     virtual void guiUpdateFileName();

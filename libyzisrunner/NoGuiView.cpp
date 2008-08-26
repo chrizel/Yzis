@@ -154,6 +154,10 @@ void NoGuiView::guiDisplayInfo( const QString& )
 {
     dbg() << HERE() << endl;
 }
+void NoGuiView::guiSetup()
+{
+    dbg() << HERE() << endl;
+}
 void NoGuiView::guiHighlightingChanged()
 {
     dbg() << HERE() << endl;

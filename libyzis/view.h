@@ -527,11 +527,6 @@ public:
      */
     const YCursor getBufferCursor() const;
 
-    YViewCursor* visualCursor()
-    {
-        return &mVisualCursor;
-    }
-
     /** Update the GUI when the cursor position has changed.
      * Updates the status bar and notificates the GUI through
      * guiUpdateCursorPosition, which should update the editor cursor position.
@@ -733,9 +728,6 @@ private:
 
     YSelectionPool * selectionPool;
     YSelection mPaintSelection;
-
-    //Visual Mode stuff
-    YViewCursor mVisualCursor; // TODO : this one is only used by external class, not by this very one ?
 
 
     /// which regs to store macros in

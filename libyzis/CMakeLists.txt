@@ -9,6 +9,7 @@ include_directories(${YZIS_INCLUDES})
 ########### next target ###############
 
 set(yzis_LIB_SRCS 
+   mode_visual.cpp 
    drawbuffer.cpp 
    view.cpp 
    action.cpp 
@@ -36,7 +37,6 @@ set(yzis_LIB_SRCS
    mode_ex.cpp 
    mode_insert.cpp 
    mode_search.cpp 
-   mode_visual.cpp 
    option.cpp 
    registers.cpp 
    resourcemgr.cpp 

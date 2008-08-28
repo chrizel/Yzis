@@ -24,7 +24,7 @@
 /* Yzis */
 #include "yzismacros.h"
 #include "cursor.h"
-class YBuffer;
+#include "buffer.h"
 class YView;
 class YCursor;
 class YInterval;
@@ -98,7 +98,7 @@ public:
     void copyArea( YView* pView, const YCursor begin, const YCursor end, const QList<QChar> &reg );
     void copyArea( YView* pView, const YInterval& i, const QList<QChar> &reg );
 
-    void replaceArea( YView* pView, const YInterval& i, const QStringList& text );
+    void replaceArea( YView* pView, const YInterval& i, const YRawData& text );
 
 
     void replaceText( YView* pView, const YCursor pos, int replacedLength, const QString& text );

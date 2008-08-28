@@ -56,7 +56,7 @@ YModeVisual::~YModeVisual()
 void YModeVisual::toClipboard( YView* mView )
 {
     YInterval interval = mView->getSelectionPool()->visual()->bufferMap()[0];
-    YSession::self()->guiSetClipboardText( mView->myBuffer()->getText( interval ).join( "\n" ), Clipboard::Selection );
+	YSession::self()->guiSetClipboardText(mView->myBuffer()->dataRegion(interval).join("\n"), Clipboard::Selection);
 }
 
 YInterval YModeVisual::buildBufferInterval( YView*, const YViewCursor& from, const YViewCursor& to )
@@ -182,20 +182,20 @@ CmdState YModeVisual::toLowerCase( const YCommandArgs& args )
 {
     CmdState state;
     YInterval inter = interval( args, &state );
-    QStringList t = args.view->myBuffer()->getText( inter );
-    QStringList lt;
+    YRawData t = args.view->myBuffer()->dataRegion(inter);
+    YRawData lt;
     for ( int i = 0; i < t.size(); i++ )
         lt << t[i].toLower();
-    args.view->myBuffer()->action()->replaceArea( args.view, inter, lt );
-    args.view->commitNextUndo();
+	args.view->myBuffer()->action()->replaceArea(args.view, inter, lt);
+	args.view->commitNextUndo();
     return CmdOk;
 }
 CmdState YModeVisual::toUpperCase( const YCommandArgs& args )
 {
     CmdState state;
     YInterval inter = interval( args, &state );
-    QStringList t = args.view->myBuffer()->getText( inter );
-    QStringList lt;
+    YRawData t = args.view->myBuffer()->dataRegion(inter);
+    YRawData lt;
     for ( int i = 0; i < t.size(); i++ )
         lt << t[i].toUpper();
     args.view->myBuffer()->action()->replaceArea( args.view, inter, lt );

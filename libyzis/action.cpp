@@ -198,7 +198,7 @@ void YZAction::copyArea( YView* , const YInterval& i, const QList<QChar> &reg )
         YSession::self()->setRegister( reg.at(ab), buff );
 }
 
-void YZAction::replaceArea( YView* /*pView*/, const YInterval& i, const QStringList& text )
+void YZAction::replaceArea( YView* /*pView*/, const YInterval& i, const YRawData& text )
 {
 	mBuffer->replaceRegion(i, text);
 }

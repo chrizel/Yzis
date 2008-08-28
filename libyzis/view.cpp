@@ -68,14 +68,13 @@ YViewIface::~YViewIface()
 static int nextId = 1;
 
 YView::YView(YBuffer *_b, YSession *sess, int cols, int lines)
-        :
-          mDrawBuffer(cols,lines),
-          mPreviousChars(""),mLastPreviousChars(""),
-          mainCursor(), workCursor(),
-		 mPaintSelection(),
-		 mVisualCursor(),
-		 keepCursor(),
-          id(nextId++)
+		:
+	mDrawBuffer(cols,lines),
+	mPreviousChars(""),mLastPreviousChars(""),
+	mainCursor(), workCursor(),
+	mPaintSelection(),
+	keepCursor(),
+	id(nextId++)
 {
     dbg().SPrintf("YView( %s, cols=%d, lines=%d )", qp(_b->toString()), cols, lines );
     dbg() << "New View created with UID: " << getId() << endl;

@@ -72,6 +72,7 @@ YView::YView(YBuffer *_b, YSession *sess, int cols, int lines)
 	mDrawBuffer(cols,lines),
 	mPreviousChars(""),mLastPreviousChars(""),
 	mainCursor(), workCursor(),
+	mSelectionPool(),
 	mPaintSelection(),
 	keepCursor(),
 	id(nextId++)
@@ -95,8 +96,6 @@ YView::YView(YBuffer *_b, YSession *sess, int cols, int lines)
     reverseSearch = false;
     mPreviousChars.clear();
 
-    selectionPool = new YSelectionPool();
-
 	updateInternalAttributes();
 
     abortPaintEvent();
@@ -113,7 +112,6 @@ YView::~YView()
         YSession::self()->deleteBuffer( mBuffer );
     }
 
-    delete selectionPool;
     delete mLineSearch;
     delete mModePool;
     delete mFoldPool;
@@ -185,11 +183,6 @@ void YView::recalcScreen( )
 void YView::displayIntro()
 {
     mModePool->change( YMode::ModeIntro );
-}
-
-YSelectionMap YView::visualSelection() const
-{
-    return selectionPool->visual()->bufferMap();
 }
 
 void YView::reindent(const QPoint pos)

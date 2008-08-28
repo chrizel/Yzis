@@ -160,14 +160,6 @@ public:
     }
 
     /**
-     * Accessor to the list of current selections
-     */
-    YSelectionPool* getSelectionPool() const
-    {
-        return selectionPool;
-    }
-
-    /**
      * Accessor to the list of recorded registers
      * @return a QList of @ref YRegisters
      */
@@ -175,8 +167,6 @@ public:
     {
         return mRegs;
     }
-
-    YSelectionMap visualSelection() const;
 
     //-------------------------------------------------------
     // ----------------- Scrolling
@@ -726,7 +716,7 @@ private:
     bool wrap;
     bool rightleft;
 
-    YSelectionPool * selectionPool;
+    YSelectionPool mSelectionPool;
     YSelection mPaintSelection;
 
 

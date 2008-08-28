@@ -70,6 +70,7 @@ protected:
     virtual YInterval buildBufferInterval( YView* mView, const YViewCursor& from, const YViewCursor& to );
     virtual YInterval buildScreenInterval( YView* mView, const YViewCursor& from, const YViewCursor& to );
     bool mEntireLines;
+	QMap<YView*, YViewCursor> startViewCursor;
 };
 
 /**

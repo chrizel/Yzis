@@ -71,7 +71,10 @@ YView::YView(YBuffer *_b, YSession *sess, int cols, int lines)
         :
           mDrawBuffer(cols,lines),
           mPreviousChars(""),mLastPreviousChars(""),
-          mainCursor(), workCursor(), mVisualCursor(), keepCursor(),
+          mainCursor(), workCursor(),
+		 mPaintSelection(),
+		 mVisualCursor(),
+		 keepCursor(),
           id(nextId++)
 {
     dbg().SPrintf("YView( %s, cols=%d, lines=%d )", qp(_b->toString()), cols, lines );
@@ -93,7 +96,6 @@ YView::YView(YBuffer *_b, YSession *sess, int cols, int lines)
     reverseSearch = false;
     mPreviousChars.clear();
 
-    mPaintSelection = new YSelection("PAINT");
     selectionPool = new YSelectionPool();
 
 	updateInternalAttributes();
@@ -113,7 +115,6 @@ YView::~YView()
     }
 
     delete selectionPool;
-    delete mPaintSelection;
     delete mLineSearch;
     delete mModePool;
     delete mFoldPool;
@@ -988,8 +989,8 @@ void YView::commitPaintEvent()
             keepCursor.invalidate();
             applyGoto( &mainCursor );
         }
-        if ( ! mPaintSelection->isEmpty() ) {
-            guiNotifyContentChanged(clipSelection(*mPaintSelection));
+        if ( ! mPaintSelection.isEmpty() ) {
+            guiNotifyContentChanged(clipSelection(mPaintSelection));
         }
         abortPaintEvent();
     }
@@ -997,7 +998,7 @@ void YView::commitPaintEvent()
 void YView::abortPaintEvent()
 {
     keepCursor.invalidate();
-    mPaintSelection->clear();
+    mPaintSelection.clear();
     setPaintAutoCommit();
 }
 
@@ -1009,7 +1010,7 @@ void YView::sendPaintEvent( const YInterval& i )
 {
 	if ( i.valid() ) {
 		setPaintAutoCommit(false);
-		mPaintSelection->addInterval(i);
+		mPaintSelection.addInterval(i);
 		commitPaintEvent();
 	}
 }
@@ -1039,19 +1040,19 @@ void YView::sendPaintEvent( YSelectionMap map, bool isBufferMap )
         }
     }
     setPaintAutoCommit( false );
-    mPaintSelection->addMap( map );
+    mPaintSelection.addMap( map );
     commitPaintEvent();
 }
 
 void YView::sendRefreshEvent( )
 {
-    mPaintSelection->clear();
+    mPaintSelection.clear();
     sendPaintEvent(YInterval(YCursor(0,0), YBound(YCursor(0,mDrawBuffer.screenHeight()), true)));
 }
 
 void YView::removePaintEvent( const YCursor from, const YCursor to )
 {
-    mPaintSelection->delInterval( YInterval( from, to ) );
+    mPaintSelection.delInterval( YInterval( from, to ) );
 }
 
 bool YView::stringHasOnlySpaces ( const QString& what )

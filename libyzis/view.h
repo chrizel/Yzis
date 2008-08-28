@@ -732,7 +732,7 @@ private:
     bool rightleft;
 
     YSelectionPool * selectionPool;
-    YSelection* mPaintSelection;
+    YSelection mPaintSelection;
 
     //Visual Mode stuff
     YViewCursor mVisualCursor; // TODO : this one is only used by external class, not by this very one ?

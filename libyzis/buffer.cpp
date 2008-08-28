@@ -907,15 +907,6 @@ QString YBuffer::getWordAt( const YCursor at ) const
     return QString();
 }
 
-QStringList YBuffer::getText(const YCursor from, const YCursor to) const
-{
-	return dataRegion(YInterval(from, to));
-}
-QStringList YBuffer::getText( const YInterval& i ) const
-{
-	return dataRegion(i);
-}
-
 int YBuffer::getLocalIntegerOption( const QString& option ) const
 {
     if ( YSession::self()->getOptions()->hasOption( d->path + "\\" + option ) ) //find the local one ?

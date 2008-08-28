@@ -191,7 +191,7 @@ void YZAction::copyArea( YView* , const YInterval& i, const QList<QChar> &reg )
             buff << mBuffer->textline( eY ).left( eX );
     }
 
-    YSession::self()->guiSetClipboardText( mBuffer->getText( i ).join("\n"), Clipboard::Clipboard );
+	YSession::self()->guiSetClipboardText(mBuffer->dataRegion(i).join("\n"), Clipboard::Clipboard);
 
     dbg() << "Copied " << buff << endl;
     for ( int ab = 0 ; ab < reg.size(); ++ab )
@@ -208,7 +208,7 @@ void YZAction::deleteArea( YView* pView, const YInterval& i, const QList<QChar> 
     dbg() << "YZAction::deleteArea " << i << endl;
     configureViews(mBuffer);
 
-    QStringList buff = mBuffer->getText( i );
+	YRawData buff = mBuffer->dataRegion(i);
 
     int bX = i.fromPos().x();
     int bY = i.fromPos().y();

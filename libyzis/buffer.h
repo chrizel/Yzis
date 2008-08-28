@@ -157,16 +157,6 @@ public:
      */
     void replaceLine( const QString& l, int line ) YZIS_DEPRECATED;
 
-	/**
-	 * Get a list of strings between two cursors
-	 * @param from the origin cursor
-	 * @param to the end cursor
-	 * @return a list of strings
-	 */
-	QStringList getText(const YCursor from, const YCursor to) const YZIS_DEPRECATED;
-	QStringList getText(const YInterval& i) const YZIS_DEPRECATED;
-
-
     /**
      * Finds the @ref YLine pointer for a line in the buffer
      * @param line the line to return

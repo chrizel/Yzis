@@ -74,7 +74,7 @@ bool YModeCompletion::initCompletion( YView* view, bool forward )
     mCompletionStart = YSession::self()->getCommandPool()->moveWordBackward( arg, &state );
     YCursor stop( cur.x() - 1, cur.y() );
     dbg() << "Start : " << mCompletionStart << ", End:" << stop << endl;
-    QStringList list = buffer->getText(mCompletionStart, stop);
+	YRawData list = buffer->dataRegion(YInterval(mCompletionStart, stop));
     dbg() << "Completing word : " << list[0] << endl;
 
     // if there's nothing to complete, abort

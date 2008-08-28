@@ -200,62 +200,7 @@ void YZAction::copyArea( YView* , const YInterval& i, const QList<QChar> &reg )
 
 void YZAction::replaceArea( YView* /*pView*/, const YInterval& i, const QStringList& text )
 {
-    configureViews(mBuffer);
-    QStringList t = text;
-
-    int bX = i.fromPos().x();
-    int bY = i.fromPos().y();
-    int eX = i.toPos().x();
-    int eY = i.toPos().y();
-
-    if ( i.from().opened() ) ++bX;
-    if ( i.to().opened() && eX > 0 ) --eX;
-    if ( i.to().opened() && eX == 0 ) {
-        --eY;
-        eX = mBuffer->textline( eY ).length() - 1;
-    }
-    QString bL = mBuffer->textline( bY ).left( bX );
-    QString eL = mBuffer->textline( eY ).mid( eX + 1 );
-
-    int rH = text.size();
-    int dH = eY - bY + 1;
-    if ( rH == 0 ) {
-        t << "";
-        rH = 1;
-    }
-
-    if ( rH > 1 ) {
-        mBuffer->replaceLine( bL + t[ 0 ], bY );
-        if ( eY == bY ) {
-            mBuffer->insertLine( t[ rH - 1 ] + eL, eY + 1 );
-        } else {
-            mBuffer->replaceLine( t[ rH - 1 ] + eL, eY );
-            --dH;
-        }
-        --rH;
-    } else {
-        mBuffer->replaceLine( bL + t[ 0 ] + eL, bY );
-        if ( eY != bY ) {
-            mBuffer->deleteLine( eY );
-            --dH;
-        }
-    }
-    int j;
-    int max = qMin( rH, dH );
-    for ( j = 1; j < max; j++ ) {
-        mBuffer->replaceLine( t[ j ], bY + j );
-    }
-    if ( j == rH ) { // remove lines
-        for ( ; j < dH; j++ ) {
-            mBuffer->deleteLine( bY + rH );
-        }
-    } else { // insert lines
-        for ( ; j < rH; j++ ) {
-            mBuffer->insertLine( t[ j ], bY + j );
-        }
-    }
-
-    commitViewsChanges(mBuffer);
+	mBuffer->replaceRegion(i, text);
 }
 
 void YZAction::deleteArea( YView* pView, const YInterval& i, const QList<QChar> &reg )

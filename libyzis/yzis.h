@@ -107,6 +107,12 @@ enum MapMode {
     MapInsert = 16,  //!< insert mode
 };
 
+/** Different selection types */
+enum SelectionType {
+	SelectionSearch = 0x8, //!< hlsearch
+	SelectionVisual = 0x10, //!< visual mode
+};
+
 };
 
 namespace Clipboard

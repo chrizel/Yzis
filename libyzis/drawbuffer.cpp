@@ -25,12 +25,124 @@
 #define err()    yzError("YDrawBuffer")
 
 /************************
+ * YDrawCell
+ ************************/
+
+YDrawCell::YDrawCell() :
+	mSelections(0),
+	mColorForeground(),
+	mColorBackground(),
+	mFont(),
+	mContent(),
+	mSteps(),
+	mStepsShift(0)
+{
+}
+YDrawCell::YDrawCell( const YDrawCell& cell ) :
+	mSelections(cell.mSelections),
+	mColorForeground(cell.mColorForeground),
+	mColorBackground(cell.mColorBackground),
+	mFont(cell.mFont),
+	mContent(cell.mContent),
+	mSteps(cell.mSteps),
+	mStepsShift(cell.mStepsShift)
+{
+}
+YDrawCell::~YDrawCell()
+{
+}
+
+void YDrawCell::addSelection( yzis::SelectionType selType )
+{
+	mSelections |= selType;
+}
+void YDrawCell::delSelection( yzis::SelectionType selType )
+{
+	if ( hasSelection( selType ) )
+		mSelections -= selType;
+}
+void YDrawCell::setForegroundColor( const YColor& color )
+{
+	mColorForeground = color;
+}
+void YDrawCell::setBackgroundColor( const YColor& color )
+{
+	mColorBackground = color;
+}
+void YDrawCell::setFont( const YFont& font )
+{
+	mFont = font;
+}
+int YDrawCell::step( const QString& data )
+{
+	mContent += data;
+	mSteps.append(data.length());
+	return data.length();
+}
+void YDrawCell::clear()
+{
+	mContent.clear();
+	mSteps.clear();
+	mColorBackground = YColor();
+	mColorForeground = YColor();
+	mSelections = 0;
+	mFont = YFont();
+}
+
+YDrawCell YDrawCell::left( int column ) const
+{
+	YDrawCell l(*this);
+	if ( column < width() ) {
+		l.mContent = mContent.left(column);
+		l.mSteps.clear();
+		int w = 0;
+		int r = column;
+		foreach( int s, mSteps ) {
+			if ( r == 0 ) break;
+			if ( s > r ) {
+				l.mSteps << r;
+				r = 0;
+			} else {
+				l.mSteps << s;
+				w += s;
+				r -= s;
+			}
+		}
+	}
+	return l;
+}
+
+YDrawCell YDrawCell::right( int column ) const
+{
+	YDrawCell c(*this);
+	if ( column > 0 ) {
+		c.mContent = mContent.right(column);
+		c.mSteps.clear();
+		int r = column;
+		foreach( int s, mSteps ) {
+			if ( r == 0 ) {
+				c.mSteps << s;
+			} else {
+				if ( s > r ) {
+					c.mStepsShift = s - r;
+					r = 0;
+				} else {
+					r -= s;
+				}
+			}
+		}
+	}
+	return c;
+}
+
+
+
+/************************
  * YDrawLine
  ************************/
 
 YDrawLine::YDrawLine() :
-	mCells(),
-	mSteps()
+	mCells()
 {
 	clear();
 }
@@ -39,101 +151,57 @@ YDrawLine::~YDrawLine()
 }
 
 void YDrawLine::clear() {
+	mCur.clear();
 	mCell = NULL;
 	mCells.clear();
-	mSteps.clear();
+	mWidth = 0;
 	changed = true;
 }
 
 void YDrawLine::setFont( const YFont& f )
 {
-    /* TODO if ( f != mCur.font ) { */ 
-    mCur.font = f;
-    /*  changed = true;
+	/* TODO */
+    /* if ( f != mCur.font ) {  */
+	mCur.setFont(f);
+	/*
+      changed = true;
      } */
-}
-bool YDrawLine::updateColor( YColor* dest, const YColor& c )
-{
-    bool changed = false;
-    bool was_valid = dest->isValid();
-    bool is_valid = c.isValid();
-    if ( was_valid != is_valid || (is_valid && c.rgb() != dest->rgb()) ) {
-        changed = true;
-        if ( is_valid ) {
-            dest->setRgb( c.rgb() );
-        } else {
-            dest->invalidate();
-        }
-    }
-    return changed;
 }
 
 void YDrawLine::setColor( const YColor& c )
 {
-    changed |= updateColor(&mCur.fg, c);
+	if ( mCur.foregroundColor() != c ) {
+		mCur.setForegroundColor(c);
+		changed = true;
+	}
 }
 void YDrawLine::setBackgroundColor( const YColor& c )
 {
-    changed |= updateColor(&mCur.bg, c);
+	if ( mCur.backgroundColor() != c ) {
+		mCur.setBackgroundColor(c);
+		changed = true;
+	}
 }
-void YDrawLine::setSelection( int sel )
-{
-    if ( sel != mCur.sel ) {
-        mCur.sel = sel;
-        changed = true;
-    }
-}
-int YDrawLine::push( const QString& c )
+
+int YDrawLine::step( const QString& c )
 {
 	if ( changed ) {
-		/* set the new properties */
-		insertCell();
+		mCells << YDrawCell(mCur);
+		mCell =& mCells[mCells.size()-1];
 		changed = false;
 	}
-	mCell->c.append( c );
-	mSteps.append(c.length());
-	return c.length();
+	return mCell->step(c);
 }
-void YDrawLine::flush() {
-	/* useless for now
-	int acc = 0;
-	foreach( int s, mSteps ) {
-		acc += s;
-	}
-	mEndViewCursor.setScreenX(mBeginViewCursor.screenX() + acc - 1);
-	*/
-}
-
-void YDrawLine::insertCell( int pos )
+void YDrawLine::flush()
 {
-	YASSERT(pos <= mCells.count());
-    if ( pos == -1 ) {
-        pos = mCells.count();
-    }
-
-    /* copy properties */
-    YDrawCell n;
-    updateColor(&n.fg, mCur.fg);
-    updateColor(&n.bg, mCur.bg);
-    n.sel = mCur.sel;
-
-    if ( pos == mCells.count() ) {
-		mCells << n;
-    } else {
-        if ( !mCells[pos].c.isEmpty() ) {
-            mCells.insert(pos, n);
-        } else {
-            mCells.replace(pos, n);
-        }
-    }
-
-    mCell =& mCells[pos];
+	mWidth = 0;
+	/* TODO */
 }
 
 YDebugStream& operator<< ( YDebugStream& out, const YDrawLine& dl )
 {
 	for ( int i = 0; i < dl.mCells.size(); ++i ) {
-		out << "'" << dl.mCells[i].c << "' ";
+		out << "'" << dl.mCells[i].content() << "' ";
 	}
     return out;
 }
@@ -143,74 +211,36 @@ YDrawSection YDrawLine::arrange( int columns ) const
 	if ( mCells.count() == 0 ) {
 		return YDrawSection() << YDrawLine();
 	}
+
 	YDrawSection ds;
-	QList<YDrawCell>::const_iterator cit = mCells.constBegin();
-	QList<int>::const_iterator sit = mSteps.constBegin();
+	QList<YDrawCell> line;
+	int line_width = 0;
 
-	QList<YDrawCell> cur_c;
-	QList<int> cur_s;
-	int cur_width = 0;
-
-	YDrawCell c;
-	int w;
-
-	for ( ; cit != mCells.constEnd(); ++cit ) {
-		c = *cit;
-		w = c.c.length();
-		if ( cur_width + w <= columns ) {
-			cur_c << c;
-			cur_width += w;
-			for ( int sw = 0; sit != mSteps.constEnd() && (sw + *sit) <= w; ++sit ) {
-				cur_s << *sit;
-				sw += *sit;
-			}
+	foreach( YDrawCell c, mCells ) {
+		int w = c.width();
+		if ( line_width + w <= columns ) {
+			line << c;
+			line_width += w;
 		} else {
 			/* split current cell */
-			int r = columns - cur_width;
-			QString left = c.c.left(r);
-			QString right = c.c.mid(r);
-			int rs = 0;
-			if ( !left.isEmpty() ) {
-				c.c = left;
-				w = c.c.length();
-				cur_c << c;
-				int sw;
-				for ( sw = 0; (sw + *sit) < w; ++sit ) {
-					cur_s << *sit;
-					sw += *sit;
-				}
-				cur_s << w - sw;
-				rs = *sit - (w-sw);
-				++sit;
+			int r = columns - line_width;
+			if ( r ) {
+				line << c.left(r);
 			}
-
 			YDrawLine dl;
-			dl.mCells = cur_c;
-			dl.mSteps = cur_s;
+			dl.mCells = line;
 			dl.flush();
 			ds << dl;
+			line.clear();
 
-			cur_c.clear();
-			cur_s.clear();
-			cur_width = 0;
-
-			c.c = right;
-			w = c.c.length();
-			cur_c << c;
-			cur_width += w;
-			if ( rs )
-				cur_s << rs;
-			int sw = rs;
-			for ( ; sit!=mSteps.constEnd() && (sw + *sit) <= w; ++sit ) {
-				cur_s << *sit;
-				sw += *sit;
-			}
+			YDrawCell right = c.right(r);
+			line << right;
+			line_width = right.width();
 		}
 	}
-	if ( cur_c.count() ) {
+	if ( line.count() > 0 ) {
 		YDrawLine dl;
-		dl.mCells = cur_c;
-		dl.mSteps = cur_s;
+		dl.mCells = line;
 		dl.flush();
 		ds << dl;
 	}
@@ -229,7 +259,7 @@ YDrawBuffer::YDrawBuffer( int columns, int lines ) :
 	mEOLCell()
 {
 	mTopBufferLine = 0;
-	mEOLCell.c = " ";
+	mEOLCell.step(" ");
 	setScreenSize(columns, lines);
 	mContent << (YDrawSection() << YDrawLine());
 }
@@ -327,6 +357,47 @@ void YDrawBuffer::verticalScroll( int delta ) {
 	}
 }
 
+YInterval YDrawBuffer::addBufferSelection( yzis::SelectionType type, const YInterval& bufferInterval )
+{
+	int lastLine = bufferInterval.toPos().line();
+	if ( bufferInterval.to().opened() && bufferInterval.toPos().column() == 0 ) {
+		--lastLine;
+	}
+	int firstLine = qMax(bufferInterval.fromPos().line(), mDrawBuffer.topBufferLine());
+	if ( firstLine > lastLine ) return; // out of screen selection
+
+	firstLine = qMax(firstLine - mTopBufferLine, 0);
+	lastLine = qMin(mContent.size()-1, lastLine-mTopBufferLine);
+
+	if ( firstLine > lastLine ) { 
+		/* out of screen */
+		return YInterval();
+	}
+
+	int sl = 0;
+	for ( int i = 0; i < firstLine; ++i ) {
+		sl += mContent[i].count();
+	}
+	YCursor begin(0, sl);
+	for ( int i = firstLine; i < lastLine; ++i ) {
+		int j = 0;
+		for ( ; j < mContent[i].count(); ++j ) {
+			mContent[i][j].addSelection(type, x1, x2);
+		}
+		sl += j;
+	}
+	return YInterval(begin, YBound(YCursor(0, sl), true));
+}
+
+YInterval YDrawBuffer::removeBufferSelection( yzis::SelectionType type, const YInterval& bufferInterval )
+{
+	//first affected cell
+	//last affected cell
+	//- selection
+	//try to join first and last cell to previous and following
+	return YInterval();
+}
+
 YDebugStream& operator<< ( YDebugStream& out, const YDrawBuffer& buff )
 {
 	int dy = 0;
@@ -407,9 +478,9 @@ void YDrawBufferIterator::setup( const YInterval& i )
 		mPos = YCursor(fCol, fLine);
 		mNext.pos = mPos;
 		foreach( YDrawCell cell, mDrawBuffer->mContent[mCurBLine][mCurLine].cells() ) {
-			int cw = cell.c.length();
+			int cw = cell.width();
 			if ( w + cw > fCol ) {
-				cell.c = cell.c.mid(fCol - w);
+				cell = cell.right(fCol - w);
 				if ( fLine == mI.toPos().line() ) {
 					/* take care of to() */
 					int tCol = mI.toPos().column();
@@ -417,7 +488,7 @@ void YDrawBufferIterator::setup( const YInterval& i )
 						--tCol;
 						YASSERT(tCol >= 0);
 					}
-					cell.c = cell.c.left(tCol - fCol + 1);
+					cell = cell.left(tCol - fCol + 1);
 				}
 				mNext.type = YDrawCellInfo::Data;
 				mNext.cell = cell;
@@ -457,7 +528,7 @@ void YDrawBufferIterator::step()
 		step();
 	} else {
 		/* go to next cell */
-		mPos.setColumn(mPos.column() + mNext.cell.c.length());
+		mPos.setColumn(mPos.column() + mNext.cell.width());
 		if ( mPos > mI.toPos() || (mI.to().opened() && mPos >= mI.toPos()) ) {
 			mStopped = true;
 			return;
@@ -483,7 +554,7 @@ void YDrawBufferIterator::step()
 					--tCol;
 					YASSERT(tCol >= 0);
 				}
-				cell.c = cell.c.left(tCol - mPos.column() + 1);
+				cell = cell.left(tCol - mPos.column() + 1);
 			}
 			mNext.cell = cell;
 		}

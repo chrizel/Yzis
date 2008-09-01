@@ -24,6 +24,7 @@
 #include <QList>
 
 /* Yzis */
+#include "yzis.h"
 #include "color.h"
 #include "font.h"
 #include "selection.h"
@@ -33,17 +34,46 @@ class YDrawLine;
 class YCursor;
 typedef QList<YDrawLine> YDrawSection;
 
-typedef QMap<YSelectionPool::SelectionLayout, YSelection> YSelectionLayout;
-
-struct YDrawCell
+class YDrawCell
 {
-    int flag;
-    YFont font;
-    QString c;
-    YColor bg;
-    YColor fg;
-    int sel;
-    YDrawCell() : flag(0), font(), c(), bg(), fg(), sel(0) {}
+public:
+	YDrawCell();
+	YDrawCell( const YDrawCell& cell );
+	~YDrawCell();
+
+	/* change properties for the whole cell */
+	void addSelection( yzis::SelectionType selType );
+	void delSelection( yzis::SelectionType selType );
+	void setForegroundColor( const YColor& color );
+	void setBackgroundColor( const YColor& color );
+	void setFont( const YFont& font );
+	void clear();
+	
+	int step( const QString& data );
+
+	/* properties accessors */
+	inline bool hasSelection( yzis::SelectionType selType ) const { return mSelections & selType; }
+	inline YColor backgroundColor() const { return mColorBackground; }
+	inline YColor foregroundColor() const { return mColorForeground; }
+	inline YFont font() const { return mFont; }
+	inline QString content() const { return mContent; };
+	inline int width() const { return mContent.length(); };
+
+	/* steps (buffer <-> draw) */
+	inline const QList<int> steps() const { return mSteps; }
+
+	/* splitters */
+	YDrawCell left( int column ) const;
+	YDrawCell right( int column ) const;
+
+private:
+	int mSelections;
+	YColor mColorForeground;
+	YColor mColorBackground;
+	YFont mFont;
+	QString mContent;
+	QList<int> mSteps;
+	int mStepsShift;
 };
 
 struct YDrawCellInfo
@@ -151,6 +181,13 @@ public:
 	/* TODO: docstring */
 	int bufferDrawSectionScreenLine( int bl ) const;
 
+	/* TODO: docstring */
+	YInterval removeBufferSelection( yzis::SelectionType type, const YInterval& bufferInterval );
+
+	/* TODO: docstring */
+	YInterval addBufferSelection( yzis::SelectionType type, const YInterval& bufferInterval );
+
+
 private :
 	QList<YDrawSection> mContent;
 
@@ -175,37 +212,27 @@ public :
     void setColor( const YColor& c );
     void setBackgroundColor( const YColor& c );
 	// TODO: setOutline
-    void setSelection( int sel );
 
 	void clear();
 
-    int push( const QString& c );
+    int step( const QString& c );
 	void flush();
 
 	YDrawSection arrange( int columns ) const;
 
-	inline const QList<int> steps() const { return mSteps; }
 	inline const QList<YDrawCell> cells() const { return mCells; }
-
-	inline int bufferLength() const { return mSteps.count(); }
+	inline const int width() const { return mWidth; }
 
 private:
 
-    void insertCell( int pos = -1 );
-
-    /*
-     * copy YColor @param c into YColor* @param dest.
-     * Returns true if *dest has changed, false else
-     */
-    static bool updateColor( YColor* dest, const YColor& c );
-
 	QList<YDrawCell> mCells;
-	QList<int> mSteps;
 
 	/* current cell */
     YDrawCell mCur;
     /* working cell */
     YDrawCell* mCell;
+
+	int mWidth;
 
     bool changed;
 

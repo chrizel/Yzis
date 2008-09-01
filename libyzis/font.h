@@ -55,6 +55,11 @@ public :
     bool overline() const;
     bool strikeOut() const;
 
+    bool operator!=( const YFont& color ) const;
+    bool operator==( const YFont& color ) const;
+	
+	YFont& operator=( const YFont& color );
+
 private :
     int m_weight;
     bool m_italic;

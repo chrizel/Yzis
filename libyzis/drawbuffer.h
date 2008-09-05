@@ -58,6 +58,7 @@ public:
 	inline YFont font() const { return mFont; }
 	inline QString content() const { return mContent; };
 	inline int width() const { return mContent.length(); };
+	inline int length() const { return mSteps.count(); }
 
 	/* steps (buffer <-> draw) */
 	inline const QList<int> steps() const { return mSteps; }
@@ -65,6 +66,8 @@ public:
 	/* splitters */
 	YDrawCell left( int column ) const;
 	YDrawCell right( int column ) const;
+	YDrawCell left_steps( int steps ) const;
+	YDrawCell right_steps( int steps ) const;
 
 private:
 	int mSelections;
@@ -89,11 +92,11 @@ struct YDrawCellInfo
 };
 
 class YDrawBuffer;
-class YZIS_EXPORT YDrawBufferIterator
+
+class YDrawBufferAbstractIterator
 {
 public:
-	YDrawBufferIterator( const YDrawBuffer* db, const YInterval& i );
-	virtual ~YDrawBufferIterator();
+	virtual ~YDrawBufferAbstractIterator() {};
 
 	/* TODO: docstring */
 	bool isValid() const;
@@ -108,14 +111,21 @@ public:
 	int screenLine() const;
 	/* TODO: docstring */
 	int lineHeight() const;
+	/* TODO: screenColumn */
 
-private:
-	void setup( const YInterval& i );
+protected:
+	YDrawBufferAbstractIterator( const YDrawBuffer* db );
+	void setup( const YInterval& i, yzis::IntervalType itype );
 	void step();
+
+	virtual void setupCell( int shift, int cut ) = 0;
+	virtual void setupEOLCell() = 0;
+
+	int getCut();
 
 	const YDrawBuffer* mDrawBuffer;
 	YInterval mI;
-	YDrawCellInfo mNext;
+	yzis::IntervalType mIntervalType;
 	bool mStopped;
 	int mCurBLine;
 	int mCurLine;
@@ -123,8 +133,43 @@ private:
 	YCursor mPos;
 };
 
+class YZIS_EXPORT YDrawBufferConstIterator : public YDrawBufferAbstractIterator
+{
+public:
+	virtual ~YDrawBufferConstIterator() {}
+	const YDrawCellInfo drawCellInfo() const;
+
+protected :
+	virtual void setupCell( int shift, int cut );
+	virtual void setupEOLCell();
+	YDrawBufferConstIterator( const YDrawBuffer* db ) : YDrawBufferAbstractIterator(db) {}
+	YDrawCellInfo mNext;
+
+	friend class YDrawBuffer;
+};
+
+class YZIS_EXPORT YDrawBufferIterator : public YDrawBufferAbstractIterator
+{
+public:
+	virtual ~YDrawBufferIterator() {}
+	inline YDrawCell* cell() const { return mNext; }
+	/* TODO: flush -> try to join splitted cells */
+
+protected:
+	YDrawBuffer* mDrawBuffer;
+	virtual void setupCell( int shift, int cut );
+	virtual void setupEOLCell();
+	YDrawBufferIterator( const YDrawBuffer* db ) : YDrawBufferAbstractIterator(db) {}
+	YDrawCell* mNext;
+
+	friend class YDrawBuffer;
+};
+
+
 class YZIS_EXPORT YDrawBuffer
 {
+	friend class YDrawBufferAbstractIterator;
+	friend class YDrawBufferConstIterator;
 	friend class YDrawBufferIterator;
 
 public:
@@ -154,7 +199,9 @@ public:
 	inline int screenWidth() const { return mScreenWidth; }
 
 	/* TODO: docstring */
-	YDrawBufferIterator iterator( const YInterval& i ) const;
+	YDrawBufferConstIterator const_iterator( const YInterval& i, yzis::IntervalType itype ) const;
+	/* TODO: docstring */
+	YDrawBufferIterator iterator( const YInterval& i, yzis::IntervalType itype );
 
 	/* TODO: docstring */
 	inline const QList<YDrawSection> sections() { return mContent; }
@@ -175,6 +222,7 @@ public:
 
 	inline bool full() const { return currentHeight() >= mScreenHeight; }
 
+
 	/* TODO: docstring */
 	const YDrawSection bufferDrawSection( int bl ) const;
 	
@@ -182,10 +230,18 @@ public:
 	int bufferDrawSectionScreenLine( int bl ) const;
 
 	/* TODO: docstring */
-	YInterval removeBufferSelection( yzis::SelectionType type, const YInterval& bufferInterval );
+	YInterval addSelection( yzis::SelectionType sel, const YInterval& i, yzis::IntervalType itype );
+	/* TODO: docstring */
+	YInterval delSelection( yzis::SelectionType sel, const YInterval& i, yzis::IntervalType itype );
 
 	/* TODO: docstring */
-	YInterval addBufferSelection( yzis::SelectionType type, const YInterval& bufferInterval );
+	bool targetBufferLine( int bline, int* sid ) const;
+	/* TODO: docstring */
+	bool targetBufferColumn( int bcol, int sid, int* lid, int* cid, int* bshift ) const;
+	/* TODO: docstring */
+	bool targetScreenLine( int sline, int* sid, int* lid ) const;
+	/* TODO: docstring */
+	bool targetScreenColumn( int scol, int sid, int lid, int* cid, int* sshift ) const;
 
 
 private :
@@ -203,7 +259,7 @@ private :
 
 extern YZIS_EXPORT YDebugStream& operator<< ( YDebugStream& out, const YDrawBuffer& buff );
 
-class YZIS_EXPORT YDrawLine {
+class YZIS_EXPORT YDrawLine : public QList<YDrawCell> {
 public :
 	YDrawLine();
 	virtual ~YDrawLine();
@@ -220,12 +276,10 @@ public :
 
 	YDrawSection arrange( int columns ) const;
 
-	inline const QList<YDrawCell> cells() const { return mCells; }
 	inline const int width() const { return mWidth; }
+	inline int length() const { return mLength; }
 
 private:
-
-	QList<YDrawCell> mCells;
 
 	/* current cell */
     YDrawCell mCur;
@@ -233,6 +287,7 @@ private:
     YDrawCell* mCell;
 
 	int mWidth;
+	int mLength;
 
     bool changed;
 

@@ -118,6 +118,10 @@ public:
     bool contains( const YBound& pos ) const;
     bool contains( const YInterval& i ) const;
 
+	YCursor closedStartCursor() const;
+	YCursor closedEndCursor( int column_max ) const;
+	YCursor openedEndCursor() const;
+
 	/*
 	 * @param i : interval to check with
 	 * @returns true if there is common part between the two intervals

@@ -1,24 +1,24 @@
 /* This file is part of the Yzis libraries
-*  Copyright (C) 2003-2005 Mickael Marchand <marchand@kde.org>,
-*  Copyright (C) 2003-2004 Thomas Capricelli <orzel@freehackers.org>
-*  Copyright (C) 2005 Scott Newton <scottn@ihug.co.nz>
-*  Copyright (C) 2008 Loic Pauleve <panard@inzenet.org>
-*
-*  This library is free software; you can redistribute it and/or
-*  modify it under the terms of the GNU Library General Public
-*  License as published by the Free Software Foundation; either
-*  version 2 of the License, or (at your option) any later version.
-*
-*  This library is distributed in the hope that it will be useful,
-*  but WITHOUT ANY WARRANTY; without even the implied warranty of
-*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-*  Library General Public License for more details.
-*
-*  You should have received a copy of the GNU Library General Public License
-*  along with this library; see the file COPYING.LIB.  If not, write to
-*  the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-*  Boston, MA 02110-1301, USA.
-**/
+ *  Copyright (C) 2003-2005 Mickael Marchand <marchand@kde.org>,
+ *  Copyright (C) 2003-2004 Thomas Capricelli <orzel@freehackers.org>
+ *  Copyright (C) 2005 Scott Newton <scottn@ihug.co.nz>
+ *  Copyright (C) 2008 Loic Pauleve <panard@inzenet.org>
+ *
+ *  This library is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU Library General Public
+ *  License as published by the Free Software Foundation; either
+ *  version 2 of the License, or (at your option) any later version.
+ *
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *  Library General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Library General Public License
+ *  along with this library; see the file COPYING.LIB.  If not, write to
+ *  the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ *  Boston, MA 02110-1301, USA.
+ **/
 
 #ifndef YZ_VIEW_H
 #define YZ_VIEW_H
@@ -30,13 +30,12 @@
 #include "viewcursor.h"
 #include "mode_pool.h"
 #include "drawbuffer.h"
+#include "buffer.h"
 
 class YViewCursor;
 class YColor;
 class YCursor;
-class YBuffer;
 class YSession;
-class YSelectionPool;
 class YzisAttribute;
 class YLine;
 class YLineSearch;
@@ -59,107 +58,107 @@ class YZFoldPool;
 class YZIS_EXPORT YView : public YViewIface
 {
 
-public:
-    //-------------------------------------------------------
-    // ----------------- Constructor/Destructor and ID
-    //-------------------------------------------------------
-    /**
-     * Each view is bound to a buffer, @arg lines is the initial
-     * number of columns and @arg lines the initial
-     * number of lines that this view can display
-     */
-    YView(YBuffer *_b, YSession *sess, int cols, int lines);
+	public:
+		//-------------------------------------------------------
+		// ----------------- Constructor/Destructor and ID
+		//-------------------------------------------------------
+		/**
+		 * Each view is bound to a buffer, @arg lines is the initial
+		 * number of columns and @arg lines the initial
+		 * number of lines that this view can display
+		 */
+		YView(YBuffer *_b, YSession *sess, int cols, int lines);
 
-    /**
-     * The destructor
-     */
-    virtual ~YView();
+		/**
+		 * The destructor
+		 */
+		virtual ~YView();
 
-    /**
-     * Accessor to the list of foldings
-     */
-    inline YZFoldPool* folds() const
-    {
-        return mFoldPool;
-    }
+		/**
+		 * Accessor to the list of foldings
+		 */
+		inline YZFoldPool* folds() const
+		{
+			return mFoldPool;
+		}
 
-    /**
-     * A global UID for this view
-     *   only used for local options (<filename>-view-<id>)
-     **/
-    inline const int getId() const { return id; }
+		/**
+		 * A global UID for this view
+		 *   only used for local options (<filename>-view-<id>)
+		 **/
+		inline const int getId() const { return id; }
 
-    /** Return a string description of the view.
-     *
-     * The string description contains:
-     * - the id
-     * - the buffer filename
-     * - the this pointer
-     *
-     **/
-    QString toString() const;
+		/** Return a string description of the view.
+		 *
+		 * The string description contains:
+		 * - the id
+		 * - the buffer filename
+		 * - the this pointer
+		 *
+		 **/
+		QString toString() const;
 
-    //-------------------------------------------------------
-    // ----------------- Visible Areas
-    //-------------------------------------------------------
-    /**
-     * Updates the number of visible @arg c columns and @arg l lines
-	 * 	it will cause a screen recalculation.
-     * @arg c is the number of columns
-     * @arg l is the number of lines
-     */
-    void setVisibleArea( int c, int l );
+		//-------------------------------------------------------
+		// ----------------- Visible Areas
+		//-------------------------------------------------------
+		/**
+		 * Updates the number of visible @arg c columns and @arg l lines
+		 * 	it will cause a screen recalculation.
+		 * @arg c is the number of columns
+		 * @arg l is the number of lines
+		 */
+		void setVisibleArea( int c, int l );
 
-    //-------------------------------------------------------
-    // ----------------- Line Visibility
-    //-------------------------------------------------------
-    /**
-     * Returns the index of the first line displayed on the view
-     */
-    int getCurrentTop() const;
+		//-------------------------------------------------------
+		// ----------------- Line Visibility
+		//-------------------------------------------------------
+		/**
+		 * Returns the index of the first line displayed on the view
+		 */
+		int getCurrentTop() const;
 
-    /**
-     * returns the number of line this view can display
-     */
-    int getLinesVisible() const;
+		/**
+		 * returns the number of line this view can display
+		 */
+		int getLinesVisible() const;
 
-    /**
-     * returns the number of lines this view can display
-     * @return the number of visible lines
-     */
-    int getColumnsVisible() const;
+		/**
+		 * returns the number of lines this view can display
+		 * @return the number of visible lines
+		 */
+		int getColumnsVisible() const;
 
-    /**
-     * Returns true if the line @arg l is visible. False otherwise.
-     */
-    bool isLineVisible(int l) const;
+		/**
+		 * Returns true if the line @arg l is visible. False otherwise.
+		 */
+		bool isLineVisible(int l) const;
 
-    /**
-     * Returns true if the column @arg c is visible for @arg line ( expanding TABs ). False otherwise
-     */
-    bool isColumnVisible(int column, int line) const;
+		/**
+		 * Returns true if the column @arg c is visible for @arg line ( expanding TABs ). False otherwise
+		 */
+		bool isColumnVisible(int column, int line) const;
 
-    //-------------------------------------------------------
-    // ----------------- Associated Objects
-    //-------------------------------------------------------
-    /**
-     * Return my current buffer
-     */
-    YBuffer *myBuffer() const
-    {
-        return mBuffer;
-    }
-    //  const YBuffer *myBuffer() const { return mBuffer; }
+		//-------------------------------------------------------
+		// ----------------- Associated Objects
+		//-------------------------------------------------------
+		/**
+		 * Return my current buffer
+		 */
+		YBuffer *myBuffer() const
+		{
+			return mBuffer;
+		}
+		//  const YBuffer *myBuffer() const { return mBuffer; }
 
-    /**
-     * Return my current line search
-     */
-    YLineSearch* myLineSearch()
-    {
-        return mLineSearch;
-    }
+		/**
+		 * Return my current line search
+		 */
+		YLineSearch* myLineSearch()
+		{
+			return mLineSearch;
+		}
 
-    /**
+		/**
      * Accessor to the list of recorded registers
      * @return a QList of @ref YRegisters
      */
@@ -319,7 +318,7 @@ public:
     }
 
     /**
-     * Go to line of file
+
      */
     void gotoLine( int line );
     void gotoLine( YViewCursor* viewCursor, int line, bool applyCursor = true );
@@ -337,6 +336,14 @@ public:
     void gotoStickyCol( YViewCursor* viewCursor, int Y, bool applyCursor = true );
 
     void applyStartPosition( const YCursor pos );
+
+	//-------------------------------------------------------
+    // ----------------- Selection
+    //-------------------------------------------------------
+
+	/*TODO: docstring */
+	YRawData setSelection( yzis::SelectionType type, const YInterval& bufferInterval );
+
 
     //-------------------------------------------------------
     // ----------------- Drawing
@@ -716,7 +723,7 @@ private:
     bool wrap;
     bool rightleft;
 
-    YSelectionPool mSelectionPool;
+    QMap<yzis::SelectionType, YInterval> mSelectionPool;
     YSelection mPaintSelection;
 
 

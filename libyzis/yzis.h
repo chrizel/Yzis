@@ -113,6 +113,11 @@ enum SelectionType {
 	SelectionVisual = 0x10, //!< visual mode
 };
 
+/** YInterval types */
+enum IntervalType {
+	BufferInterval,
+	ScreenInterval
+};
 };
 
 namespace Clipboard

@@ -9,14 +9,15 @@ include_directories(${YZIS_INCLUDES})
 ########### next target ###############
 
 set(yzis_LIB_SRCS 
+   selection.cpp 
+   drawbuffer.cpp 
    view.cpp 
+   color.cpp 
    mode_visual.cpp 
    action.cpp 
    buffer.cpp 
-   color.cpp 
    cursor.cpp 
    debug.cpp 
-   drawbuffer.cpp 
    events.cpp 
    luaengine.cpp 
    luaregexp.cpp 
@@ -41,7 +42,6 @@ set(yzis_LIB_SRCS
    registers.cpp 
    resourcemgr.cpp 
    search.cpp 
-   selection.cpp 
    session.cpp 
    swapfile.cpp 
    tags_interface.cpp 

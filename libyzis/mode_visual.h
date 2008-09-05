@@ -45,8 +45,6 @@ public:
     virtual void leave( YView* mView );
 
     virtual void cursorMoved( YView* mView );
-    virtual void toClipboard( YView* mView );
-
 
     CmdState commandInsert( const YCommandArgs& args );
     CmdState commandAppend( const YCommandArgs& args );
@@ -67,10 +65,10 @@ public:
     virtual YInterval interval(const YCommandArgs &args, CmdState *state);
 
 protected:
-    virtual YInterval buildBufferInterval( YView* mView, const YViewCursor& from, const YViewCursor& to );
-    virtual YInterval buildScreenInterval( YView* mView, const YViewCursor& from, const YViewCursor& to );
+    virtual YInterval buildBufferInterval( YView* mView );
     bool mEntireLines;
-	QMap<YView*, YViewCursor> startViewCursor;
+	QMap<YView*, YViewCursor> mStartViewCursor;
+	yzis::SelectionType mSelectionType;
 };
 
 /**
@@ -83,8 +81,7 @@ public:
     virtual ~YModeVisualLine();
 
 protected:
-    virtual YInterval buildBufferInterval( YView* mView, const YViewCursor& from, const YViewCursor& to );
-    virtual YInterval buildScreenInterval( YView* mView, const YViewCursor& from, const YViewCursor& to );
+    virtual YInterval buildBufferInterval( YView* mView );
 };
 
 /**

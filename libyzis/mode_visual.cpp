@@ -36,7 +36,8 @@
 
 using namespace yzis;
 
-YModeVisual::YModeVisual() : YModeCommand()
+YModeVisual::YModeVisual() : YModeCommand(),
+	mStartViewCursor()
 {
     mType = YMode::ModeVisual;
     mString = _( "[ Visual ]" );
@@ -45,6 +46,7 @@ YModeVisual::YModeVisual() : YModeCommand()
     mIsEditMode = true;
     mIsCmdLineMode = false;
     mIsSelMode = true;
+	mSelectionType = yzis::SelectionVisual;
 }
 YModeVisual::~YModeVisual()
 {
@@ -53,70 +55,37 @@ YModeVisual::~YModeVisual()
     commands.clear();
 }
 
-void YModeVisual::toClipboard( YView* mView )
-{
-    YInterval interval = mView->getSelectionPool()->visual()->bufferMap()[0];
-	YSession::self()->guiSetClipboardText(mView->myBuffer()->dataRegion(interval).join("\n"), Clipboard::Selection);
-}
-
-YInterval YModeVisual::buildBufferInterval( YView*, const YViewCursor& from, const YViewCursor& to )
-{
-    return YInterval( from.buffer(), to.buffer() );
-}
-YInterval YModeVisual::buildScreenInterval( YView*, const YViewCursor& from, const YViewCursor& to )
-{
-    return YInterval( from.screen(), to.screen() );
-}
-
 void YModeVisual::enter( YView* mView )
 {
-    YDoubleSelection* visual = mView->getSelectionPool()->visual();
-
-    mView->setPaintAutoCommit( false );
-    if ( ! visual->isEmpty() ) {
-        mView->sendPaintEvent( visual->screenMap(), false );
-        cursorMoved( mView );
-    } else {
-        YViewCursor pos = mView->viewCursor();
-        *mView->visualCursor() = pos;
-        visual->addInterval( buildBufferInterval( mView, pos, pos ), buildScreenInterval( mView, pos, pos ) );
-        mView->sendPaintEvent( visual->screenMap(), false );
-
-        toClipboard( mView );
+	if ( !mStartViewCursor.contains(mView) ) {
+		mStartViewCursor[mView] = mView->viewCursor();
     }
-    mView->commitPaintEvent();
-    mView->guiSelectionChanged();
+	cursorMoved(mView);
 }
 void YModeVisual::leave( YView* mView )
 {
-    YDoubleSelection* visual = mView->getSelectionPool()->visual();
-    mView->setPaintAutoCommit( false );
-    mView->sendPaintEvent( visual->screenMap(), false );
-    visual->clear();
-    mView->commitPaintEvent();
-    mView->guiSelectionChanged();
+	YASSERT(mStartViewCursor.contains(mView));
+	mView->setSelection(mSelectionType, YSelection());
+	mStartViewCursor.remove(mView)
 }
 void YModeVisual::cursorMoved( YView* mView )
 {
-    YDoubleSelection* visual = mView->getSelectionPool()->visual();
+	YInterval bufferSelection = buildBufferInterval(mView);
+	YRawData selectedData = mView->setSelection(mSelectionType, bufferSelection);
+	YSession::self()->guiSetClipboardText(selectedData.join("\n"), Clipboard::Selection);
+}
 
-    YViewCursor curPos = mView->viewCursor();
-    YViewCursor visPos = *mView->visualCursor();
-    bool reverse = visPos.buffer() > curPos.buffer();
-    YInterval bufI = buildBufferInterval( mView, reverse ? curPos : visPos, reverse ? visPos : curPos );
-    YInterval scrI = buildScreenInterval( mView, reverse ? curPos : visPos, reverse ? visPos : curPos );
-    YInterval curI = visual->screenMap()[0];
-
-    visual->clear();
-    visual->addInterval( bufI, scrI );
-
-    YSelection tmp("tmp");
-    tmp.addInterval( YInterval( qMin( scrI.from(), curI.from() ), qMax( scrI.to(), curI.to() ) ) );
-    tmp.delInterval( YInterval( qMax( scrI.from(), curI.from() ), qMin( scrI.to(), curI.to() ) ) );
-    mView->sendPaintEvent( tmp.map(), false );
-
-    toClipboard( mView );
-    mView->guiSelectionChanged();
+YInterval YModeVisual::buildBufferInterval( YView* mView )
+{
+	YASSERT(mStartViewCursor.contains(mView));
+	YViewCursor beginPos = mStartViewCursor[mView];
+	YViewCursor endPos = mView->viewCursor();
+	if ( beginPos > endPos ) {
+		YViewCursor tmp = endPos;
+		endPos = beginPos;
+		beginPos = endPos;
+	}
+	return YInterval(beginPos.buffer(), endPos.buffer());
 }
 
 void YModeVisual::initCommandPool()
@@ -301,7 +270,7 @@ CmdState YModeVisual::movetoInsertMode( const YCommandArgs& args )
 YInterval YModeVisual::interval(const YCommandArgs& args, CmdState *state )
 {
     *state = CmdOk;
-    return args.view->getSelectionPool()->visual()->bufferMap()[0];
+	return buildBufferInterval(args.view)
 }
 
 /**
@@ -316,28 +285,17 @@ YModeVisualLine::YModeVisualLine() : YModeVisual()
 YModeVisualLine::~YModeVisualLine()
 {}
 
-YInterval YModeVisualLine::buildBufferInterval( YView* , const YViewCursor& from, const YViewCursor& to )
+YInterval YModeVisualLine::buildBufferInterval( YView* mView )
 {
-    YBound bf( from.buffer() );
-    YBound bt( to.buffer(), true );
-    bf.setPos( QPoint(0, from.bufferY()));
-    bt.setPos( QPoint(0, to.bufferY() + 1));
-    return YInterval( bf, bt );
-}
-YInterval YModeVisualLine::buildScreenInterval( YView* mView, const YViewCursor& from, const YViewCursor& to )
-{
-    YViewCursor pos = from;
-    mView->gotoxy( &pos, 0, from.bufferY() );
-    YBound bf( pos.screen() );
-    YBound bt( pos.screen(), true );
-    if ( to.bufferY() < mView->myBuffer()->lineCount() - 1 ) {
-        mView->gotoxy( &pos, 0, to.bufferY() + 1 );
-        bt.setPos( pos.screen() );
-    } else {
-        mView->gotoxy( &pos, qMax( 1, mView->myBuffer()->getLineLength( to.bufferY() ) ) - 1, to.bufferY() );
-        bt.setPos( YCursor( 0, pos.screenY() + 1 ) );
-    }
-    return YInterval( bf, bt );
+	YASSERT(mStartViewCursor.contains(mView));
+	YViewCursor beginPos = mStartViewCursor[mView];
+	YViewCursor endPos = mView->viewCursor();
+	if ( beginPos > endPos ) {
+		YViewCursor tmp = endPos;
+		endPos = beginPos;
+		beginPos = endPos;
+	}
+	return YInterval(YCursor(0,beginPos.bufferY()), YBound(YCursor(0,endPos.bufferY()+1), true));
 }
 
 /**
@@ -354,51 +312,6 @@ YModeVisualBlock::~YModeVisualBlock()
 
 void YModeVisualBlock::cursorMoved( YView* mView )
 {
-    mView->setPaintAutoCommit( false );
-
-    YDoubleSelection* visual = mView->getSelectionPool()->visual();
-    YSelection old = visual->screen();
-    visual->clear();
-
-    int fromLine = mView->visualCursor()->bufferY();
-    int toLine = mView->getBufferCursor().y();
-	/* TODO */
-    int fromCol = /*(mView->visualCursor()->curLineHeight() - 1) * mView->getColumnsVisible()*/ + mView->visualCursor()->screenX();
-    int toCol = /*(mView->viewCursor().curLineHeight() - 1) * mView->getColumnsVisible()*/ + mView->getCursor().x();
-
-    YViewCursor cur = *mView->visualCursor();
-    if ( fromCol > toCol ) {
-        int tmp = toCol;
-        toCol = fromCol;
-        fromCol = tmp;
-    }
-    if ( fromLine > toLine ) {
-        cur = mView->viewCursor();
-        int tmp = toLine;
-        toLine = fromLine;
-        fromLine = tmp;
-    }
-    dbg() << "visual block : from " << fromCol << "," << fromLine << " to " << toCol << "," << toLine << endl;
-    YInterval sI, bI;
-    for ( int i = fromLine; i <= toLine; i++ ) {
-
-        mView->gotodxy( &cur, fromCol, i );
-        sI.setFromPos( YCursor(fromCol, cur.screenY()) );
-        bI.setFromPos( cur.buffer() );
-
-        mView->gotodxy( &cur, toCol, i );
-        if ( cur.screenX() < fromCol ) continue; // too far, skip this line
-        sI.setTo( YBound(YCursor(toCol, cur.screenY())) );
-        bI.setTo( YBound(cur.buffer()) );
-
-        visual->addInterval( bI, sI );
-        //  dbg() << "visual block>" << bI << ", " << sI << endl;
-    }
-    YSelection diff = YSelection::diff( old, visual->screen() );
-    mView->sendPaintEvent( diff.map(), false );
-
-    mView->commitPaintEvent();
-    toClipboard( mView );
-    mView->guiSelectionChanged();
+	//TODO
 }
 

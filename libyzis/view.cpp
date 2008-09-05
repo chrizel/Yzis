@@ -382,7 +382,7 @@ void YView::gotoy( int nexty )
 void YView::gotox( int nextx, bool forceGoBehindEOL )
 {
 	YASSERT(nextx >= 0);
-	int shift = (mWorkDrawLine.bufferLength() == 0 || forceGoBehindEOL || mModePool->current()->isEditMode()) ? 1 : 0;
+	int shift = (mWorkDrawLine.length() == 0 || forceGoBehindEOL || mModePool->current()->isEditMode()) ? 1 : 0;
 	nextx = qMin(mBuffer->getLineLength(workCursor.bufferY()) - 1 + shift, nextx);
 	//TODO check this forceGoBehindEOL parameter...
 
@@ -390,12 +390,12 @@ void YView::gotox( int nextx, bool forceGoBehindEOL )
 	int acc_x = 0;
 	int dy = 0;
 	foreach( mWorkDrawLine, mWorkDrawSection ) {
-		if ( (acc_x + mWorkDrawLine.bufferLength() + shift) > nextx ) {
+		if ( (acc_x + mWorkDrawLine.length() + shift) > nextx ) {
 			// drawLine contains our destination
 			break;
 		} else if ( dy < mWorkDrawSection.count() - 1 ) {
 			// destination is after drawLine, prepare next
-			acc_x += mWorkDrawLine.bufferLength();
+			acc_x += mWorkDrawLine.length();
 			dy += 1;
 		}
 	}
@@ -423,7 +423,7 @@ void YView::gotox( int nextx, bool forceGoBehindEOL )
 void YView::gotodx( int nextx )
 {
 	//TODO: directly support nextx > screenWidth
-	int shift = (mWorkDrawLine.bufferLength() == 0 || mModePool->current()->isEditMode()) ? 1 : 0;
+	int shift = (mWorkDrawLine.length() == 0 || mModePool->current()->isEditMode()) ? 1 : 0;
 	YASSERT(0 <= nextx && nextx < (mDrawBuffer.screenWidth()+shift));
 	//TODO nextx = qMin(...);
 
@@ -737,6 +737,27 @@ QString YView::append ()
 void YView::commitUndoItem()
 {
     mBuffer->undoBuffer()->commitUndoItem(mainCursor.bufferX(), mainCursor.bufferY());
+}
+
+
+YRawData YView::setSelection( yzis::SelectionType type, const YInterval& bufferInterval )
+{
+	YRawData selectedData;
+	setPaintAutoCommit(false);
+	if ( type == yzis::SelectionVisual ) {
+		dbg() << "setSelection[Visual] = " << bufferInterval << endl;
+		if ( mSelectionPool.contains(type) ) {
+			sendPaintEvent(mDrawBuffer.delSelection(type, mSelectionPool[type], yzis::BufferInterval));
+		}
+		mSelectionPool[type] = bufferInterval;
+		sendPaintEvent(mDrawBuffer.addSelection(type, mSelectionPool[type], yzis::BufferInterval));
+		selectedData = mBuffer->dataRegion(bufferInterval);
+	} else {
+		//TODO
+		YASSERT(false);
+	}
+	commitPaintEvent();
+	return selectedData;
 }
 
 /*
@@ -1219,7 +1240,7 @@ YDrawLine YView::drawLineFromYLine( const YLine* yl, int start_column ) {
 			last_at = at;
 			last_is_listchar = is_listchar;
 		}
-		column += dl.push(text);
+		column += dl.step(text);
 	}
 
 	return dl;
@@ -1273,7 +1294,7 @@ void YView::guiPaintEvent( const YSelection& drawMap )
 
 	int cur_line = -1;
 	foreach( YInterval di, drawMap.map() ) {
-		for ( YDrawBufferIterator it = mDrawBuffer.iterator(di); it.isValid(); it.next() ) {
+		for ( YDrawBufferConstIterator it = mDrawBuffer.const_iterator(di, yzis::ScreenInterval); it.isValid(); it.next() ) {
 			if ( show_numbers && cur_line != it.screenLine() ) {
 				guiDrawSetLineNumber(it.screenLine(), it.bufferLine() + 1, it.lineHeight());
 				cur_line = it.screenLine();
@@ -1294,8 +1315,8 @@ void YView::guiPaintEvent( const YSelection& drawMap )
 		/* may be fake lines ? */
 
 		YDrawCell fl;
-		fl.c = "~";
-		fl.fg = YColor("cyan");
+		fl.step("~");
+		fl.setForegroundColor(YColor("cyan"));
 
 		YInterval fake(YCursor(0,mDrawBuffer.currentHeight()),YCursor(mDrawBuffer.screenWidth()-1,mDrawBuffer.screenHeight()-1));
 		foreach( YInterval di, drawMap.map() ) {

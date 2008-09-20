@@ -89,6 +89,28 @@ void YDrawCell::clear()
 	mFont = YFont();
 }
 
+int YDrawCell::widthForLength( int length ) const
+{
+	YASSERT(length >= 0);
+	int w = 0;
+	int length = qMax(length, mSteps.count());
+	while ( length-- ) {
+		w += mSteps.at(length);
+	}
+	return w;
+}
+
+int YDrawCell::lengthForWidth( int width ) const
+{
+	YASSERT(width >= 0);
+	int w = mStepsShift;
+	int l = 0;
+	for( ; w < width; ++l ) {
+		w += mSteps[l];
+	}
+	return l;
+}
+
 YDrawCell YDrawCell::left_steps( int steps ) const
 {
 	YDrawCell c(*this);
@@ -478,7 +500,7 @@ bool YDrawBuffer::targetBufferLine( int bline, int* sid ) const
 	*sid = bline - mTopBufferLine;
 	return true;
 }
-bool YDrawBuffer::targetBufferColumn( int bcol, int sid, int* lid, int* cid, int* bshift ) const
+bool YDrawBuffer::targetBufferColumn( int bcol, int sid, int* lid, int* cid, int* bshift, int* column ) const
 {
 	YASSERT(0 <= bcol);
 	bool lid_found = false;
@@ -494,19 +516,32 @@ bool YDrawBuffer::targetBufferColumn( int bcol, int sid, int* lid, int* cid, int
 		}
 	}
 	bool found = false;
+	int my_column = 0;
+	if ( column != NULL ) {
+		my_column = my_lid * mScreenWidth;
+	}
 	if ( lid_found ) {
 		int my_cid = 0;
 		for( ; !found && my_cid < mContent[sid][my_lid].count(); ++my_cid ) {
 			int cw = mContent[sid][my_lid][my_cid].length();
 			if ( w + cw > bcol ) {
 				*bshift = bcol - w;
+				if ( column != NULL ) {
+					my_column += mContent[sid][my_lid][my_cid].widthForLength(bcol - w);
+				}
 				found = true;
 			} else {
 				w += cw;
+				if ( column != NULL ) {
+					my_column += mContent[sid][my_lid][my_cid].width();
+				}
 			}
 		}
 		*lid = my_lid;
 		*cid = my_cid;
+	}
+	if ( column != NULL ) {
+		*column = my_column;
 	}
 	return found;
 }
@@ -534,23 +569,36 @@ bool YDrawBuffer::targetScreenLine( int sline, int* sid, int* lid ) const
 	*lid = my_lid;
 	return found;
 }
-bool YDrawBuffer::targetScreenColumn( int scol, int sid, int lid, int* cid, int* sshift ) const
+bool YDrawBuffer::targetScreenColumn( int scol, int sid, int lid, int* cid, int* sshift, int* position ) const
 {
 	YASSERT(0 <= scol);
 	YASSERT(scol < screenWidth());
 	bool found = false;
 	int my_cid = 0;
 	int w = 0;
+	int my_position = 0;
+	if ( position != NULL ) {
+		for ( int i = 0; i < lid; ++i ) {
+			my_position += mContent[sid][i].length();
+		}
+	}
 	for( ; !found && my_cid < mContent[sid][lid].count(); ++my_cid ) {
 		int cw = mContent[sid][lid][my_cid].width();
 		if ( w + cw > scol ) {
 			*sshift = scol - w;
+			if ( position != NULL ) {
+				my_position += mContent[sid][lid][my_cid].lengthForWidth(scol - w);
+			}
 			found = true;
 		} else {
 			w += cw;
+			if ( position != NULL ) {
+				my_position += mContent[sid][lid][my_cid].length();
+			}
 		}
 	}
 	*cid = my_cid;
+	if ( position != NULL ) *position = my_position;
 	return found;
 }
 

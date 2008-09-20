@@ -21,91 +21,22 @@
 **/
 
 #include "viewcursor.h"
-#include "debug.h"
 
 /**
  * class YViewCursor
  */
-
-#define dbg()    yzDebug("YViewCursor")
-#define err()    yzError("YViewCursor")
-
-YViewCursor::YViewCursor()
-{
-    reset();
-}
-
-YViewCursor::YViewCursor( const YViewCursor &c )
-        : YCursorPos()
-{
-    copyFields( c );
-}
-
-YViewCursor::~YViewCursor( )
-{}
-
-void YViewCursor::copyFields( const YViewCursor &c )
-{
-    mScreen = c.mScreen;
-    mBuffer = c.mBuffer;
-}
+YViewCursor::YViewCursor() : 
+	mBuffer(), mColumn(0) {}
+YViewCursor::YViewCursor( int line, int position, int column ) : 
+	mBuffer(line, position), mColumn(column) {}
+YViewCursor::YViewCursor( const YViewCursor &c ) : 
+	mBuffer(c.mBuffer), mColumn(c.mColumn) {}
+YViewCursor::~YViewCursor() {}
 
 YViewCursor &YViewCursor::operator=( const YViewCursor& c )
 {
-    mValid = true;
-    copyFields( c );
+    mBuffer = c.mBuffer;
+	mColumn = c.mColumn;
     return *this;
 }
-
-void YViewCursor::reset()
-{
-    mValid = true;
-    mBuffer.setLineColumn(0, 0);
-    mScreen.setLineColumn(0, 0);
-}
-
-void YViewCursor::invalidate()
-{
-    mValid = false;
-}
-bool YViewCursor::valid() const
-{
-    return mValid;
-}
-
-int YViewCursor::bufferX() const
-{
-    return mBuffer.x();
-}
-int YViewCursor::bufferY() const
-{
-    return mBuffer.y();
-}
-int YViewCursor::screenX() const
-{
-    return mScreen.x();
-}
-int YViewCursor::screenY() const
-{
-    return mScreen.y();
-}
-
-
-void YViewCursor::setBufferX( int value )
-{
-    mBuffer.setX( value );
-}
-void YViewCursor::setBufferY( int value )
-{
-    mBuffer.setY( value );
-}
-void YViewCursor::setScreenX( int value )
-{
-    mScreen.setX( value );
-}
-void YViewCursor::setScreenY( int value )
-{
-    mScreen.setY( value );
-}
-
 

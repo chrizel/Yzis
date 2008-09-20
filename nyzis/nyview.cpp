@@ -135,7 +135,7 @@ void NYView::guiScroll( int /* dx */, int dy )
         /* redraw the new bottom */
         top += getLinesVisible() - n;
     }
-    sendPaintEvent(YCursor(left, top ), YCursor( left + getColumnsVisible(), top + n ) );
+    guiPaintEvent(YSelection(YInterval(YCursor(0, top), YCursor(getColumnsVisible(), top + n))));
 }
 
 void NYView::guiNotifyContentChanged( const YSelection& s )

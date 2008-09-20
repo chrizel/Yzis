@@ -224,6 +224,21 @@ class YZIS_EXPORT YView : public YViewIface
     //-------------------------------------------------------
     // ----------------- Cursor Motion
     //-------------------------------------------------------
+
+	/* TODO: docstring */
+	YViewCursor viewCursorFromLinePosition( int line, int position ) const;
+	/* TODO: docstring */
+	YViewCursor viewCursorFromLinePosition( const YCursor& buffer ) const {
+		return viewCursorFromLinePosition(buffer.line(), buffer.position());
+	}
+	/* TODO: docstring */
+	YViewCursor viewCursorFromLineColumn( int line, int column ) const;
+	/* TODO: docstring */
+	YViewCursor viewCursorFromStickedLine( int line ) const;
+
+	/* TODO: docstring */
+	void gotoViewCursor( const YViewCursor& cursor );
+
     // Return value is whether motion stopped by constraints of buffer
     /**
      * moves the cursor of the current view down
@@ -238,16 +253,9 @@ class YZIS_EXPORT YView : public YViewIface
     bool moveUp( YViewCursor* viewCursor, int nb_lines = 1, bool applyCursor = true );
 
     /**
-     * moves the cursor of the current view to the left
+     * TODO: docstring
      */
-    bool moveLeft(int nb_cols = 1, bool wrap = false, bool applyCursor = true);
-    bool moveLeft( YViewCursor* viewCursor, int nb_cols = 1, bool wrap = false, bool applyCursor = true);
-
-    /**
-     * moves the cursor of the current view to the right
-     */
-    bool moveRight(int nb_cols = 1, bool wrap = false, bool applyCursor = true);
-    bool moveRight( YViewCursor* viewCursor, int nb_cols = 1, bool wrap = false, bool applyCursor = true);
+	YViewCursor moveHorizontal(int ticks, bool wrap = false, bool* stopped = NULL);
 
     /**
      * moves the cursor of the current view to the first non-blank character
@@ -255,67 +263,6 @@ class YZIS_EXPORT YView : public YViewIface
      */
     QString moveToFirstNonBlankOfLine();
     QString moveToFirstNonBlankOfLine( YViewCursor* viewCursor, bool applyCursor = true );
-
-    /**
-     * moves the cursor of the current view to the start of the current line
-     */
-    QString moveToStartOfLine();
-    QString moveToStartOfLine( YViewCursor* viewCursor, bool applyCursor = true );
-
-    /**
-     * moves the cursor of the current view to the end of the current line
-     */
-    QString moveToEndOfLine();
-    QString moveToEndOfLine( YViewCursor* viewCursor, bool applyCursor = true );
-
-    /**
-     * Moves the draw cursor to @arg nextx, @arg nexty
-     */
-    void gotodxdy(QPoint nextpos, bool applyCursor = true );
-    // TODO : remoev
-    void gotodxdy(int nextx, int nexty, bool applyCursor = true )
-    {
-        gotodxdy(QPoint(nextx, nexty), applyCursor);
-    }
-    void gotodxdy( YViewCursor* viewCursor, QPoint nextpos, bool applyCursor = true );
-    void gotodxdy( YViewCursor* viewCursor, const int x, const int y, bool applyCursor = true )
-    {
-        gotodxdy(viewCursor, QPoint(x, y), applyCursor);
-    }
-
-    /**
-     * Moves the cursor to @arg draw nextx, @arg buffer nexty
-     */
-    void gotodxy(int nextx, int nexty, bool applyCursor = true );
-    void gotodxy( YViewCursor* viewCursor, int nextx, int nexty, bool applyCursor = true );
-
-    /**
-     * Moves the buffer cursor to @arg nextx, @arg nexty
-     */
-    void gotoxy(const QPoint nextpos, bool applyCursor = true );
-    void gotoxy( YViewCursor* viewCursor, const QPoint nextpos, bool applyCursor = true );
-    void gotoxy(int nextx, int nexty, bool applyCursor = true )
-    {
-        gotoxy(QPoint(nextx, nexty), applyCursor);
-    }
-    void gotoxy( YViewCursor* viewCursor, int nextx, int nexty, bool applyCursor = true )
-    {
-        gotoxy(viewCursor, QPoint(nextx, nexty), applyCursor);
-    }
-
-    /**
-     * Moves the buffer cursor to @arg cursor and stick the column
-     */
-    void gotoxyAndStick( const QPoint cursor );
-    void gotoxyAndStick( const int x, const int y)
-    {
-        gotoxyAndStick(QPoint(x, y));
-    }
-    void gotodxdyAndStick( const QPoint cursor );
-    void gotodxdyAndStick( const int x, const int y )
-    {
-        gotodxdyAndStick(QPoint(x, y));
-    }
 
     /**
 
@@ -329,11 +276,6 @@ class YZIS_EXPORT YView : public YViewIface
     void gotoLastLine();
     void gotoLastLine( YViewCursor* viewCursor, bool applyCursor = true );
 
-    /**
-     * move the cursor to the sticky column
-     */
-    void gotoStickyCol( int Y );
-    void gotoStickyCol( YViewCursor* viewCursor, int Y, bool applyCursor = true );
 
     void applyStartPosition( const YCursor pos );
 
@@ -458,17 +400,21 @@ class YZIS_EXPORT YView : public YViewIface
     //-------------------------------------------------------
     virtual void guiPaintEvent( const YSelection& drawMap );
 
-	void sendPaintEvent( const YInterval& i );
-    void sendPaintEvent( const YCursor from, const YCursor to ) YZIS_DEPRECATED;
-    void sendPaintEvent( int curx, int cury, int curw, int curh ) YZIS_DEPRECATED;
-    void sendPaintEvent( YSelectionMap map, bool isBufferMap = true ) YZIS_DEPRECATED;
 
     /**
      * Ask for refresh screen
      */
     void sendRefreshEvent();
 
-    void removePaintEvent( const YCursor from, const YCursor to ) YZIS_DEPRECATED;
+	/*
+	 * Ask for repainting interval @arg i of screen.
+	 */
+	void sendPaintEvent( const YInterval& i );
+
+	/*
+	 * Ask for repainting interval @arg i of screen.
+	 */
+	void sendPaintEvent( const YSelection& s );
 
     /**
      * @arg enable is true, future paint events will be directly applied
@@ -479,7 +425,7 @@ class YZIS_EXPORT YView : public YViewIface
     /**
      * drop all pending paint events and returns into autocommit mode
      */
-    void abortPaintEvent();
+    void resetPaintEvent();
 
     /**
      * If the number of calls of commitPaintEvent is equals to the number of 
@@ -501,15 +447,13 @@ class YZIS_EXPORT YView : public YViewIface
     //-------------------------------------------------------
     // ----------------- Cursors
     //-------------------------------------------------------
-    void sendCursor( YViewCursor cursor );
-
     /**
      * Get the view cursor
      * @return a constant ref to the view cursor ( YViewCursor )
      */
     const YViewCursor &viewCursor() const
     {
-        return mainCursor;
+        return mMainCursor;
     }
 
     /**
@@ -568,19 +512,10 @@ class YZIS_EXPORT YView : public YViewIface
     // ----------------- Sticky
     //-------------------------------------------------------
     /**
-     * Updates stickyCol
+     * set current column as sticky
      */
-    void setStickyCol( int col )
-    {
-        stickyCol = col;
-    }
-
-    void updateStickyCol( );
-
-    /**
-     * update stickCol to according to viewCursor
-     */
-    void updateStickyCol( YViewCursor* viewCursor );
+    void stickToColumn();
+	void stickToEOL();
 
     //-------------------------------------------------------
     // ----------------- Mode
@@ -650,6 +585,7 @@ protected:
     YDrawBuffer mDrawBuffer;
 
 private:
+
 	/* update internal attributes */
 	void updateInternalAttributes();
 
@@ -682,7 +618,7 @@ private:
     /**
       * This is the main cursor, the one which is displayed
      */
-    YViewCursor mainCursor;
+    YViewCursor mMainCursor;
 
     /**
      * Searching backward
@@ -702,18 +638,14 @@ private:
     /**
      * This is the worker cursor, the one which we directly modify in our draw engine
      */
-    YViewCursor workCursor;
 
     YzisAttribute* mHighlightAttributes;
 
-    void gotoy( int y );
-    void gotody( int y );
-    void gotox( int x, bool forceGoBehindEOL = false );
-    void gotodx( int x );
-    void applyGoto( YViewCursor* viewCursor, bool applyCursor = true );
-    void initGoto( YViewCursor* viewCursor );
+	/* TODO: docstring */
+    void applyGoto();
 
-    int stickyCol;
+	/* TODO: docstring */
+    int mStickyColumn;
 
     QChar m_lineFiller;
     QChar m_lineMarker;
@@ -730,7 +662,6 @@ private:
     /// which regs to store macros in
     QList<QChar> mRegs;
     int m_paintAutoCommit;
-    YViewCursor keepCursor;
 
     YModePool* mModePool;
 

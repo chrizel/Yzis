@@ -58,6 +58,8 @@ public:
 	inline YFont font() const { return mFont; }
 	inline QString content() const { return mContent; };
 	inline int width() const { return mContent.length(); };
+	int widthForLength( int length ) const;
+	int lengthForWidth( int width ) const;
 	inline int length() const { return mSteps.count(); }
 
 	/* steps (buffer <-> draw) */
@@ -237,11 +239,11 @@ public:
 	/* TODO: docstring */
 	bool targetBufferLine( int bline, int* sid ) const;
 	/* TODO: docstring */
-	bool targetBufferColumn( int bcol, int sid, int* lid, int* cid, int* bshift ) const;
+	bool targetBufferColumn( int bcol, int sid, int* lid, int* cid, int* bshift, int* column = NULL ) const;
 	/* TODO: docstring */
 	bool targetScreenLine( int sline, int* sid, int* lid ) const;
 	/* TODO: docstring */
-	bool targetScreenColumn( int scol, int sid, int lid, int* cid, int* sshift ) const;
+	bool targetScreenColumn( int scol, int sid, int lid, int* cid, int* sshift, int* position = NULL ) const;
 
 
 private :

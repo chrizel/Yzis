@@ -408,36 +408,32 @@ YMotion *YModeCommand::parseMotion( const YKeySequence &inputs, YKeySequence::co
 
 // MOTIONS
 
-YCursor YModeCommand::moveLeft(const YMotionArgs &args, CmdState *state )
+YViewCursor YModeCommand::moveLeft(const YMotionArgs &args, CmdState *state, MotionStick* )
 {
-    YViewCursor viewCursor = args.view->viewCursor();
-    args.view->moveLeft(&viewCursor, args.count, false, args.standalone );
     *state = CmdOk;
-    return viewCursor.buffer();
+    return args.view->moveHorizontal(-args.count);
 }
 
-YCursor YModeCommand::moveRight(const YMotionArgs &args, CmdState *state )
+YViewCursor YModeCommand::moveRight(const YMotionArgs &args, CmdState *state, MotionStick* )
 {
-    YViewCursor viewCursor = args.view->viewCursor();
-    args.view->moveRight(&viewCursor, args.count, false, args.standalone );
     *state = CmdOk;
-    return viewCursor.buffer();
+    return args.view->moveHorizontal(args.count);
 }
 
-YCursor YModeCommand::moveLeftWrap( const YMotionArgs & args, CmdState *state )
+YViewCursor YModeCommand::moveLeftWrap( const YMotionArgs & args, CmdState *state, MotionStick* )
 {
-    YViewCursor viewCursor = args.view->viewCursor();
-    bool stopped  = args.view->moveLeft(&viewCursor, args.count, true, args.standalone );
+	bool stopped = false;
+    YViewCursor ret = args.view->moveHorizontal(-args.count, true, &stopped );
     *state = stopped ? CmdStopped : CmdOk;
-    return viewCursor.buffer();
+	return ret;
 }
 
-YCursor YModeCommand::moveRightWrap( const YMotionArgs & args, CmdState *state )
+YViewCursor YModeCommand::moveRightWrap( const YMotionArgs & args, CmdState *state, MotionStick* )
 {
-    YViewCursor viewCursor = args.view->viewCursor();
-    bool stopped = args.view->moveRight(&viewCursor, args.count, true, args.standalone );
+	bool stopped = false;
+    YViewCursor ret = args.view->moveHorizontal(args.count, true, &stopped );
     *state = stopped ? CmdStopped : CmdOk;
-    return viewCursor.buffer();
+	return ret;
 }
 
 YCursor YModeCommand::moveDown(const YMotionArgs &args, CmdState *state)
@@ -706,30 +702,24 @@ YCursor YModeCommand::gotoSOL(const YMotionArgs &args, CmdState *state)
     return viewCursor.buffer();
 }
 
-YCursor YModeCommand::gotoEOL(const YMotionArgs &args, CmdState *state)
+YViewCursor YModeCommand::gotoEOL(const YMotionArgs &args, CmdState *state, MotionStick* stick)
 {
-    YViewCursor viewCursor = args.view->viewCursor();
-    args.view->moveToEndOfLine(&viewCursor, args.standalone);
     *state = CmdOk;
-    return viewCursor.buffer();
+	if ( stick != NULL ) *stick = MotionStickEOL;
+	int line = args.view->viewCursor().line();
+	return args.view->viewCursorFromLinePosition(line, mBuffer->getLineLength(line));
 }
 
-YCursor YModeCommand::gotoStartOfDocument(const YMotionArgs &args, CmdState *state)
+YViewCursor YModeCommand::gotoStartOfDocument(const YMotionArgs &args, CmdState *state, MotionStick* )
 {
-    YViewCursor viewCursor = args.view->viewCursor();
-    args.view->gotoLine(&viewCursor, 0, args.standalone);
-    args.view->moveToStartOfLine(&viewCursor, args.standalone);
     *state = CmdOk;
-    return viewCursor.buffer();
+	return args.view->viewCursorFromLinePosition(0,0);
 }
 
-YCursor YModeCommand::gotoEndOfDocument(const YMotionArgs &args, CmdState *state)
+YViewCursor YModeCommand::gotoEndOfDocument(const YMotionArgs &args, CmdState *state, MotionStick* )
 {
-    YViewCursor viewCursor = args.view->viewCursor();
-    args.view->gotoLastLine(&viewCursor, args.standalone);
-    args.view->moveToEndOfLine(&viewCursor, args.standalone);
     *state = CmdOk;
-    return viewCursor.buffer();
+	return args.view->viewCursorFromLineColumn(mBuffer->lineCount()-1, mBuffer->getLineLength(mBuffer->lineCount()-1));
 }
 
 YCursor YModeCommand::moveWordForward(const YMotionArgs &args, CmdState *state)
@@ -1304,13 +1294,22 @@ CmdState YModeCommand::execMotion( const YCommandArgs &args )
     if ( ! m || ! m->argsPresent( *args.inputs, *args.parsePos ))
         return CmdOperatorPending;
     CmdState state;
+	MotionStick stick = MotionStickColumn;
     YASSERT(m);
-    YCursor to = (this->*(m->motionMethod()))(YMotionArgs(args.view, args.count, args.inputs, 
+    YViewCursor dest = (this->*(m->motionMethod()))(YMotionArgs(args.view, args.count, args.inputs, 
                                                           args.parsePos, args.cmd->keySeq().toString(),
-                                                          args.usercount, true), &state);
-    //args.view->centerViewVertically( to.y() );
-    args.view->gotoxy(to.x(), to.y());
-    
+                                                          args.usercount, true), &state, &stick);
+    args.view->gotoViewCursor(dest);
+	switch ( stick ) {
+		case MotionStickColumn:
+			args.view->stickToColumn();
+			break;
+		case MotionStickEOL:
+			args.view->stickToEOL();
+			break;
+		case MotionNoStick:
+			break;
+	}
     return state;
 }
 

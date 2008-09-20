@@ -230,7 +230,6 @@ void YSearch::highlightLine( YBuffer* buffer, int line )
 
         foreach( YView *view, views ) {
             view->getSelectionPool()->setSearch( searchMap );
-            view->sendPaintEvent( 0, line, qMax( (int)(buffer->textline( line ).length() - 1), 0 ), line );
         }
     }
 }
@@ -267,12 +266,10 @@ void YSearch::Private::highlightSearch( YView *view, YSelectionMap searchMap )
 {
     view->setPaintAutoCommit( false );
     YSelection* vMap = view->getSelectionPool()->search();
-    view->sendPaintEvent( vMap->map(), false );
     vMap->clear();
     if ( YSession::self()->getBooleanOption( "hlsearch" ) ) {
         vMap->setMap( searchMap );
         //  dbg() << "new search Map : " << *(vMap) << endl;
-        view->sendPaintEvent( vMap->map() );
     }
     view->commitPaintEvent();
 }

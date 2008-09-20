@@ -133,7 +133,7 @@ CmdState YModeSearch::execCommand( YView* view, const YKeySequence& keys, YKeySe
             view->gotoxy(mSearchBegin.x(), mSearchBegin.y());
             view->setPaintAutoCommit( false );
             incSearchFound = false;
-            view->sendPaintEvent( searchSelection->map() );
+            //view->sendXXXPaintEvent( searchSelection->map() );
             searchSelection->clear();
             view->commitPaintEvent();
         }
@@ -161,12 +161,12 @@ CmdState YModeSearch::execCommand( YView* view, const YKeySequence& keys, YKeySe
                 YCursor endResult(incSearchResult );
                 endResult.setX( endResult.x() + matchlength - 1 );
                 searchSelection->addInterval( YInterval(incSearchResult, endResult) );
-                view->sendPaintEvent( searchSelection->map() );
+                //view->sendXXXPaintEvent( searchSelection->map() );
             }
             view->gotoxyAndStick(incSearchResult );
         } else {
             view->gotoxy( mSearchBegin.x(), mSearchBegin.y() );
-            view->sendPaintEvent( searchSelection->map() );
+            //view->sendXXXPaintEvent( searchSelection->map() );
             searchSelection->clear();
         }
         view->commitPaintEvent();

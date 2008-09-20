@@ -54,6 +54,16 @@ public:
 	inline int column() const { return mColumn; }
 	inline void setColumn( int value ) { mColumn = value; }
 
+    /*
+     * operators
+     */
+    bool operator== ( const YViewCursor right ) const;
+    bool operator!= ( const YViewCursor right ) const;
+    bool operator< ( const YViewCursor right ) const;
+    bool operator<= ( const YViewCursor right ) const;
+    bool operator> ( const YViewCursor right ) const;
+    bool operator>= ( const YViewCursor right ) const;
+
 private :
 	YCursor mBuffer;
 	int mColumn;

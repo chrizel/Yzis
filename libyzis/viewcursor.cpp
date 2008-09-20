@@ -40,3 +40,28 @@ YViewCursor &YViewCursor::operator=( const YViewCursor& c )
     return *this;
 }
 
+bool YViewCursor::operator== (const YViewCursor right ) const
+{
+	return mBuffer == right.mBuffer;
+}
+bool YViewCursor::operator!= (const YViewCursor right ) const
+{
+	return mBuffer != right.mBuffer;
+}
+bool YViewCursor::operator< (const YViewCursor right ) const
+{
+	return mBuffer < right.mBuffer;
+}
+bool YViewCursor::operator<= (const YViewCursor right ) const
+{
+	return mBuffer <= right.mBuffer;
+}
+bool YViewCursor::operator> (const YViewCursor right ) const
+{
+	return mBuffer > right.mBuffer;
+}
+bool YViewCursor::operator>= (const YViewCursor right ) const
+{
+	return mBuffer >= right.mBuffer;
+}
+

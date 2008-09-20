@@ -270,7 +270,7 @@ CmdState YModeVisual::movetoInsertMode( const YCommandArgs& args )
 YInterval YModeVisual::interval(const YCommandArgs& args, CmdState *state )
 {
     *state = CmdOk;
-	return buildBufferInterval(args.view)
+	return buildBufferInterval(args.view);
 }
 
 /**
@@ -295,7 +295,7 @@ YInterval YModeVisualLine::buildBufferInterval( YView* mView )
 		endPos = beginPos;
 		beginPos = endPos;
 	}
-	return YInterval(YCursor(0,beginPos.bufferY()), YBound(YCursor(0,endPos.bufferY()+1), true));
+	return YInterval(YCursor(0,beginPos.line()), YBound(YCursor(0,endPos.line()+1), true));
 }
 
 /**

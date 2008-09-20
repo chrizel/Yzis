@@ -413,7 +413,6 @@ YViewCursor YModeCommand::moveLeft(const YMotionArgs &args, CmdState *state, Mot
     *state = CmdOk;
     return args.view->moveHorizontal(-args.count);
 }
-
 YViewCursor YModeCommand::moveRight(const YMotionArgs &args, CmdState *state, MotionStick* )
 {
     *state = CmdOk;
@@ -423,35 +422,29 @@ YViewCursor YModeCommand::moveRight(const YMotionArgs &args, CmdState *state, Mo
 YViewCursor YModeCommand::moveLeftWrap( const YMotionArgs & args, CmdState *state, MotionStick* )
 {
 	bool stopped = false;
-    YViewCursor ret = args.view->moveHorizontal(-args.count, true, &stopped );
+    YViewCursor ret = args.view->moveHorizontal(-args.count, true, &stopped);
     *state = stopped ? CmdStopped : CmdOk;
 	return ret;
 }
-
 YViewCursor YModeCommand::moveRightWrap( const YMotionArgs & args, CmdState *state, MotionStick* )
 {
 	bool stopped = false;
-    YViewCursor ret = args.view->moveHorizontal(args.count, true, &stopped );
+    YViewCursor ret = args.view->moveHorizontal(args.count, true, &stopped);
     *state = stopped ? CmdStopped : CmdOk;
 	return ret;
 }
 
-YCursor YModeCommand::moveDown(const YMotionArgs &args, CmdState *state)
+YViewCursor YModeCommand::moveDown(const YMotionArgs &args, CmdState *state, MotionStick* stick)
 {
-    bool stopped;
-    YViewCursor viewCursor = args.view->viewCursor();
-    stopped = args.view->moveDown(&viewCursor, args.count, args.standalone );
-    *state = stopped ? CmdStopped : CmdOk;
-    return viewCursor.buffer();
+	if ( stick != NULL ) *stick = MotionNoStick;
+    *state = CmdOk;
+	return args.view->moveVertical(args.count);
 }
-
-YCursor YModeCommand::moveUp(const YMotionArgs &args, CmdState *state)
+YViewCursor YModeCommand::moveUp(const YMotionArgs &args, CmdState *state, MotionStick* stick)
 {
-    bool stopped;
-    YViewCursor viewCursor = args.view->viewCursor();
-    stopped = args.view->moveUp(&viewCursor, args.count, args.standalone  );
-    *state = stopped ? CmdStopped : CmdOk;
-    return viewCursor.buffer();
+	if ( stick != NULL ) *stick = MotionNoStick;
+    *state = CmdOk;
+	return args.view->moveVertical(-args.count);
 }
 
 YCursor YModeCommand::scrollPageUp(const YMotionArgs &args, CmdState *state)
@@ -1343,9 +1336,10 @@ YInterval YModeCommand::interval(const YCommandArgs& args, CmdState *state)
     }
     
     // We have a valid motion so lets try executing it
-    YCursor to = (this->*(m->motionMethod()))(YMotionArgs(args.view, count, args.inputs, 
+    YViewCursor tov = (this->*(m->motionMethod()))(YMotionArgs(args.view, count, args.inputs, 
                                                           args.parsePos, args.cmd->keySeq().toString(),
                                                           args.usercount ), state);
+	YCursor to = tov.buffer();
 
     bool bound_open = true;
     switch(motionType) {

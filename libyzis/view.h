@@ -234,28 +234,22 @@ class YZIS_EXPORT YView : public YViewIface
 	/* TODO: docstring */
 	YViewCursor viewCursorFromLineColumn( int line, int column ) const;
 	/* TODO: docstring */
+	YViewCursor viewCursorFromRowColumn( int row, int column ) const;
+	/* TODO: docstring */
 	YViewCursor viewCursorFromStickedLine( int line ) const;
 
 	/* TODO: docstring */
 	void gotoViewCursor( const YViewCursor& cursor );
 
-    // Return value is whether motion stopped by constraints of buffer
     /**
-     * moves the cursor of the current view down
+     * TODO: docstring
      */
-    bool moveDown( int nb_lines = 1, bool applyCursor = true );
-    bool moveDown( YViewCursor* viewCursor, int nb_lines = 1, bool applyCursor = true );
-
-    /**
-     * moves the cursor of the current view up
-     */
-    bool moveUp( int nb_lines = 1, bool applyCursor = true );
-    bool moveUp( YViewCursor* viewCursor, int nb_lines = 1, bool applyCursor = true );
+	YViewCursor moveVertical( int ticks );
 
     /**
      * TODO: docstring
      */
-	YViewCursor moveHorizontal(int ticks, bool wrap = false, bool* stopped = NULL);
+	YViewCursor moveHorizontal( int ticks, bool wrap = false, bool* stopped = NULL );
 
     /**
      * moves the cursor of the current view to the first non-blank character
@@ -640,9 +634,6 @@ private:
      */
 
     YzisAttribute* mHighlightAttributes;
-
-	/* TODO: docstring */
-    void applyGoto();
 
 	/* TODO: docstring */
     int mStickyColumn;

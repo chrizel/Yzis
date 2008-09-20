@@ -93,7 +93,7 @@ int YDrawCell::widthForLength( int length ) const
 {
 	YASSERT(length >= 0);
 	int w = 0;
-	int length = qMax(length, mSteps.count());
+	length = qMax(length, mSteps.count());
 	while ( length-- ) {
 		w += mSteps.at(length);
 	}
@@ -526,13 +526,13 @@ bool YDrawBuffer::targetBufferColumn( int bcol, int sid, int* lid, int* cid, int
 			int cw = mContent[sid][my_lid][my_cid].length();
 			if ( w + cw > bcol ) {
 				*bshift = bcol - w;
-				if ( column != NULL ) {
+				if ( column != NULL ) {
 					my_column += mContent[sid][my_lid][my_cid].widthForLength(bcol - w);
 				}
 				found = true;
 			} else {
 				w += cw;
-				if ( column != NULL ) {
+				if ( column != NULL ) {
 					my_column += mContent[sid][my_lid][my_cid].width();
 				}
 			}

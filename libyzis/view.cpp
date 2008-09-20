@@ -45,7 +45,6 @@
 
 using namespace yzis;
 
-#define STICK_ENDLINE -1
 
 static const QChar tabChar( '\t' );
 
@@ -346,6 +345,7 @@ void YView::alignViewVertically( int line )
 
 YViewCursor YView::viewCursorFromLinePosition( int line, int position ) const
 {
+	//TODO: behindEOL
 	YASSERT(line >= 0);
 	YASSERT(line < mBuffer->lineCount());
 	YASSERT(position >= 0);
@@ -355,8 +355,23 @@ YViewCursor YView::viewCursorFromLinePosition( int line, int position ) const
 	return YViewCursor(line, position, column);
 }
 
+YViewCursor YView::viewCursorFromRowColumn( int row, int column ) const
+{
+	//TODO: behindEOL
+	YASSERT(row >= 0);
+	YASSERT(row < mDrawBuffer->screenHeight());
+	YASSERT(column >= 0);
+	YASSERT(column < mDrawBuffer->screenWidth());
+	int sid, lid;
+	mDrawBuffer->targetScreenLine(line, &sid, &lid);
+	int cid, sshift, position;
+	mDrawbuffer->targetScreenColumn(column, sid, lid, &cid, &sshift, &position);
+	return YViewCursor(line, position, column);
+}
+
 YViewCursor YView::viewCursorFromLineColumn( int line, int column ) const
 {
+	//TODO: behindEOL
 	YASSERT(line >= 0);
 	YASSERT(line < mBuffer->lineCount());
 	YASSERT(column >= 0);
@@ -369,6 +384,10 @@ YViewCursor YView::viewCursorFromLineColumn( int line, int column ) const
 	return YViewCursor(line, position, column);
 }
 
+/*
+ * Sticky column support
+ */
+#define STICK_ENDLINE -1
 YViewCursor YView::viewCursorFromStickedLine( int line ) const
 {
 	if ( stickyColumn == STICK_ENDLINE ) {
@@ -377,15 +396,19 @@ YViewCursor YView::viewCursorFromStickedLine( int line ) const
 		return viewCursorFromLineColumn(line, column);
 	}
 }
-
-/*
- * all the goto-like commands
- */
-
-
-
-void YView::applyGoto()
+void YView::stickToColumn()
 {
+	mStickyColumn = mMainCursor.column();
+}
+void YView::stickToEOL()
+{
+	mStickColumn = STICK_ENDLINE;
+}
+
+
+void YView::gotoViewCursor( const YViewCursor& cursor )
+{
+	mMainCursor = cursor;
 	//TODO: scroll
 #if 0
 	if ( nexty < mDrawBuffer.topBufferLine() ) {
@@ -398,53 +421,20 @@ void YView::applyGoto()
 		mDrawBuffer.verticalScroll(delta);
 		updateBufferInterval(previousBottomLine+1, nexty);
 	}
-
-
-        if ( !isColumnVisible( mMainCursor.screenX(), mMainCursor.screenY() ) ) {
-            centerViewHorizontally( mMainCursor.screenX( ) );
-        }
-        if ( !isLineVisible( mMainCursor.screenY() ) ) {
-			dbg() << "applyGoto: cursor is out of screen! TODO" << endl;
-			YASSERT(false);
-        }
-        commitPaintEvent();
-    }
 #endif
 	mModePool->current()->cursorMoved( this );
 	updateCursor();
 }
 
-void YView::gotoViewCursor( const YViewCursor& cursor )
+YViewCursor YView::moveVertical( int ticks )
 {
-	mMainCursor = cursor;
-	applyGoto();
-}
-
-
-// These all return whether the motion was stopped
-bool YView::moveDown( int nb_lines, bool applyCursor )
-{
-    return moveDown( &mMainCursor, nb_lines, applyCursor );
-}
-bool YView::moveDown( YViewCursor* viewCursor, int nb_lines, bool applyCursor )
-{
-    int destRequested = mFoldPool->lineAfterFold( viewCursor->bufferY() + nb_lines );
-    gotoStickyCol( viewCursor, qMin( destRequested, mBuffer->lineCount() - 1 ), applyCursor );
-    return destRequested > (mBuffer->lineCount() - 1);
-}
-bool YView::moveUp( int nb_lines, bool applyCursor )
-{
-    return moveUp( &mMainCursor, nb_lines, applyCursor );
-}
-bool YView::moveUp( YViewCursor* viewCursor, int nb_lines, bool applyCursor )
-{
-    int destRequested = viewCursor->bufferY() - nb_lines;
-    gotoStickyCol( viewCursor, qMax( destRequested, 0 ), applyCursor );
-    return destRequested < 0;
+	int line = qMax(mBuffer->lineCount()-1, qMin(0, mMainCursor.line() + ticks));
+	return viewCursorFromStickedLine(line);
 }
 
 YViewCursor YView::moveHorizontal( int ticks, bool wrap, bool* stopped )
 {
+	//TODO: check behindEOL
 	int line = mMainCursor.line();
 	int position = mMainCursor.position() + ticks;
 	bool my_stopped = false;
@@ -479,13 +469,10 @@ YViewCursor YView::moveHorizontal( int ticks, bool wrap, bool* stopped )
 			position = mBuffer->getLineLength(line) - 1;
 		}
 	}
+
 	if ( stopped != NULL ) *stopped = my_stopped;
-	YViewCursor dest = viewCursorFromLinePosition(line, position);
-	if ( applyCursor ) {
-		gotoViewCursor(dest);
-		updateStickyColumn();
-	}
-	return dest;
+
+	return viewCursorFromLinePosition(line, position);
 }
 
 QString YView::moveToFirstNonBlankOfLine( )
@@ -587,7 +574,7 @@ bool YView::isColumnVisible( int column, int ) const
 bool YView::isLineVisible( int l ) const
 {
 	/* screen line */
-	return l >= 0 and l < mDrawBuffer.screenWidth();
+	return l >= 0 and l < mDrawBuffer.screenHeight();
 }
 
 const YColor& YView::drawColor ( int col, int line ) const
@@ -699,14 +686,6 @@ QString YView::getCharBelow( int delta )
 	return QString();
 }
 
-void YView::stickToColumn()
-{
-	mStickyColumn = mMainCursor.column();
-}
-void YView::stickToEOL()
-{
-	mStickColumn = STICK_ENDLINE;
-}
 
 void YView::commitNextUndo()
 {

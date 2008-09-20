@@ -37,6 +37,7 @@ class YMotion;
 class YInterval;
 class YModeCommand;
 class YView;
+class YViewCursor;
 
 /** @file mode_command.h
   * Some documentation

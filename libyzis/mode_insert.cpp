@@ -288,7 +288,7 @@ CmdState YModeInsert::commandEnter( const YCommandArgs &args )
             }
         }
     }
-    args.view->updateStickyCol();
+    args.view->stickToColumn();
     return CmdOk;
 }
 CmdState YModeInsert::addText( YView* mView, const QString& key )

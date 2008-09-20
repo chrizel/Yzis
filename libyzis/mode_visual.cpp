@@ -65,8 +65,8 @@ void YModeVisual::enter( YView* mView )
 void YModeVisual::leave( YView* mView )
 {
 	YASSERT(mStartViewCursor.contains(mView));
-	mView->setSelection(mSelectionType, YSelection());
-	mStartViewCursor.remove(mView)
+	mView->setSelection(mSelectionType, YInterval());
+	mStartViewCursor.remove(mView);
 }
 void YModeVisual::cursorMoved( YView* mView )
 {
@@ -135,14 +135,14 @@ void YModeVisual::initVisualCommandPool()
 }
 CmdState YModeVisual::commandAppend( const YCommandArgs& args )
 {
-    YCursor pos = qMax( args.view->visualCursor()->buffer(), args.view->getBufferCursor() );
+    YCursor pos = qMax(mStartViewCursor[args.view], args.view->viewCursor()).buffer();
     args.view->modePool()->change( ModeInsert );
     args.view->gotoxy( pos.x(), pos.y() );
     return CmdOk;
 }
 CmdState YModeVisual::commandInsert( const YCommandArgs& args )
 {
-    YCursor pos = qMin( args.view->visualCursor()->buffer(), args.view->getBufferCursor() );
+    YCursor pos = qMin(mStartViewCursor[args.view], args.view->viewCursor()).buffer();
     args.view->modePool()->change( ModeInsert );
     args.view->gotoxy( pos.x(), pos.y() );
     return CmdOk;
@@ -200,10 +200,9 @@ CmdState YModeVisual::deleteWholeLines(const YCommandArgs &args)
 }
 CmdState YModeVisual::yankWholeLines(const YCommandArgs &args)
 {
-    YCursor topLeft = args.view->getSelectionPool()->visual()->bufferMap()[0].fromPos();
-
     CmdState state;
     YInterval i = interval(args, &state);
+	YCursor topLeft = i.fromPos();
     unsigned int lines = i.toPos().y() - i.fromPos().y() + 1;
 
     if (args.view->modePool()->currentType() == YMode::ModeVisualLine) {
@@ -217,8 +216,8 @@ CmdState YModeVisual::yankWholeLines(const YCommandArgs &args)
     args.view->modePool()->pop();
 
     // move cursor to top left corner of selection (yes, this is correct behaviour :)
-    args.view->gotoxy( topLeft.x(), topLeft.y(), true );
-    args.view->updateStickyCol( );
+    args.view->gotoxy( topLeft.x(), topLeft.y() );
+    args.view->stickToColumn( );
     return CmdOk;
 }
 CmdState YModeVisual::yank( const YCommandArgs& args )

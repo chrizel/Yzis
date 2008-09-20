@@ -219,7 +219,7 @@ void KYEditor::mousePressEvent ( QMouseEvent * e )
         if (mParent->modePool()->currentType() != YMode::ModeEx) {
             mParent->gotodxdy( e->x() / ( fontMetrics().maxWidth() ) + mParent->getDrawCurrentLeft( ),
                                 e->y() / fontMetrics().lineSpacing() + mParent->getDrawCurrentTop( ) );
-            mParent->updateStickyCol();
+            mParent->stickToColumn();
         }
     } else if ( e->button() == Qt::MidButton ) {
         QString text = KApplication::clipboard()->text( QClipboard::Selection );

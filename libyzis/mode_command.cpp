@@ -1878,7 +1878,7 @@ CmdState YModeCommand::replace( const YCommandArgs &args )
     if ( args.view->myBuffer()->action()->replaceChar( args.view, pos, (*args.parsePos)->toString() ) )
         return CmdStopped;
     args.view->gotoxy(pos.x(), pos.y(), true);
-    args.view->updateStickyCol();
+    args.view->stickToColumn();
     args.view->commitNextUndo();
     ++(*args.parsePos);
     return CmdOk;

@@ -468,5 +468,5 @@ void YZAction::pasteContent( YView *view, QChar registr, bool after )
 
         view->gotoxy( pos );
     }
-    view->updateStickyCol();
+    view->stickToColumn();
 }

@@ -26,7 +26,7 @@
 #include "yzismacros.h"
 #include "viewcursor.h"
 
-typedef QMap<QString, YCursorPos> YViewMarker;
+typedef QMap<QString, YViewCursor> YViewMarker;
 
 
 // struct YZMarkPos{

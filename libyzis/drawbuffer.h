@@ -241,7 +241,7 @@ public:
 	/* TODO: docstring */
 	bool targetBufferColumn( int bcol, int sid, int* lid, int* cid, int* bshift, int* column = NULL ) const;
 	/* TODO: docstring */
-	bool targetScreenLine( int sline, int* sid, int* lid ) const;
+	bool targetScreenLine( int sline, int* sid, int* lid, int* bline = NULL ) const;
 	/* TODO: docstring */
 	bool targetScreenColumn( int scol, int sid, int lid, int* cid, int* sshift, int* position = NULL ) const;
 

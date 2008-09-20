@@ -546,7 +546,7 @@ bool YDrawBuffer::targetBufferColumn( int bcol, int sid, int* lid, int* cid, int
 	return found;
 }
 
-bool YDrawBuffer::targetScreenLine( int sline, int* sid, int* lid ) const
+bool YDrawBuffer::targetScreenLine( int sline, int* sid, int* lid, int* bline ) const
 {
 	YASSERT(0 <= sline);
 	YASSERT(sline < screenHeight());
@@ -567,6 +567,7 @@ bool YDrawBuffer::targetScreenLine( int sline, int* sid, int* lid ) const
 	YASSERT(my_lid < mContent[my_sid].count());
 	*sid = my_sid;
 	*lid = my_lid;
+	if ( bline != NULL ) *bline = my_sid + mTopBufferLine;
 	return found;
 }
 bool YDrawBuffer::targetScreenColumn( int scol, int sid, int lid, int* cid, int* sshift, int* position ) const

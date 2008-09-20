@@ -229,7 +229,7 @@ class YZIS_EXPORT YView : public YViewIface
 	YViewCursor viewCursorFromLinePosition( int line, int position ) const;
 	/* TODO: docstring */
 	YViewCursor viewCursorFromLinePosition( const YCursor& buffer ) const {
-		return viewCursorFromLinePosition(buffer.line(), buffer.position());
+		return viewCursorFromLinePosition(buffer.line(), buffer.column());
 	}
 	/* TODO: docstring */
 	YViewCursor viewCursorFromLineColumn( int line, int column ) const;
@@ -240,6 +240,11 @@ class YZIS_EXPORT YView : public YViewIface
 
 	/* TODO: docstring */
 	void gotoViewCursor( const YViewCursor& cursor );
+
+	void gotoxy( int position, int line ) YZIS_DEPRECATED;
+	void gotoxyAndStick( int position, int line ) YZIS_DEPRECATED;
+	void gotoxy( const YCursor& buffer ) YZIS_DEPRECATED;
+	void gotoxyAndStick( const YCursor& buffer ) YZIS_DEPRECATED;
 
     /**
      * TODO: docstring
@@ -252,23 +257,9 @@ class YZIS_EXPORT YView : public YViewIface
 	YViewCursor moveHorizontal( int ticks, bool wrap = false, bool* stopped = NULL );
 
     /**
-     * moves the cursor of the current view to the first non-blank character
-     * of the current line
+	 * TODO: docstring
      */
-    QString moveToFirstNonBlankOfLine();
-    QString moveToFirstNonBlankOfLine( YViewCursor* viewCursor, bool applyCursor = true );
-
-    /**
-
-     */
-    void gotoLine( int line );
-    void gotoLine( YViewCursor* viewCursor, int line, bool applyCursor = true );
-
-    /**
-     * Go to last line of the file
-     */
-    void gotoLastLine();
-    void gotoLastLine( YViewCursor* viewCursor, bool applyCursor = true );
+	YViewCursor gotoLine( int line );
 
 
     void applyStartPosition( const YCursor pos );
@@ -404,11 +395,6 @@ class YZIS_EXPORT YView : public YViewIface
 	 * Ask for repainting interval @arg i of screen.
 	 */
 	void sendPaintEvent( const YInterval& i );
-
-	/*
-	 * Ask for repainting interval @arg i of screen.
-	 */
-	void sendPaintEvent( const YSelection& s );
 
     /**
      * @arg enable is true, future paint events will be directly applied
@@ -551,11 +537,6 @@ class YZIS_EXPORT YView : public YViewIface
 
     QString getCharBelow( int delta );
 
-    /*
-     * @returns current screen YCursor relative to top-left screen corner
-     */
-    YCursor getRelativeScreenCursor() const;
-
     /**
      * returns a YSelection which fit view
      */
@@ -589,9 +570,6 @@ private:
 	/* TODO: docstring */
 	void deleteFromBufferLine( int bl );
 
-	YDrawSection mWorkDrawSection;
-	YDrawLine mWorkDrawLine;
-
     /*
      * scroll draw buffer and view
      */
@@ -605,24 +583,19 @@ private:
     YKeySequence mLastPreviousChars;
 
     /**
+     * The current session, provided by the GUI
+     */
+    YSession* mSession;
+
+    /**
      * The buffer we depend on
      */
-    YBuffer *mBuffer;
+    YBuffer* mBuffer;
 
     /**
       * This is the main cursor, the one which is displayed
      */
     YViewCursor mMainCursor;
-
-    /**
-     * Searching backward
-     */
-    bool reverseSearch;
-
-    /**
-     * The current session, provided by the GUI
-     */
-    YSession *mSession;
 
     /**
      * Line search

@@ -230,8 +230,8 @@ void QYEdit::mousePressEvent ( QMouseEvent * e )
     /*
     FIXME: How to handle mouse events commented out now so kyzis will compile
 
-    if ( mView->myBuffer()->introShown() ) {
-     mView->myBuffer()->clearIntro();
+    if ( mView->buffer()->introShown() ) {
+     mView->buffer()->clearIntro();
      mView->gotodxdy( 0, 0 );
      return;
     }
@@ -255,7 +255,7 @@ void QYEdit::mousePressEvent ( QMouseEvent * e )
             if ( mView->modePool()->current()->isEditMode() ) {
                 QChar reg = '\"';
                 YSession::self()->setRegister( reg, text.split("\n") );
-                                mView->myBuffer()->action()->pasteContent( mView, reg, false);
+                                mView->buffer()->action()->pasteContent( mView, reg, false);
                 //mView->pasteContent( reg, false );
                 mView->moveRight();
             }
@@ -281,19 +281,19 @@ void QYEdit::mouseMoveEvent( QMouseEvent *e )
 
 void QYEdit::focusInEvent ( QFocusEvent * )
 {
-    dbg() << "focusInEvent() for " << mView->myBuffer()->fileNameShort() << endl;
+    dbg() << "focusInEvent() for " << mView->buffer()->fileNameShort() << endl;
     YSession::self()->setCurrentView( mView );
     updateCursor();
 }
 void QYEdit::focusOutEvent ( QFocusEvent * )
 {
-    dbg() << "focusOutEvent() for " << mView->myBuffer()->fileNameShort() << endl;
+    dbg() << "focusOutEvent() for " << mView->buffer()->fileNameShort() << endl;
     updateCursor();
 }
 
 void QYEdit::resizeEvent(QResizeEvent* e)
 {
-    dbg() << "resizeEvent(" << *e << ") - filename=" << mView->myBuffer()->fileNameShort() << endl;
+    dbg() << "resizeEvent(" << *e << ") - filename=" << mView->buffer()->fileNameShort() << endl;
     updateArea();
 }
 

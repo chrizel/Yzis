@@ -56,10 +56,10 @@ void YBufferOperation::performOperation( YView* pView, bool opposite)
 
     switch ( t) {
 		case OpAddRegion:
-			pView->myBuffer()->insertRegion(interval.fromPos(), data);
+			pView->buffer()->insertRegion(interval.fromPos(), data);
 			break;
 		case OpDelRegion:
-			pView->myBuffer()->deleteRegion(interval);
+			pView->buffer()->deleteRegion(interval);
 			break;
     }
 

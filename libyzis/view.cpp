@@ -109,7 +109,7 @@ YView::~YView()
 QString YView::toString() const
 {
     QString s;
-    s.sprintf("View(this=%p id=%d buffer='%s')", this, getId(), qp(myBuffer()->fileNameShort()) );
+    s.sprintf("View(this=%p id=%d buffer='%s')", this, getId(), qp(buffer()->fileNameShort()) );
     return s;
 }
 
@@ -279,7 +279,7 @@ void YView::updateMode()
 
 void YView::updateFileName()
 {
-    QString filename = myBuffer()->fileName();
+    QString filename = buffer()->fileName();
     if (guiStatusBar())
         guiStatusBar()->setFileName(filename);
     guiUpdateFileName();
@@ -288,7 +288,7 @@ void YView::updateFileName()
 void YView::updateFileInfo()
 {
     if (guiStatusBar())
-        guiStatusBar()->setFileInfo(myBuffer()->fileIsNew(), myBuffer()->fileIsModified());
+        guiStatusBar()->setFileInfo(buffer()->fileIsNew(), buffer()->fileIsModified());
     guiUpdateFileInfo();
 }
 

@@ -464,7 +464,7 @@ CmdState YModeEx::execExCommand( YView* view, const QString& inputs )
         }
     }
     if ( _input.length() == 0 ) {
-		view->gotoViewCursor(view->viewCursorFromLinePosition(view->myBuffer()->firstNonBlankChar(to), to));
+		view->gotoViewCursor(view->viewCursorFromLinePosition(view->buffer()->firstNonBlankChar(to), to));
     } else if ( !commandIsValid ) {
         YSession::self()->guiPopupMessage( _("Not an editor command: ") + _input);
     }
@@ -488,11 +488,11 @@ int YModeEx::rangeCurrentLine( const YExRangeArgs& args )
 }
 int YModeEx::rangeLastLine( const YExRangeArgs& args )
 {
-    return qMax( (int)args.view->myBuffer()->lineCount() - 1, 0 );
+    return qMax( (int)args.view->buffer()->lineCount() - 1, 0 );
 }
 int YModeEx::rangeMark( const YExRangeArgs& args )
 {
-    YViewMarker *mark = args.view->myBuffer()->viewMarks();
+    YViewMarker *mark = args.view->buffer()->viewMarks();
     if ( mark->contains(args.arg.mid(1)))
         return mark->value(args.arg.mid(1)).line();
     return -1;
@@ -520,9 +520,9 @@ int YModeEx::rangeSearch( const YExRangeArgs& args )
     if ( args.arg.length() == 1 ) {
         dbg() << "rangeSearch : replay" << endl;
         if ( reverse ) {
-            pos = YSession::self()->search()->replayBackward( args.view->myBuffer(), &found, args.view->myBuffer()->end(), true );
+            pos = YSession::self()->search()->replayBackward( args.view->buffer(), &found, args.view->buffer()->end(), true );
         } else {
-            pos = YSession::self()->search()->replayForward( args.view->myBuffer(), &found, args.view->myBuffer()->begin(), true );
+            pos = YSession::self()->search()->replayForward( args.view->buffer(), &found, args.view->buffer()->begin(), true );
         }
     } else {
         QString pat = args.arg.mid( 1, args.arg.length() - 2 );
@@ -531,7 +531,7 @@ int YModeEx::rangeSearch( const YExRangeArgs& args )
         else
             pat.replace( "\\/", "/" );
         dbg() << "rangeSearch: " << pat << endl;
-        pos = YSession::self()->search()->forward( args.view->myBuffer(), pat, &found, args.view->getBufferCursor() );
+        pos = YSession::self()->search()->forward( args.view->buffer(), pat, &found, args.view->getBufferCursor() );
     }
 
     if ( found ) {
@@ -562,21 +562,21 @@ CmdState YModeEx::write( const YExCommandArgs& args )
         return ret;
     }
     if ( args.arg.length() ) {
-        args.view->myBuffer()->setPath( args.arg ); //a filename was given as argument
+        args.view->buffer()->setPath( args.arg ); //a filename was given as argument
     }
     if ( quit && force ) { //check readonly ? XXX
-        args.view->myBuffer()->save();
+        args.view->buffer()->save();
         YSession::self()->deleteView( args.view );
         ret = CmdQuit;
     } else if ( quit ) {
-        if ( args.view->myBuffer()->save() ) {
+        if ( args.view->buffer()->save() ) {
             YSession::self()->deleteView( args.view );
             ret = CmdQuit;
         }
     } else if ( ! force ) {
-        args.view->myBuffer()->save();
+        args.view->buffer()->save();
     } else if ( force ) {
-        args.view->myBuffer()->save();
+        args.view->buffer()->save();
     }
     return ret;
 }
@@ -598,11 +598,11 @@ CmdState YModeEx::quit( const YExCommandArgs& args )
         }
     } else {
         //close current view, if it's the last one on a buffer , check it is saved or not
-        if ( args.view->myBuffer()->views().count() > 1 ) {
+        if ( args.view->buffer()->views().count() > 1 ) {
             ret = CmdQuit;
             YSession::self()->deleteView( args.view );
-        } else if ( args.view->myBuffer()->views().count() == 1 && YSession::self()->buffers().count() == 1) {
-            if ( force || !args.view->myBuffer()->fileIsModified() ) {
+        } else if ( args.view->buffer()->views().count() == 1 && YSession::self()->buffers().count() == 1) {
+            if ( force || !args.view->buffer()->fileIsModified() ) {
                 if ( YSession::self()->exitRequest() )
                     ret = CmdQuit;
                 else {
@@ -610,7 +610,7 @@ CmdState YModeEx::quit( const YExCommandArgs& args )
                 }
             } else YSession::self()->guiPopupMessage( _( "One file is modified! Save it first..." ) );
         } else {
-            if ( force || !args.view->myBuffer()->fileIsModified() ) {
+            if ( force || !args.view->buffer()->fileIsModified() ) {
                 ret = CmdQuit;
                 YSession::self()->deleteView(args.view);
             } else YSession::self()->guiPopupMessage( _( "One file is modified! Save it first..." ) );
@@ -677,7 +677,7 @@ CmdState YModeEx::bufferdelete ( const YExCommandArgs& args )
 {
     dbg() << "bufferdelete( " << args.toString() << " ) " << endl;
 
-    YSession::self()->removeBuffer( args.view->myBuffer() );
+    YSession::self()->removeBuffer( args.view->buffer() );
 
     return CmdQuit;
 }
@@ -702,7 +702,7 @@ CmdState YModeEx::edit ( const YExCommandArgs& args )
     QString filename;
 
     // check if the file needs to be saved
-    if ( !force && args.view->myBuffer()->fileIsModified() ) {
+    if ( !force && args.view->buffer()->fileIsModified() ) {
         YSession::self()->guiPopupMessage( _( "No write since last change (add ! to override)" ) );
         return CmdError;
     }
@@ -712,7 +712,7 @@ CmdState YModeEx::edit ( const YExCommandArgs& args )
     // Guardian for no arguments
     // in this case Vim reloads the current buffer
     if ( filename.isEmpty() /* XXX or if the filename is the name of the current buffer */ ) {
-        YBuffer *buff = args.view->myBuffer();
+        YBuffer *buff = args.view->buffer();
         buff->saveYzisInfo( args.view );
         filename = buff->fileName();
 
@@ -754,7 +754,7 @@ CmdState YModeEx::set ( const YExCommandArgs& args )
     else if ( args.cmd.startsWith("setl") )
         user_scope = ScopeLocal;
     YBuffer* buff = NULL;
-    if ( args.view ) buff = args.view->myBuffer();
+    if ( args.view ) buff = args.view->buffer();
     bool matched;
     bool success = YSession::self()->getOptions()->setOptionFromString( &matched,
                    args.arg.simplified()
@@ -805,18 +805,18 @@ CmdState YModeEx::substitute( const YExCommandArgs& args )
     }
     unsigned int lastLine = 0;
     YCursor start( 0, args.fromLine );
-    YSession::self()->search()->forward( args.view->myBuffer(), search, &found, start );
+    YSession::self()->search()->forward( args.view->buffer(), search, &found, start );
     if ( found ) {
         for ( unsigned int i = args.fromLine; i <= args.toLine; i++ ) {
-            if ( args.view->myBuffer()->substitute( search, replace, options.contains( "g" ), i ) ) {
+            if ( args.view->buffer()->substitute( search, replace, options.contains( "g" ), i ) ) {
                 needsUpdate = true;
                 lastLine = i;
             }
         }
         if ( needsUpdate ) {
             args.view->commitNextUndo();
-            args.view->myBuffer()->updateAllViews();
-			args.view->gotoViewCursor(args.view->viewCursorFromLinePosition(args.view->myBuffer()->firstNonBlankChar(lastLine), lastLine));
+            args.view->buffer()->updateAllViews();
+			args.view->gotoViewCursor(args.view->viewCursorFromLinePosition(args.view->buffer()->firstNonBlankChar(lastLine), lastLine));
         }
     }
 
@@ -838,7 +838,7 @@ CmdState YModeEx::hardcopy( const YExCommandArgs& args )
 
 CmdState YModeEx::preserve( const YExCommandArgs& args )
 {
-    args.view->myBuffer()->preserve();
+    args.view->buffer()->preserve();
     return CmdOk;
 }
 
@@ -1061,10 +1061,10 @@ CmdState YModeEx::indent( const YExCommandArgs& args )
     if ( args.arg.length() > 0 ) count = args.arg.toUInt();
     if ( args.cmd[ 0 ] == '<' ) count *= -1;
     for ( unsigned int i = args.fromLine; i <= args.toLine; i++ ) {
-        args.view->myBuffer()->action()->indentLine( args.view, i, count );
+        args.view->buffer()->action()->indentLine( args.view, i, count );
     }
     args.view->commitNextUndo();
-	args.view->gotoViewCursor(args.view->viewCursorFromLinePosition(args.view->myBuffer()->firstNonBlankChar(args.toLine), args.toLine));
+	args.view->gotoViewCursor(args.view->viewCursorFromLinePosition(args.view->buffer()->firstNonBlankChar(args.toLine), args.toLine));
     return CmdOk;
 }
 
@@ -1099,9 +1099,9 @@ CmdState YModeEx::registers( const YExCommandArgs& )
 CmdState YModeEx::syntax( const YExCommandArgs& args )
 {
     if ( args.arg == "on" ) {
-        args.view->myBuffer()->detectHighLight();
+        args.view->buffer()->detectHighLight();
     } else if ( args.arg == "off" ) {
-        args.view->myBuffer()->setHighLight(0);
+        args.view->buffer()->setHighLight(0);
     }
     return CmdOk;
 }
@@ -1174,10 +1174,10 @@ CmdState YModeEx::highlight( const YExCommandArgs& args )
     YSession::self()->getOptions()->getOption( type )->setList( option );
     YSession::self()->getOptions()->setGroup("Global");
 
-    if ( args.view && args.view->myBuffer() ) {
-        YzisHighlighting *yzis = args.view->myBuffer()->highlight();
+    if ( args.view && args.view->buffer() ) {
+        YzisHighlighting *yzis = args.view->buffer()->highlight();
         if (yzis) {
-            args.view->myBuffer()->makeAttribs();
+            args.view->buffer()->makeAttribs();
             args.view->sendRefreshEvent();
         }
     }
@@ -1246,7 +1246,7 @@ CmdState YModeEx::tagprevious( const YExCommandArgs& /*args*/ )
 
 CmdState YModeEx::retab( const YExCommandArgs& args )
 {
-    YBuffer *buffer = args.view->myBuffer();
+    YBuffer *buffer = args.view->buffer();
 
     // save the cursor's position on screen so it can be restored
 	YCursor cursor = args.view->viewCursor().buffer();
@@ -1267,7 +1267,7 @@ CmdState YModeEx::retab( const YExCommandArgs& args )
         if (args.arg.toInt() > 0) {
             // set the value of 'tabstop' to the argument given
             YSession::self()->getOptions()->setOptionFromString( args.arg.trimmed().insert(0, "tabstop="),
-                    ScopeLocal, args.view->myBuffer(), args.view );
+                    ScopeLocal, args.view->buffer(), args.view );
             tabstop = args.arg.toInt();
         } else {
             // Value must be > 0 FIXME: The user should get an error message

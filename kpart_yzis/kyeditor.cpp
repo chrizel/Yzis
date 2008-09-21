@@ -202,8 +202,8 @@ void KYEditor::mousePressEvent ( QMouseEvent * e )
     /*
     FIXME: How to handle mouse events commented out now so kyzis will compile
 
-    if ( mParent->myBuffer()->introShown() ) {
-     mParent->myBuffer()->clearIntro();
+    if ( mParent->buffer()->introShown() ) {
+     mParent->buffer()->clearIntro();
      mParent->gotodxdy( 0, 0 );
      return;
     }
@@ -230,7 +230,7 @@ void KYEditor::mousePressEvent ( QMouseEvent * e )
             if ( mParent->modePool()->current()->isEditMode() ) {
                 QChar reg = '\"';
                 KYSession::self()->setRegister( reg, text.split( "\n" ) );
-                mParent->myBuffer()->action()->pasteContent( mParent, reg, false );
+                mParent->buffer()->action()->pasteContent( mParent, reg, false );
                 mParent->moveRight();
             }
         }

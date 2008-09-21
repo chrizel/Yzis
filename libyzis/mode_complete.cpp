@@ -59,7 +59,7 @@ void YModeCompletion::leave( YView* /*view*/ )
 bool YModeCompletion::initCompletion( YView* view, bool forward )
 {
     CmdState state;
-    YBuffer* buffer = view->myBuffer();
+    YBuffer* buffer = view->buffer();
     YMotionArgs arg(view, 1);
     YCursor cur = view->getBufferCursor();
     QString line = buffer->textline(cur.y());
@@ -129,7 +129,7 @@ void YModeCompletion::doComplete( YView* view, bool forward )
 
     // replace text
     QString proposal = mProposedCompletions[ mCurrentProposal ];
-    YZAction *action = view->myBuffer()->action();
+    YZAction *action = view->buffer()->action();
     YCursor currentCursor = view->getBufferCursor();
     action->replaceText( view, mCompletionStart, currentCursor.x() - mCompletionStart.x(), proposal );
     view->gotoxy( mCompletionStart.x() + proposal.length(), currentCursor.y() );
@@ -284,7 +284,7 @@ void YModeCompletion::completeFromFileNames( QStringList & /*proposed*/ )
 
 void YModeCompletion::completeFromCurrentBuffer( const YCursor cursor, bool forward, QStringList &proposed )
 {
-    YBuffer *buffer = YSession::self()->currentView()->myBuffer();
+    YBuffer *buffer = YSession::self()->currentView()->buffer();
 
     QStringList matches;
     QList<YCursor> cursorlist;

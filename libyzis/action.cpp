@@ -295,15 +295,15 @@ void YZAction::indentLine( YView* pView, int Y, int count )
             line = line.replace( reg, "" );
     }
     replaceLine( pView, Y, line );
-    pView->gotoViewCursor(pView->viewCursorFromLinePosition(Y, pView->myBuffer()->firstNonBlankChar(Y)));
+    pView->gotoViewCursor(pView->viewCursorFromLinePosition(Y, pView->buffer()->firstNonBlankChar(Y)));
     commitViewsChanges(mBuffer);
 }
 
 YCursor YZAction::match( YView* pView, const YCursor cursor, bool *found ) const
 {
-    QString matchers = pView->myBuffer()->getLocalStringOption("matchpairs");
+    QString matchers = pView->buffer()->getLocalStringOption("matchpairs");
 
-    QString current = pView->myBuffer()->textline( cursor.y() );
+    QString current = pView->buffer()->textline( cursor.y() );
     QChar cchar = current.at(cursor.x());
 
     int i = 0;
@@ -318,12 +318,12 @@ YCursor YZAction::match( YView* pView, const YCursor cursor, bool *found ) const
             back = ( abs( i / 2 ) * 2 ) != i;
             QChar c = matchers[ back ? i - 1 : i + 1 ]; //the character to match
             //now do the real search
-            while ( curY < pView->myBuffer()->lineCount() && count > 0 ) {
-                current = pView->myBuffer()->textline( curY );
+            while ( curY < pView->buffer()->lineCount() && count > 0 ) {
+                current = pView->buffer()->textline( curY );
                 if ( back && cursor.y() == curY ) {
                     if ( cursor.x() == 0) {
                         curY--;
-                        current = pView->myBuffer()->textline( curY );
+                        current = pView->buffer()->textline( curY );
                         start = current.length() - 1;
                     } else
                         start = cursor.x() - 1;
@@ -340,7 +340,7 @@ YCursor YZAction::match( YView* pView, const YCursor cursor, bool *found ) const
                     }
                 }
                 if ( count > 0 ) { //let's do another loop
-                    //current = pView->myBuffer()->textline( back ? --curY : ++curY );
+                    //current = pView->buffer()->textline( back ? --curY : ++curY );
                     if ( back ) --curY;
                     else curY++;
                 }
@@ -456,7 +456,7 @@ void YZAction::pasteContent( YView *view, QChar registr, bool after )
             commitViewsChanges(mBuffer);
             view->gotoxy( list[ i ].length(), pos.y() + i );
         } else if ( copyWholeLinesOnly ) {
-            view->gotoxy( view->myBuffer()->firstNonBlankChar(pos.y()+1), pos.y() + 1 );
+            view->gotoxy( view->buffer()->firstNonBlankChar(pos.y()+1), pos.y() + 1 );
         }
 
     } else if ( !after ) { //paste whole lines before current char

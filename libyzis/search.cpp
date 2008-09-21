@@ -183,7 +183,7 @@ void YSearch::Private::setCurrentSearch( const QString& pattern )
             int matchedLength = 0;
             int pos = 0;
             do {
-                from = b->action()->search( v->myBuffer(), mCurrentSearch, cur, end, &matchedLength, &found );
+                from = b->action()->search( v->buffer(), mCurrentSearch, cur, end, &matchedLength, &found );
                 if ( found && matchedLength > 0 ) {
                     cur = from;
                     cur.setX( cur.x() + matchedLength - 1 );
@@ -218,7 +218,7 @@ void YSearch::highlightLine( YBuffer* buffer, int line )
         bool found;
         int matchedLength = 0;
         do {
-            from = buffer->action()->search( v->myBuffer(), d->mCurrentSearch, cur, end, &matchedLength, &found );
+            from = buffer->action()->search( v->buffer(), d->mCurrentSearch, cur, end, &matchedLength, &found );
             if ( found && matchedLength > 0 ) {
                 cur = from;
                 cur.setX( cur.x() + matchedLength - 1 );

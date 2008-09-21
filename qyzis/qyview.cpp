@@ -88,7 +88,7 @@ QYView::QYView ( YBuffer * buffer, QYSession * qysession)
     mStatusBar->show();
     mEdit->setFocus();
     setFocusProxy( mEdit );
-    mVScroll->setMaximum( myBuffer()->lineCount() - 1 );
+    mVScroll->setMaximum( buffer()->lineCount() - 1 );
 }
 
 QYView::~QYView ()
@@ -108,17 +108,17 @@ QString QYView::guiGetCommandLineText() const
 
 void QYView::focusInEvent( QFocusEvent * e )
 {
-    dbg() << "focusInEvent() for " << myBuffer()->fileNameShort() << endl;
+    dbg() << "focusInEvent() for " << buffer()->fileNameShort() << endl;
 }
 
 void QYView::resizeEvent( QResizeEvent * e )
 {
-    dbg() << "resizeEvent() for " << myBuffer()->fileNameShort() << endl;
+    dbg() << "resizeEvent() for " << buffer()->fileNameShort() << endl;
 }
 
 void QYView::guiSetFocusMainWindow()
 {
-    dbg() << "setFocusMainWindow() for " << myBuffer()->fileNameShort() << endl;
+    dbg() << "setFocusMainWindow() for " << buffer()->fileNameShort() << endl;
     mEdit->setFocus();
     mCommandLine->setEnabled( false );
 }
@@ -218,7 +218,7 @@ void QYView::guiDrawSetLineNumber( int y, int n, int h )
 }
 QChar QYView::currentChar() const
 {
-    return myBuffer()->textline( viewCursor().bufferY() ).at( viewCursor().bufferX() );
+    return buffer()->textline( viewCursor().bufferY() ).at( viewCursor().bufferX() );
 }
 
 void QYView::wheelEvent( QWheelEvent * e )
@@ -267,18 +267,18 @@ void QYView::applyConfig( const QSettings& settings, bool refresh )
 
 void QYView::fileSave()
 {
-    myBuffer()->save();
+    buffer()->save();
 }
 
 void QYView::fileSaveAs()
 {
     if ( guiPopupFileSaveAs() )
-        myBuffer()->save();
+        buffer()->save();
 }
 
 void QYView::guiUpdateFileName()
 {
-    mSession->viewFilenameChanged( this, myBuffer()->fileNameShort() );
+    mSession->viewFilenameChanged( this, buffer()->fileNameShort() );
 }
 
 void QYView::guiUpdateCursorPosition()
@@ -302,7 +302,7 @@ bool QYView::guiPopupFileSaveAs()
     if ( url.isEmpty() ) return false; //canceled
 
     if ( ! url.isEmpty() ) {
-        myBuffer()->setPath( url );
+        buffer()->setPath( url );
         return true;
     }
     return false;
@@ -317,8 +317,8 @@ YStatusBarIface* QYView::guiStatusBar()
 void QYView::scrollView( int value )
 {
     if ( value < 0 ) value = 0;
-    else if ( value > myBuffer()->lineCount() - 1 )
-        value = myBuffer()->lineCount() - 1;
+    else if ( value > buffer()->lineCount() - 1 )
+        value = buffer()->lineCount() - 1;
 
     // only redraw if the view actually moves
     if (value != getCurrentTop()) {

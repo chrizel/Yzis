@@ -444,7 +444,7 @@ const YCursor YInfo::previousJumpPosition()
 
         --mCurrentJumpListItem;
 
-        if ( mJumpList[mCurrentJumpListItem]->filename() == YSession::self()->currentView()->myBuffer()->fileName() ) {
+        if ( mJumpList[mCurrentJumpListItem]->filename() == YSession::self()->currentView()->buffer()->fileName() ) {
             found = true;
             break;
         }

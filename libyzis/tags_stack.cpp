@@ -36,7 +36,7 @@
 
 static YInfoJumpListRecord getRecord()
 {
-    YBuffer *buffer = YSession::self()->currentView()->myBuffer();
+    YBuffer *buffer = YSession::self()->currentView()->buffer();
     const YCursor &cursor = YSession::self()->currentView()->getCursor();
     return YInfoJumpListRecord( buffer->fileName(), cursor);
 }

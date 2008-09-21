@@ -231,7 +231,7 @@ void YSession::parseCommandLine( int argc, char * argv[] )
     if ( !first ) {
         /* no view opened */
         first = YSession::self()->createBufferAndView();
-        first->myBuffer()->openNewFile();
+        first->buffer()->openNewFile();
         first->displayIntro();
     }
 
@@ -504,7 +504,7 @@ void YSession::setCurrentView( YView* view )
     view->guiSetFocusMainWindow();
 
     mCurView = view;
-    mCurBuffer = view->myBuffer();
+    mCurBuffer = view->buffer();
 }
 
 const YViewList YSession::getAllViews() const
@@ -527,7 +527,7 @@ YView* YSession::findViewByBuffer( const YBuffer *buffer )
 {
     if (buffer == NULL) return NULL;
     foreach( YView *view, mViewList )
-    if ( view->myBuffer() == buffer )
+    if ( view->buffer() == buffer )
         return view;
     return NULL;
 }

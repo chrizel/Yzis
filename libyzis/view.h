@@ -144,10 +144,7 @@ class YZIS_EXPORT YView : public YViewIface
 		/**
 		 * Return my current buffer
 		 */
-		YBuffer *myBuffer() const
-		{
-			return mBuffer;
-		}
+		YBuffer* buffer() const { return mBuffer; }
 		//  const YBuffer *myBuffer() const { return mBuffer; }
 
 		/**

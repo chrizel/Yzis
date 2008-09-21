@@ -64,7 +64,7 @@ static tagFile* doOpenTagFile( QString &filename )
     // first, if the filename starts with ./, replace the dot with
     // the current buffer's path
     if ( filename.startsWith( QString(".") + QDir::separator() ) ) {
-        QFileInfo file( YSession::self()->currentView()->myBuffer()->fileName() );
+        QFileInfo file( YSession::self()->currentView()->buffer()->fileName() );
         filename.replace( 0, 1, file.absoluteDir().absolutePath() );
     }
 
@@ -125,14 +125,14 @@ static void switchToViewOfFilename( const QString &filename )
 
 static void doJumpToTag ( const YTagStackItem &entry )
 {
-    YBuffer * b = YSession::self()->currentView()->myBuffer();
+    YBuffer * b = YSession::self()->currentView()->buffer();
 
     QFileInfo file( entry.filename );
     QString filepath = file.absoluteFilePath();
     QString pattern = entry.pattern;
 
     // if the tag is in a different file, we have to change buffers
-    if ( filepath != YSession::self()->currentView()->myBuffer()->fileName() ) {
+    if ( filepath != YSession::self()->currentView()->buffer()->fileName() ) {
         switchToViewOfFilename( filepath );
     }
 
@@ -164,7 +164,7 @@ static void doJumpToTag ( const YTagStackItem &entry )
 
 static bool jumpToJumpRecord(const YInfoJumpListRecord *record)
 {
-    YBuffer *buffer = YSession::self()->currentView()->myBuffer();
+    YBuffer *buffer = YSession::self()->currentView()->buffer();
 
     // check to see if we have to change buffers before jumping
     if ( record->filename() != buffer->fileName() ) {

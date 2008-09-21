@@ -134,7 +134,7 @@ int YLuaFuncs::line(lua_State *L)
     line = line ? line - 1 : 0;
 
     YView* cView = YSession::self()->currentView();
-    QString t = cView->myBuffer()->textline( line );
+    QString t = cView->buffer()->textline( line );
 
     lua_pushstring( L, t.toUtf8() ); // first result
     YASSERT_EQUALS( lua_gettop(L), 1 );
@@ -155,7 +155,7 @@ int YLuaFuncs::setline(lua_State *L)
         return 0;
     }
     YView* cView = YSession::self()->currentView();
-    cView->myBuffer()->action()->replaceLine(cView, sLine, text );
+    cView->buffer()->action()->replaceLine(cView, sLine, text );
 
     YASSERT_EQUALS( lua_gettop(L), 0 );
     return 0; // no result
@@ -176,8 +176,8 @@ int YLuaFuncs::insert(lua_State *L)
     QStringList list = text.split( "\n" );
     QStringList::Iterator it = list.begin(), end = list.end();
     for ( ; it != end; ++it ) {
-        if ( sLine >= cView->myBuffer()->lineCount() ) cView->myBuffer()->action()->insertNewLine( cView, 0, sLine );
-        cView->myBuffer()->action()->insertChar( cView, sCol, sLine, *it );
+        if ( sLine >= cView->buffer()->lineCount() ) cView->buffer()->action()->insertNewLine( cView, 0, sLine );
+        cView->buffer()->action()->insertChar( cView, sCol, sLine, *it );
         sCol = 0;
         sLine++;
     }
@@ -198,7 +198,7 @@ int YLuaFuncs::remove(lua_State *L)
     sLine = sLine ? sLine - 1 : 0;
 
     YView* cView = YSession::self()->currentView();
-    YBuffer * cBuffer = cView->myBuffer();
+    YBuffer * cBuffer = cView->buffer();
     YZAction * cAction = cBuffer->action();
     cAction->deleteChar(cView, sCol, sLine, sNb);
 
@@ -219,7 +219,7 @@ int YLuaFuncs::insertline(lua_State *L)
     QStringList list = text.split( "\n" );
     QStringList::Iterator it = list.begin(), end = list.end();
     for ( ; it != end; ++it ) {
-        YBuffer * cBuffer = cView->myBuffer();
+        YBuffer * cBuffer = cView->buffer();
         YZAction * cAction = cBuffer->action();
         if (!(cBuffer->isEmpty() && sLine == 0)) {
             cAction->insertNewLine( cView, 0, sLine );
@@ -239,7 +239,7 @@ int YLuaFuncs::appendline(lua_State *L)
     lua_pop(L, 1);
 
     YView* cView = YSession::self()->currentView();
-    YBuffer * cBuffer = cView->myBuffer();
+    YBuffer * cBuffer = cView->buffer();
     YZAction * cAction = cBuffer->action();
     QStringList list = text.split( "\n" );
     QStringList::Iterator it = list.begin(), end = list.end();
@@ -274,11 +274,11 @@ int YLuaFuncs::replace(lua_State *L)
     }
 
     YView* cView = YSession::self()->currentView();
-    if ( sLine >= cView->myBuffer()->lineCount() ) {
-        cView->myBuffer()->action()->insertNewLine( cView, 0, sLine );
+    if ( sLine >= cView->buffer()->lineCount() ) {
+        cView->buffer()->action()->insertNewLine( cView, 0, sLine );
         sCol = 0;
     }
-    cView->myBuffer()->action()->replaceChar( cView, sCol, sLine, text );
+    cView->buffer()->action()->replaceChar( cView, sCol, sLine, text );
 
     YASSERT_EQUALS( lua_gettop(L), 0 );
     return 0 ; // no result
@@ -380,7 +380,7 @@ int YLuaFuncs::deleteline(lua_State *L)
     YView* cView = YSession::self()->currentView();
     QList<QChar> regs;
     regs << QChar( '"' ) ;
-    cView->myBuffer()->action()->deleteLine( cView, sLine ? sLine - 1 : 0, 1, regs );
+    cView->buffer()->action()->deleteLine( cView, sLine ? sLine - 1 : 0, 1, regs );
 
     YASSERT_EQUALS( lua_gettop(L), 0 );
     return 0 ;
@@ -390,7 +390,7 @@ int YLuaFuncs::filename(lua_State *L)
 {
     if (!YLuaEngine::checkFunctionArguments(L, 0, 0, "filename", "")) return 0;
     YView* cView = YSession::self()->currentView();
-    QByteArray fn = cView->myBuffer()->fileName().toUtf8();
+    QByteArray fn = cView->buffer()->fileName().toUtf8();
     const char *filename = fn.data();
 
     lua_pushstring( L, filename );
@@ -423,7 +423,7 @@ int YLuaFuncs::linecount(lua_State *L)
 
     YView* cView = YSession::self()->currentView();
 
-    lua_pushnumber( L, cView->myBuffer()->lineCount()); // first result
+    lua_pushnumber( L, cView->buffer()->lineCount()); // first result
     YASSERT_EQUALS( lua_gettop(L), 1 );
     return 1 ; // one result
 }
@@ -779,7 +779,7 @@ int YLuaFuncs::matchpair(lua_State *L )
     bool found = false;
     YView *v = YSession::self()->currentView();
     YCursor s = v->getBufferCursor();
-    YCursor c = v->myBuffer()->action()->match(v, s, &found);
+    YCursor c = v->buffer()->action()->match(v, s, &found);
 
     lua_pushboolean(L , found);
     lua_pushnumber(L, c.x());

@@ -65,17 +65,17 @@ void YModeSearch::leave( YView* view )
 
 YCursor YModeSearch::replaySearch( YView* view, bool* found )
 {
-    return YSession::self()->search()->replayForward( view->myBuffer(), found, view->getBufferCursor() );
+    return YSession::self()->search()->replayForward( view->buffer(), found, view->getBufferCursor() );
 }
 YCursor YModeSearch::search( YView* view, const QString& s, bool* found )
 {
-    return YSession::self()->search()->forward( view->myBuffer(), s, found, view->getBufferCursor() );
+    return YSession::self()->search()->forward( view->buffer(), s, found, view->getBufferCursor() );
 }
 YCursor YModeSearch::search( YView* view, const QString& s, const YCursor begin, int* matchlength, bool* found )
 {
-    YCursor end( 0, view->myBuffer()->lineCount() - 1 );
-    end.setX( view->myBuffer()->textline( end.y() ).length() );
-    return view->myBuffer()->action()->search( view->myBuffer(), s, begin, end, matchlength, found );
+    YCursor end( 0, view->buffer()->lineCount() - 1 );
+    end.setX( view->buffer()->textline( end.y() ).length() );
+    return view->buffer()->action()->search( view->buffer(), s, begin, end, matchlength, found );
 }
 
 void YModeSearch::initModifierKeys()
@@ -187,18 +187,18 @@ YModeSearchBackward::~YModeSearchBackward()
 
 YCursor YModeSearchBackward::replaySearch( YView* view, bool * found )
 {
-    return YSession::self()->search()->replayBackward( view->myBuffer(), found, view->getBufferCursor() );
+    return YSession::self()->search()->replayBackward( view->buffer(), found, view->getBufferCursor() );
 }
 YCursor YModeSearchBackward::search( YView* view, const QString& s, bool* found )
 {
     //XXX YCursor buffer = view->getBufferCursor();
     //XXX view->gotoxy( buffer.x() + 1, buffer.y(), false );
-    return YSession::self()->search()->backward( view->myBuffer(), s, found, view->getBufferCursor() );
+    return YSession::self()->search()->backward( view->buffer(), s, found, view->getBufferCursor() );
 }
 YCursor YModeSearchBackward::search( YView* view, const QString& s, const YCursor begin, int* matchlength, bool* found )
 {
     YCursor end( 0, 0 );
-    return view->myBuffer()->action()->search( view->myBuffer(), s, begin, end, matchlength, found );
+    return view->buffer()->action()->search( view->buffer(), s, begin, end, matchlength, found );
 }
 
 

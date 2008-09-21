@@ -66,7 +66,7 @@ void QYCommandLine::keyPressEvent ( QKeyEvent * e )
 
 void QYCommandLine::focusInEvent (QFocusEvent * e)
 {
-    dbg() << "focusInEvent() for " << mView->myBuffer()->fileNameShort() << ", reason=" << e->reason() << endl;
+    dbg() << "focusInEvent() for " << mView->buffer()->fileNameShort() << ", reason=" << e->reason() << endl;
 
     //e->accept();
     QLineEdit::focusInEvent(e);
@@ -74,7 +74,7 @@ void QYCommandLine::focusInEvent (QFocusEvent * e)
 
 void QYCommandLine::focusOutEvent (QFocusEvent *e)
 {
-    dbg() << "focusOutEvent() for " << mView->myBuffer()->fileNameShort() << " ,reason=" << e->reason() << endl;
+    dbg() << "focusOutEvent() for " << mView->buffer()->fileNameShort() << " ,reason=" << e->reason() << endl;
     /*
     if ( mView->modePool()->currentType() != YMode::ModeEx 
     && mView->modePool()->currentType() != YMode::ModeSearch 

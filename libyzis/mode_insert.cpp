@@ -142,7 +142,7 @@ CmdState YModeInsert::execCommand( YView* mView, const YKeySequence& inputs,
     else
         text = parsePos->toString();
     ret = addText( mView, text );
-    QStringList ikeys = mView->myBuffer()->getLocalListOption("indentkeys");
+    QStringList ikeys = mView->buffer()->getLocalListOption("indentkeys");
     if ( ikeys.contains(text) )
         YSession::self()->eventCall("INDENT_ON_KEY", mView);
 
@@ -191,7 +191,7 @@ CmdState YModeInsert::completionPrevious( const YCommandArgs &args )
 CmdState YModeInsert::deleteWordBefore( const YCommandArgs &args )
 {
     YCursor cur = args.view->getBufferCursor();
-    YBuffer* mBuffer = args.view->myBuffer();
+    YBuffer* mBuffer = args.view->buffer();
     if ( cur.x() == 0 && cur.y() > 0 && args.view->getLocalStringOption( "backspace" ).contains( "eol" ) ) {
         mBuffer->action()->mergeNextLine( args.view, cur.y() - 1 );
         //mBuffer->action()->deleteChar( mView, *mView->getBufferCursor(), 1 ); see bug #158
@@ -235,7 +235,7 @@ CmdState YModeInsert::deleteWordBefore( const YCommandArgs &args )
 CmdState YModeInsert::deleteLineBefore( const YCommandArgs &args )
 {
     YCursor cur = args.view->getBufferCursor();
-    YBuffer* mBuffer = args.view->myBuffer();
+    YBuffer* mBuffer = args.view->buffer();
     if ( cur.x() == 0 && cur.y() > 0 && args.view->getLocalStringOption( "backspace" ).contains( "eol" ) ) {
         mBuffer->action()->mergeNextLine( args.view, cur.y() - 1 );
     } else {
@@ -249,7 +249,7 @@ CmdState YModeInsert::deleteChar( const YCommandArgs &args )
     dbg() << HERE() << endl ; 
 
     YCursor cur = args.view->getBufferCursor();
-    YBuffer* mBuffer = args.view->myBuffer();
+    YBuffer* mBuffer = args.view->buffer();
     if ( cur.x() == mBuffer->textline( cur.y() ).length()
             && args.view->getLocalStringOption( "backspace" ).contains( "eol" ) ) {
         mBuffer->action()->mergeNextLine( args.view, cur.y(), false );
@@ -262,7 +262,7 @@ CmdState YModeInsert::deleteChar( const YCommandArgs &args )
 CmdState YModeInsert::backspace( const YCommandArgs &args )
 {
     YCursor cur = args.view->getBufferCursor();
-    YBuffer* mBuffer = args.view->myBuffer();
+    YBuffer* mBuffer = args.view->buffer();
     if ( cur.x() == 0 && cur.y() > 0 && args.view->getLocalStringOption( "backspace" ).contains( "eol" ) ) {
         mBuffer->action()->mergeNextLine( args.view, cur.y() - 1 );
         //mBuffer->action()->deleteChar( mView, *mView->getBufferCursor(), 1 ); see bug #158
@@ -275,7 +275,7 @@ CmdState YModeInsert::backspace( const YCommandArgs &args )
 CmdState YModeInsert::commandEnter( const YCommandArgs &args )
 {
     YCursor cur = args.view->getBufferCursor();
-    YBuffer* mBuffer = args.view->myBuffer();
+    YBuffer* mBuffer = args.view->buffer();
     if ( args.view->getLocalBooleanOption("cindent") ) {
         args.view->indent();
     } else {
@@ -294,7 +294,7 @@ CmdState YModeInsert::commandEnter( const YCommandArgs &args )
 CmdState YModeInsert::addText( YView* mView, const QString& key )
 {
     dbg() << HERE() << endl;
-    mView->myBuffer()->action()->insertChar( mView, mView->getBufferCursor(), key );
+    mView->buffer()->action()->insertChar( mView, mView->getBufferCursor(), key );
     if ( mView->getLocalBooleanOption( "cindent" ) && key == "}" )
         mView->reindent( QPoint(mView->getBufferCursor().x() - 1, mView->getBufferCursor().y()));
     return CmdOk;
@@ -313,7 +313,7 @@ void YModeInsert::imCompose( YView* mView, const QString& entry )
             pos.setX( pos.x() - len );
         else
             pos.setX( 0 );
-        mView->myBuffer()->action()->replaceText( mView, pos, len, entry );
+        mView->buffer()->action()->replaceText( mView, pos, len, entry );
     } else {
         YKey input;
         input.fromString(entry);
@@ -359,7 +359,7 @@ CmdState YModeReplace::backspace( const YCommandArgs &args )
 
 CmdState YModeReplace::addText( YView* mView, const QString &text )
 {
-    mView->myBuffer()->action()->replaceChar( mView, mView->getBufferCursor(), text );
+    mView->buffer()->action()->replaceChar( mView, mView->getBufferCursor(), text );
     return CmdOk;
 }
 

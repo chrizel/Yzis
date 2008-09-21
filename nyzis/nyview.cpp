@@ -413,9 +413,9 @@ if ( changecolorok )
 
 void NYView::guiUpdateFileName()
 {
-    QString filename = myBuffer()->fileName();
-    int lineCount = myBuffer()->lineCount();
-    int wholeLength = myBuffer()->getWholeTextLength();
+    QString filename = buffer()->fileName();
+    int lineCount = buffer()->lineCount();
+    int wholeLength = buffer()->getWholeTextLength();
     displayInfo(QString("\"%1\" %2L, %3C" ).arg(filename).arg(lineCount).arg(wholeLength));
     restoreFocus();
 }

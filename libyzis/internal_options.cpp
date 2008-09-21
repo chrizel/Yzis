@@ -126,7 +126,7 @@ void doNothing( YBuffer*, YView* )
 void changeEncoding( YBuffer* b, YView* v )
 {
     if ( b == NULL && v )
-        b = v->myBuffer();
+        b = v->buffer();
     if ( b ) {
         QString enc = b->getLocalStringOption("encoding");
         if ( enc != b->encoding() ) {
@@ -165,7 +165,7 @@ void viewUpdateListChars( YBuffer*, YView* v )
 void setSyntax( YBuffer* b, YView* v )
 {
     if ( b == NULL && v )
-        b = v->myBuffer();
+        b = v->buffer();
     if ( b )
         b->setHighLight( b->getLocalStringOption("syntax") );
 }

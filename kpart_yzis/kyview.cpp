@@ -335,8 +335,8 @@ void KYView::scrollView( int value )
 {
     if ( value < 0 )
         value = 0;
-    else if ( value > myBuffer()->lineCount() - 1 )
-        value = myBuffer()->lineCount() - 1;
+    else if ( value > buffer()->lineCount() - 1 )
+        value = buffer()->lineCount() - 1;
 
     // only redraw if the view actually moves
     if (value != getCurrentTop()) {

@@ -151,11 +151,11 @@ CmdState YModeVisual::toLowerCase( const YCommandArgs& args )
 {
     CmdState state;
     YInterval inter = interval( args, &state );
-    YRawData t = args.view->myBuffer()->dataRegion(inter);
+    YRawData t = args.view->buffer()->dataRegion(inter);
     YRawData lt;
     for ( int i = 0; i < t.size(); i++ )
         lt << t[i].toLower();
-	args.view->myBuffer()->action()->replaceArea(args.view, inter, lt);
+	args.view->buffer()->action()->replaceArea(args.view, inter, lt);
 	args.view->commitNextUndo();
     return CmdOk;
 }
@@ -163,11 +163,11 @@ CmdState YModeVisual::toUpperCase( const YCommandArgs& args )
 {
     CmdState state;
     YInterval inter = interval( args, &state );
-    YRawData t = args.view->myBuffer()->dataRegion(inter);
+    YRawData t = args.view->buffer()->dataRegion(inter);
     YRawData lt;
     for ( int i = 0; i < t.size(); i++ )
         lt << t[i].toUpper();
-    args.view->myBuffer()->action()->replaceArea( args.view, inter, lt );
+    args.view->buffer()->action()->replaceArea( args.view, inter, lt );
     args.view->commitNextUndo();
     return CmdOk;
 }
@@ -176,10 +176,10 @@ CmdState YModeVisual::changeWholeLines(const YCommandArgs &args)
     CmdState state;
     YInterval i = interval(args, &state);
     YCursor from( 0, i.fromPos().y());
-    YCursor to( args.view->myBuffer()->getLineLength(i.toPos().y()) - 1, i.toPos().y());
+    YCursor to( args.view->buffer()->getLineLength(i.toPos().y()) - 1, i.toPos().y());
 
     // delete selected lines and enter insert mode
-    args.view->myBuffer()->action()->deleteArea( args.view, from, to, args.regs);
+    args.view->buffer()->action()->deleteArea( args.view, from, to, args.regs);
     args.view->modePool()->change( ModeInsert );
     return CmdOk;
 }
@@ -192,7 +192,7 @@ CmdState YModeVisual::deleteWholeLines(const YCommandArgs &args)
         --lines;
 
     // delete whole lines, even those who are only partially selected
-    args.view->myBuffer()->action()->deleteLine(args.view, i.fromPos().y(), lines, args.regs);
+    args.view->buffer()->action()->deleteLine(args.view, i.fromPos().y(), lines, args.regs);
     args.view->commitNextUndo();
 
     args.view->modePool()->pop();
@@ -207,10 +207,10 @@ CmdState YModeVisual::yankWholeLines(const YCommandArgs &args)
 
     if (args.view->modePool()->currentType() == YMode::ModeVisualLine) {
         // visual line mode, we don't need to do anything special
-        args.view->myBuffer()->action()->copyArea( args.view, i, args.regs);
+        args.view->buffer()->action()->copyArea( args.view, i, args.regs);
     } else {
         // copy whole lines, even those who are only partially selected
-        args.view->myBuffer()->action()->copyLine( args.view, i.fromPos(), lines, args.regs );
+        args.view->buffer()->action()->copyLine( args.view, i.fromPos(), lines, args.regs );
     }
 
     args.view->modePool()->pop();

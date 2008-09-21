@@ -669,7 +669,7 @@ bool YBuffer::save()
 
 void YBuffer::saveYzisInfo( YView* view )
 {
-    YASSERT( view->myBuffer() == this );
+    YASSERT( view->buffer() == this );
     /* save buffer cursor */
     YSession::self()->getYzisinfo()->updateStartPosition( this, view->getBufferCursor() );
     YSession::self()->getYzisinfo()->write();

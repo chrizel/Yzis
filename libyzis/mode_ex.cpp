@@ -464,8 +464,7 @@ CmdState YModeEx::execExCommand( YView* view, const QString& inputs )
         }
     }
     if ( _input.length() == 0 ) {
-        view->gotoxy( 0, to );
-        view->moveToFirstNonBlankOfLine();
+		view->gotoViewCursor(view->viewCursorFromLinePosition(view->myBuffer()->firstNonBlankChar(to), to));
     } else if ( !commandIsValid ) {
         YSession::self()->guiPopupMessage( _("Not an editor command: ") + _input);
     }
@@ -495,11 +494,13 @@ int YModeEx::rangeMark( const YExRangeArgs& args )
 {
     YViewMarker *mark = args.view->myBuffer()->viewMarks();
     if ( mark->contains(args.arg.mid(1)))
-        return mark->value(args.arg.mid(1)).mBuffer.y();
+        return mark->value(args.arg.mid(1)).line();
     return -1;
 }
 int YModeEx::rangeVisual( const YExRangeArgs& args )
 {
+	//TODO
+#if 0
     YSelectionMap visual = args.view->visualSelection();
     if ( visual.size() ) {
         if ( args.arg.mid( 1 ) == "<" )
@@ -507,6 +508,7 @@ int YModeEx::rangeVisual( const YExRangeArgs& args )
         else if ( args.arg.mid( 1 ) == ">" )
             return visual[ 0 ].toPos().y();
     }
+#endif
     return -1;
 }
 int YModeEx::rangeSearch( const YExRangeArgs& args )
@@ -814,8 +816,7 @@ CmdState YModeEx::substitute( const YExCommandArgs& args )
         if ( needsUpdate ) {
             args.view->commitNextUndo();
             args.view->myBuffer()->updateAllViews();
-            args.view->gotoxy( 0, lastLine );
-            args.view->moveToFirstNonBlankOfLine();
+			args.view->gotoViewCursor(args.view->viewCursorFromLinePosition(args.view->myBuffer()->firstNonBlankChar(lastLine), lastLine));
         }
     }
 
@@ -1063,8 +1064,7 @@ CmdState YModeEx::indent( const YExCommandArgs& args )
         args.view->myBuffer()->action()->indentLine( args.view, i, count );
     }
     args.view->commitNextUndo();
-    args.view->gotoxy( 0, args.toLine );
-    args.view->moveToFirstNonBlankOfLine();
+	args.view->gotoViewCursor(args.view->viewCursorFromLinePosition(args.view->myBuffer()->firstNonBlankChar(args.toLine), args.toLine));
     return CmdOk;
 }
 
@@ -1249,8 +1249,7 @@ CmdState YModeEx::retab( const YExCommandArgs& args )
     YBuffer *buffer = args.view->myBuffer();
 
     // save the cursor's position on screen so it can be restored
-    int cursordx = args.view->viewCursor().screenX();
-    int cursordy = args.view->viewCursor().screenY();
+	YCursor cursor = args.view->viewCursor().buffer();
 
     int tabstop = args.view->getLocalIntegerOption("tabstop");
     bool changed = false;
@@ -1349,7 +1348,7 @@ CmdState YModeEx::retab( const YExCommandArgs& args )
         args.view->commitNextUndo();
 
     // move the cursor to the same *screen* position it was at
-    args.view->gotodxdy(cursordx, cursordy);
+    args.view->gotoViewCursor(args.view->viewCursorFromLinePosition(cursor));
 
     args.view->recalcScreen();
 

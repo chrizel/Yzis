@@ -55,7 +55,7 @@ void YModeInsert::enter( YView* mView )
 void YModeInsert::leave( YView* mView )
 {
     if ( mView->getBufferCursor().x() > 0 )
-        mView->moveLeft();
+		mView->gotoViewCursor(mView->moveHorizontal(-1));
 }
 
 void YModeInsert::initMotionPool()
@@ -353,7 +353,7 @@ CmdState YModeReplace::commandInsert( const YCommandArgs &args )
 
 CmdState YModeReplace::backspace( const YCommandArgs &args )
 {
-    args.view->moveLeft();
+	args.view->gotoViewCursor(args.view->moveHorizontal(-1));
     return CmdOk;
 }
 

@@ -295,7 +295,7 @@ void YZAction::indentLine( YView* pView, int Y, int count )
             line = line.replace( reg, "" );
     }
     replaceLine( pView, Y, line );
-    pView->moveToFirstNonBlankOfLine();
+    pView->gotoViewCursor(pView->viewCursorFromLinePosition(Y, pView->myBuffer()->firstNonBlankChar(Y)));
     commitViewsChanges(mBuffer);
 }
 
@@ -456,8 +456,7 @@ void YZAction::pasteContent( YView *view, QChar registr, bool after )
             commitViewsChanges(mBuffer);
             view->gotoxy( list[ i ].length(), pos.y() + i );
         } else if ( copyWholeLinesOnly ) {
-            view->gotoxy( 0, pos.y() + 1 );
-            view->moveToFirstNonBlankOfLine();
+            view->gotoxy( view->myBuffer()->firstNonBlankChar(pos.y()+1), pos.y() + 1 );
         }
 
     } else if ( !after ) { //paste whole lines before current char

@@ -9,18 +9,13 @@ include_directories(${YZIS_INCLUDES})
 ########### next target ###############
 
 set(yzis_LIB_SRCS 
-   drawbuffer.cpp 
-   view.cpp 
-   color.cpp 
-   mode_visual.cpp 
    action.cpp 
    buffer.cpp 
+   color.cpp 
    cursor.cpp 
    debug.cpp 
+   drawbuffer.cpp 
    events.cpp 
-   luaengine.cpp 
-   luaregexp.cpp 
-   luafuncs.cpp 
    folding.cpp 
    font.cpp 
    history.cpp 
@@ -28,15 +23,19 @@ set(yzis_LIB_SRCS
    keys.cpp
    line.cpp 
    linesearch.cpp 
+   luaengine.cpp 
+   luafuncs.cpp 
+   luaregexp.cpp 
    mapping.cpp 
    mark.cpp 
-   mode.cpp 
-   mode_pool.cpp 
    mode_command.cpp 
    mode_complete.cpp 
+   mode.cpp 
    mode_ex.cpp 
    mode_insert.cpp 
+   mode_pool.cpp 
    mode_search.cpp 
+   mode_visual.cpp 
    option.cpp 
    registers.cpp 
    resourcemgr.cpp 
@@ -47,6 +46,7 @@ set(yzis_LIB_SRCS
    tags_interface.cpp 
    tags_stack.cpp 
    undo.cpp 
+   view.cpp 
    viewcursor.cpp 
    yzisinfo.cpp 
    yzisinfojumplistrecord.cpp 

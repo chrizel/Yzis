@@ -155,7 +155,7 @@ static void doJumpToTag ( const YTagStackItem &entry )
 
         if ( pos != -1 ) {
             YSession::self()->currentView()->centerViewVertically( i );
-            YSession::self()->currentView()->gotoxy( 0, i, true );
+            YSession::self()->currentView()->gotoxy( 0, i );
             YSession::self()->saveJumpPosition();
             break;
         }
@@ -180,7 +180,7 @@ static bool jumpToJumpRecord(const YInfoJumpListRecord *record)
 
     const YCursor &cursor = record->position();
     YSession::self()->currentView()->centerViewVertically( cursor.y() );
-    YSession::self()->currentView()->gotodxdy( cursor, true );
+    YSession::self()->currentView()->gotodxdy( cursor );
 
     return true;
 }

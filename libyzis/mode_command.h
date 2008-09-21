@@ -37,7 +37,6 @@ class YMotion;
 class YInterval;
 class YModeCommand;
 class YView;
-class YViewCursor;
 
 /** @file mode_command.h
   * Some documentation
@@ -176,7 +175,7 @@ public:
     bool usercount;
 };
 
-typedef YViewCursor (YModeCommand::*MotionMethod) (const YMotionArgs&, CmdState *, MotionStick*);
+typedef YCursor (YModeCommand::*MotionMethod) (const YMotionArgs&, CmdState *, MotionStick*);
 
 /**
  * Command mode (The default mode of Yzis)
@@ -211,45 +210,44 @@ public:
     YCursor execMotion(YView *view, const QString &inputs, int count, bool usercount, bool *stopped );
 
     // methods implementing motions
-    YViewCursor moveLeft(const YMotionArgs &args, CmdState *state, MotionStick* stick = NULL);
-    YViewCursor moveRight(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
-    YViewCursor moveLeftWrap(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
-    YViewCursor moveRightWrap(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
-    YViewCursor moveDown(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
-    YViewCursor moveUp(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
-    YViewCursor moveWordForward(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
-    YViewCursor moveSWordForward(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
-    YViewCursor moveWordBackward(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
-    YViewCursor moveSWordBackward(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
-    YViewCursor moveWordEndForward(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
-    YViewCursor moveSWordEndForward(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
-    YViewCursor moveWordEndBackward(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
-    YViewCursor moveSWordEndBackward(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
-    YViewCursor gotoSOL(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
-    YViewCursor gotoEOL(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
-    YViewCursor gotoStartOfDocument(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
-    YViewCursor gotoEndOfDocument(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
-    //YViewCursor find(const YMotionArgs &args, MotionStick* ms = NULL);
-    YViewCursor findNext(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
-    YViewCursor findBeforeNext(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
-    YViewCursor findPrevious(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
-    YViewCursor findAfterPrevious(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
-    YViewCursor repeatFind(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
-    YViewCursor matchPair(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
-    YViewCursor firstNonBlank(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
-    YViewCursor gotoMark(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
-    YViewCursor firstNonBlankNextLine(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
-    YViewCursor firstNonBlankPreviousLine(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
-    YViewCursor gotoLine(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
-    YViewCursor searchWord(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
-    YViewCursor searchNext(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
-    YViewCursor searchPrev(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
-    YViewCursor nextEmptyLine(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
-    YViewCursor previousEmptyLine(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
-    YViewCursor scrollPageUp( const YMotionArgs &args, CmdState *state , MotionStick* ms = NULL);
-    YViewCursor scrollPageDown( const YMotionArgs &args, CmdState *state , MotionStick* ms = NULL);
-    YViewCursor scrollLineUp( const YMotionArgs &args, CmdState *state , MotionStick* ms = NULL);
-    YViewCursor scrollLineDown( const YMotionArgs &args, CmdState *state , MotionStick* ms = NULL);
+    YCursor moveLeft(const YMotionArgs &args, CmdState *state, MotionStick* stick = NULL);
+    YCursor moveRight(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
+    YCursor moveLeftWrap(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
+    YCursor moveRightWrap(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
+    YCursor moveDown(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
+    YCursor moveUp(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
+    YCursor moveWordForward(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
+    YCursor moveSWordForward(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
+    YCursor moveWordBackward(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
+    YCursor moveSWordBackward(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
+    YCursor moveWordEndForward(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
+    YCursor moveSWordEndForward(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
+    YCursor moveWordEndBackward(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
+    YCursor moveSWordEndBackward(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
+    YCursor gotoSOL(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
+    YCursor gotoEOL(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
+    YCursor gotoStartOfDocument(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
+    YCursor gotoEndOfDocument(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
+    YCursor findNext(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
+    YCursor findBeforeNext(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
+    YCursor findPrevious(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
+    YCursor findAfterPrevious(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
+    YCursor repeatFind(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
+    YCursor matchPair(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
+    YCursor firstNonBlank(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
+    YCursor gotoMark(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
+    YCursor firstNonBlankNextLine(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
+    YCursor firstNonBlankPreviousLine(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
+    YCursor gotoLine(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
+    YCursor searchWord(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
+    YCursor searchNext(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
+    YCursor searchPrev(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
+    YCursor nextEmptyLine(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
+    YCursor previousEmptyLine(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
+    YCursor scrollPageUp( const YMotionArgs &args, CmdState *state , MotionStick* ms = NULL);
+    YCursor scrollPageDown( const YMotionArgs &args, CmdState *state , MotionStick* ms = NULL);
+    YCursor scrollLineUp( const YMotionArgs &args, CmdState *state , MotionStick* ms = NULL);
+    YCursor scrollLineDown( const YMotionArgs &args, CmdState *state , MotionStick* ms = NULL);
 
     // methods implementing commands
     CmdState execMotion(const YCommandArgs &args);

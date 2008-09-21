@@ -210,8 +210,8 @@ void YSearch::highlightLine( YBuffer* buffer, int line )
         YCursor cur( from );
         YCursor end( buffer->textline( line ).length(), line );
 
-        YSelection* searchMap = v->getSelectionPool()->search();
-        searchMap->delInterval( YInterval( from, end ) );
+        //XXX YSelection* searchMap = v->getSelectionPool()->search();
+        //XXX searchMap->delInterval( YInterval( from, end ) );
 
         if ( end.x() > 0 ) end.setX( end.x() - 1 );
 
@@ -222,14 +222,14 @@ void YSearch::highlightLine( YBuffer* buffer, int line )
             if ( found && matchedLength > 0 ) {
                 cur = from;
                 cur.setX( cur.x() + matchedLength - 1 );
-                searchMap->addInterval( YInterval( from, cur ) );
+                //XXX searchMap->addInterval( YInterval( from, cur ) );
                 cur.setX( cur.x() + 1 );
                 //    dbg() << "cur = " << cur << "; end = " << end << endl;
             }
         } while ( found );
 
         foreach( YView *view, views ) {
-            view->getSelectionPool()->setSearch( searchMap );
+            //XXX view->getSelectionPool()->setSearch( searchMap );
         }
     }
 }
@@ -241,6 +241,8 @@ void YSearch::shiftHighlight( YBuffer* buffer, int fromLine, int shift )
         return ;
     YView* v = views.front();
     if ( v ) {
+		//TODO
+#if 0
         YSelectionMap searchMap = v->getSelectionPool()->search()->map();
 
         if ( shift + fromLine < 0 ) fromLine = -shift;
@@ -259,11 +261,14 @@ void YSearch::shiftHighlight( YBuffer* buffer, int fromLine, int shift )
 
         foreach( YView *view, views )
         d->highlightSearch( view, searchMap );
+#endif
     }
 }
 
 void YSearch::Private::highlightSearch( YView *view, YSelectionMap searchMap )
 {
+	//TODO
+#if 0
     view->setPaintAutoCommit( false );
     YSelection* vMap = view->getSelectionPool()->search();
     vMap->clear();
@@ -272,6 +277,7 @@ void YSearch::Private::highlightSearch( YView *view, YSelectionMap searchMap )
         //  dbg() << "new search Map : " << *(vMap) << endl;
     }
     view->commitPaintEvent();
+#endif
 }
 
 void YSearch::update()

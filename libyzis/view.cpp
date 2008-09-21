@@ -437,6 +437,14 @@ void YView::gotoxyAndStick( const YCursor& buffer )
 	gotoViewCursor(viewCursorFromLinePosition(buffer.line(), buffer.column()));
 	stickToColumn();
 }
+void YView::gotodxdy( int column, int row )
+{
+	gotoViewCursor(viewCursorFromRowColumn(row, column));
+}
+void YView::gotodxdy( const YCursor& screen )
+{
+	gotoViewCursor(viewCursorFromRowColumn(screen.line(), screen.column()));
+}
 
 YViewCursor YView::moveVertical( int ticks )
 {

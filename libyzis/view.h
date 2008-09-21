@@ -245,6 +245,8 @@ class YZIS_EXPORT YView : public YViewIface
 	void gotoxyAndStick( int position, int line ) YZIS_DEPRECATED;
 	void gotoxy( const YCursor& buffer ) YZIS_DEPRECATED;
 	void gotoxyAndStick( const YCursor& buffer ) YZIS_DEPRECATED;
+	void gotodxdy( int column, int row ) YZIS_DEPRECATED;
+	void gotodxdy( const YCursor& screen ) YZIS_DEPRECATED;
 
     /**
      * TODO: docstring
@@ -435,6 +437,9 @@ class YZIS_EXPORT YView : public YViewIface
     {
         return mMainCursor;
     }
+	inline int currentLine() const { return mMainCursor.line(); }
+	inline int currentPosition() const { return mMainCursor.position(); }
+	inline int currentColumn() const { return mMainCursor.column(); }
 
     /**
      * Get the current cursor information

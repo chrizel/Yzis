@@ -84,7 +84,7 @@ void YModeSearch::initModifierKeys()
 }
 CmdState YModeSearch::execCommand( YView* view, const YKeySequence& keys, YKeySequence::const_iterator &parsePos )
 {
-    YSelection* searchSelection = view->getSelectionPool()->search();
+    //XXX YSelection* searchSelection = view->getSelectionPool()->search();
 
     if ( *parsePos == Qt::Key_Enter || *parsePos == Qt::Key_Return) {
         QString what = view->guiGetCommandLineText();
@@ -134,7 +134,7 @@ CmdState YModeSearch::execCommand( YView* view, const YKeySequence& keys, YKeySe
             view->setPaintAutoCommit( false );
             incSearchFound = false;
             //view->sendXXXPaintEvent( searchSelection->map() );
-            searchSelection->clear();
+            //XXX searchSelection->clear();
             view->commitPaintEvent();
         }
         view->modePool()->pop();
@@ -160,14 +160,14 @@ CmdState YModeSearch::execCommand( YView* view, const YKeySequence& keys, YKeySe
             if ( view->getLocalBooleanOption("hlsearch") ) {
                 YCursor endResult(incSearchResult );
                 endResult.setX( endResult.x() + matchlength - 1 );
-                searchSelection->addInterval( YInterval(incSearchResult, endResult) );
+                //XXX  searchSelection->addInterval( YInterval(incSearchResult, endResult) );
                 //view->sendXXXPaintEvent( searchSelection->map() );
             }
             view->gotoxyAndStick(incSearchResult );
         } else {
             view->gotoxy( mSearchBegin.x(), mSearchBegin.y() );
             //view->sendXXXPaintEvent( searchSelection->map() );
-            searchSelection->clear();
+            //XXX searchSelection->clear();
         }
         view->commitPaintEvent();
     }
@@ -191,8 +191,8 @@ YCursor YModeSearchBackward::replaySearch( YView* view, bool * found )
 }
 YCursor YModeSearchBackward::search( YView* view, const QString& s, bool* found )
 {
-    YCursor buffer = view->getBufferCursor();
-    view->gotoxy( buffer.x() + 1, buffer.y(), false );
+    //XXX YCursor buffer = view->getBufferCursor();
+    //XXX view->gotoxy( buffer.x() + 1, buffer.y(), false );
     return YSession::self()->search()->backward( view->myBuffer(), s, found, view->getBufferCursor() );
 }
 YCursor YModeSearchBackward::search( YView* view, const QString& s, const YCursor begin, int* matchlength, bool* found )

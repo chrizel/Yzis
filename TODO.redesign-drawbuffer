@@ -1,8 +1,9 @@
-
-YView, YAction: cursor/stickyCol, gotod?[xy]
+ 
 YView/YDrawLine: take care of wrapped tab
 
 YDrawBuffer: Selections
+
+YAction: still needed?
 
 YBuffer::insertRegion: shift search hl, etc..
 YBuffer::deleteRegion: shift search hl, etc..

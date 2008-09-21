@@ -20,152 +20,20 @@
 #ifndef DRAWBUFFER_H
 #define DRAWBUFFER_H
 
-/* Qt */
 #include <QList>
 
-/* Yzis */
 #include "yzis.h"
-#include "color.h"
-#include "font.h"
 #include "selection.h"
-#include "viewcursor.h"
+#include "drawbufferiterators.h"
 
 class YDrawLine;
-class YCursor;
 typedef QList<YDrawLine> YDrawSection;
 
-class YDrawCell
-{
-public:
-	YDrawCell();
-	YDrawCell( const YDrawCell& cell );
-	~YDrawCell();
+#include "drawline.h"
 
-	/* change properties for the whole cell */
-	void addSelection( yzis::SelectionType selType );
-	void delSelection( yzis::SelectionType selType );
-	void setForegroundColor( const YColor& color );
-	void setBackgroundColor( const YColor& color );
-	void setFont( const YFont& font );
-	void clear();
-	
-	int step( const QString& data );
 
-	/* properties accessors */
-	inline bool hasSelection( yzis::SelectionType selType ) const { return mSelections & selType; }
-	inline YColor backgroundColor() const { return mColorBackground; }
-	inline YColor foregroundColor() const { return mColorForeground; }
-	inline YFont font() const { return mFont; }
-	inline QString content() const { return mContent; };
-	inline int width() const { return mContent.length(); };
-	int widthForLength( int length ) const;
-	int lengthForWidth( int width ) const;
-	inline int length() const { return mSteps.count(); }
-
-	/* steps (buffer <-> draw) */
-	inline const QList<int> steps() const { return mSteps; }
-
-	/* splitters */
-	YDrawCell left( int column ) const;
-	YDrawCell right( int column ) const;
-	YDrawCell left_steps( int steps ) const;
-	YDrawCell right_steps( int steps ) const;
-
-private:
-	int mSelections;
-	YColor mColorForeground;
-	YColor mColorBackground;
-	YFont mFont;
-	QString mContent;
-	QList<int> mSteps;
-	int mStepsShift;
-};
-
-struct YDrawCellInfo
-{
-	enum YDrawCellType {
-		Data,
-		EOL
-	};
-
-	YDrawCellType type;
-	YCursor pos;
-	YDrawCell cell;
-};
-
-class YDrawBuffer;
-
-class YDrawBufferAbstractIterator
-{
-public:
-	virtual ~YDrawBufferAbstractIterator() {};
-
-	/* TODO: docstring */
-	bool isValid() const;
-	/* TODO: docstring */
-	void next();
-
-	/* TODO: docstring */
-	const YDrawCellInfo drawCellInfo() const;
-	/* TODO: docstring */
-	int bufferLine() const;
-	/* TODO: docstring */
-	int screenLine() const;
-	/* TODO: docstring */
-	int lineHeight() const;
-	/* TODO: screenColumn */
-
-protected:
-	YDrawBufferAbstractIterator( const YDrawBuffer* db );
-	void setup( const YInterval& i, yzis::IntervalType itype );
-	void step();
-
-	virtual void setupCell( int shift, int cut ) = 0;
-	virtual void setupEOLCell() = 0;
-
-	int getCut();
-
-	const YDrawBuffer* mDrawBuffer;
-	YInterval mI;
-	yzis::IntervalType mIntervalType;
-	bool mStopped;
-	int mCurBLine;
-	int mCurLine;
-	int mCurCell;
-	YCursor mPos;
-};
-
-class YZIS_EXPORT YDrawBufferConstIterator : public YDrawBufferAbstractIterator
-{
-public:
-	virtual ~YDrawBufferConstIterator() {}
-	const YDrawCellInfo drawCellInfo() const;
-
-protected :
-	virtual void setupCell( int shift, int cut );
-	virtual void setupEOLCell();
-	YDrawBufferConstIterator( const YDrawBuffer* db ) : YDrawBufferAbstractIterator(db) {}
-	YDrawCellInfo mNext;
-
-	friend class YDrawBuffer;
-};
-
-class YZIS_EXPORT YDrawBufferIterator : public YDrawBufferAbstractIterator
-{
-public:
-	virtual ~YDrawBufferIterator() {}
-	inline YDrawCell* cell() const { return mNext; }
-	/* TODO: flush -> try to join splitted cells */
-
-protected:
-	YDrawBuffer* mDrawBuffer;
-	virtual void setupCell( int shift, int cut );
-	virtual void setupEOLCell();
-	YDrawBufferIterator( const YDrawBuffer* db ) : YDrawBufferAbstractIterator(db) {}
-	YDrawCell* mNext;
-
-	friend class YDrawBuffer;
-};
+class YDrawCell;
+class YCursor;
 
 
 class YZIS_EXPORT YDrawBuffer
@@ -261,42 +129,5 @@ private :
 
 extern YZIS_EXPORT YDebugStream& operator<< ( YDebugStream& out, const YDrawBuffer& buff );
 
-class YZIS_EXPORT YDrawLine : public QList<YDrawCell> {
-public :
-	YDrawLine();
-	virtual ~YDrawLine();
-
-    void setFont( const YFont& f );
-    void setColor( const YColor& c );
-    void setBackgroundColor( const YColor& c );
-	// TODO: setOutline
-
-	void clear();
-
-    int step( const QString& c );
-	void flush();
-
-	YDrawSection arrange( int columns ) const;
-
-	inline const int width() const { return mWidth; }
-	inline int length() const { return mLength; }
-
-private:
-
-	/* current cell */
-    YDrawCell mCur;
-    /* working cell */
-    YDrawCell* mCell;
-
-	int mWidth;
-	int mLength;
-
-    bool changed;
-
-	friend class YDrawBuffer;
-	friend class YDrawBufferIterator;
-    friend YDebugStream& operator<< ( YDebugStream& out, const YDrawLine& dl );
-};
-extern YZIS_EXPORT YDebugStream& operator<< ( YDebugStream& out, const YDrawLine& dl );
 
 #endif

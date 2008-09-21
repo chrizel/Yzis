@@ -15,6 +15,9 @@ set(yzis_LIB_SRCS
    cursor.cpp 
    debug.cpp 
    drawbuffer.cpp 
+   drawbufferiterators.cpp 
+   drawcell.cpp 
+   drawline.cpp 
    events.cpp 
    folding.cpp 
    font.cpp 

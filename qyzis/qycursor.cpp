@@ -70,7 +70,7 @@ void QYCursor::paintEvent( QPaintEvent* pe )
     Q_UNUSED(pe);
 
 	YCursor my_pos = mEdit->translateRealToPosition(pos());
-	YDrawBufferIterator it = mEdit->mView->mDrawBuffer.iterator(YInterval(my_pos, my_pos), yzis::ScreenInterval);
+	YDrawBufferConstIterator it = mEdit->mView->mDrawBuffer.const_iterator(YInterval(my_pos, my_pos), yzis::ScreenInterval);
 	const YDrawCell cell = it.drawCellInfo().cell;
 
     QColor cbg, cfg;

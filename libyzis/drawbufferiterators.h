@@ -50,8 +50,6 @@ public:
 	void next();
 
 	/* TODO: docstring */
-	const YDrawCellInfo drawCellInfo() const;
-	/* TODO: docstring */
 	int bufferLine() const;
 	/* TODO: docstring */
 	int screenLine() const;

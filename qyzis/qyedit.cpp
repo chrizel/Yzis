@@ -245,7 +245,10 @@ void QYEdit::mousePressEvent ( QMouseEvent * e )
 
     if (( e->button() == Qt::LeftButton ) || ( e->button() == Qt::RightButton )) {
         if ( mView->modePool()->currentType() != YMode::ModeEx ) {
-            mView->gotodxdyAndStick( translateRealToAbsolutePosition( e->pos() ) );
+			YCursor screenPosition = translateRealToAbsolutePosition(e->pos());
+			YViewCursor dest = mView->viewCursorFromRowColumn(screenPosition.line(), screenPosition.column());
+			mView->gotoViewCursor(dest);
+			mView->stickToColumn();
         }
     } else if ( e->button() == Qt::MidButton ) {
         QString text = QApplication::clipboard()->text( QClipboard::Selection );
@@ -257,7 +260,7 @@ void QYEdit::mousePressEvent ( QMouseEvent * e )
                 YSession::self()->setRegister( reg, text.split("\n") );
                                 mView->buffer()->action()->pasteContent( mView, reg, false);
                 //mView->pasteContent( reg, false );
-                mView->moveRight();
+                mView->moveHorizontal(1);
             }
         }
     }
@@ -338,32 +341,32 @@ void QYEdit::scroll( int dx, int dy )
 
 void QYEdit::guiDrawCell( YCursor pos , const YDrawCell& cell, QPainter* p )
 {
-    //dbg() << "QYEdit::guiDrawCell(" << x << "," << y <<",'" << cell.c << "')" << endl;
+    //dbg() << "QYEdit::guiDrawCell(" << x << "," << y <<",'" << cell.content() << "')" << endl;
     p->save();
     bool has_bg = false;
-    if ( !cell.sel ) {
-        if ( cell.fg.isValid() )
-            p->setPen( cell.fg.rgb() );
-        if ( cell.bg.isValid() ) {
-            has_bg = true;
-            p->setBackground( QColor(cell.bg.rgb()) );
-        }
-    } else if ( cell.sel & YSelectionPool::Visual ) {
+	if ( cell.hasSelection(yzis::SelectionVisual) ) {
         has_bg = true;
         p->setBackground( QColor(181, 24, 181) ); //XXX setting
         p->setPen( Qt::white );
-    } else {
+	} else if ( cell.hasSelection(yzis::SelectionAny) ) {
         has_bg = true;
-        p->setBackground( cell.fg.isValid() ? QColor(cell.fg.rgb()) : palette().color( QPalette::WindowText ) );
-        p->setPen( cell.bg.isValid() ? QColor(cell.bg.rgb()) : palette().color( QPalette::Window ) );
+        p->setBackground( cell.foregroundColor().isValid() ? QColor(cell.foregroundColor().rgb()) : palette().color( QPalette::WindowText ) );
+        p->setPen( cell.backgroundColor().isValid() ? QColor(cell.backgroundColor().rgb()) : palette().color( QPalette::Window ) );
+	} else {
+        if ( cell.foregroundColor().isValid() )
+            p->setPen( cell.foregroundColor().rgb() );
+        if ( cell.backgroundColor().isValid() ) {
+            has_bg = true;
+            p->setBackground( QColor(cell.backgroundColor().rgb()) );
+        }
     }
-    QRect r( pos.x()*fontMetrics().maxWidth(), pos.y()*fontMetrics().lineSpacing(), cell.c.length()*fontMetrics().maxWidth(), fontMetrics().lineSpacing() );
+    QRect r( pos.x()*fontMetrics().maxWidth(), pos.y()*fontMetrics().lineSpacing(), cell.content().length()*fontMetrics().maxWidth(), fontMetrics().lineSpacing() );
 
     //dbg() << "guiDrawCell: r=" << r.topLeft() << "," << r.bottomRight() << " has_bg=" << has_bg << endl;
     //dbg() << "guiDrawCell: fg=" << p->pen().color().name() << endl;
     if ( has_bg )
         p->eraseRect( r );
-    p->drawText( r, cell.c );
+    p->drawText( r, cell.content() );
     p->restore();
 }
 

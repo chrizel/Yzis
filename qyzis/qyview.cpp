@@ -45,9 +45,9 @@
 #define dbg() yzDebug("QYView")
 #define err() yzError("QYView")
 
-QYView::QYView ( YBuffer * buffer, QYSession * qysession)
+QYView::QYView ( YBuffer* b, QYSession * qysession)
         : QWidget( ),
-          YView(  buffer, qysession, 0, 0 ),
+          YView(b, qysession, 0, 0),
           mSession( qysession )
 {
     mEdit = new QYEdit( this );
@@ -218,7 +218,7 @@ void QYView::guiDrawSetLineNumber( int y, int n, int h )
 }
 QChar QYView::currentChar() const
 {
-    return buffer()->textline( viewCursor().bufferY() ).at( viewCursor().bufferX() );
+    return buffer()->textline(viewCursor().line()).at(viewCursor().position());
 }
 
 void QYView::wheelEvent( QWheelEvent * e )
@@ -283,7 +283,8 @@ void QYView::guiUpdateFileName()
 
 void QYView::guiUpdateCursorPosition()
 {
-    mEdit->setCursor(viewCursor().screenX(), viewCursor().screenY());
+	int line_h = viewCursor().column() / getColumnsVisible();
+    mEdit->setCursor(viewCursor().column() % getColumnsVisible(), viewCursor().line() + line_h);
 }
 
 void QYView::guiUpdateMode()

@@ -1173,20 +1173,17 @@ YCursor YModeCommand::gotoLine(const YMotionArgs &args, CmdState *state, MotionS
 
     if ( args.count > 0 ) line = args.count - 1;
 
-	YViewCursor dest;
+	int dest_line = 0;
     if ( args.cmd == "gg" || ( args.cmd == "G" && args.usercount ) ) {
-		dest = args.view->viewCursorGotoLine(line);
-    } else {
-        if ( args.cmd == "G" ) {
-			dest = args.view->viewCursorGotoLine(args.view->buffer()->lineCount()-1);
-        } else {
-			dest = args.view->viewCursorGotoLine(0);
-		}
+		dest_line = qMin(line, args.view->buffer()->lineCount()-1);
+    } else if ( args.cmd == "G" ) {
+		dest_line = args.view->buffer()->lineCount()-1;
     }
-
-    YSession::self()->saveJumpPosition();
-
-    return dest.buffer();
+	if ( args.view->getLocalBooleanOption("startofline") ) {
+		return YCursor(0, dest_line);
+	} else {
+		return args.view->viewCursorFromStickedLine(dest_line).buffer();
+	}
 }
 
 YCursor YModeCommand::searchWord(const YMotionArgs &args, CmdState *state, MotionStick* )

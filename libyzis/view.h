@@ -239,8 +239,6 @@ class YZIS_EXPORT YView : public YViewIface
 	YViewCursor viewCursorMoveVertical( int ticks );
     /* TODO: docstring */
 	YViewCursor viewCursorMoveHorizontal( int ticks, bool wrap = false, bool* stopped = NULL );
-	/* TODO: docstring */
-	YViewCursor viewCursorGotoLine( int line );
 
 	/* TODO: docstring */
 	void gotoViewCursor( const YViewCursor& cursor );

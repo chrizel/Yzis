@@ -495,16 +495,6 @@ YViewCursor YView::viewCursorMoveHorizontal( int ticks, bool wrap, bool* stopped
 	return viewCursorFromLinePosition(line, position);
 }
 
-YViewCursor YView::viewCursorGotoLine( int line )
-{
-	line = qMin(line, mBuffer->lineCount() - 1);
-    if ( getLocalBooleanOption("startofline") ) {
-		return viewCursorFromLinePosition(line, mBuffer->firstNonBlankChar(line));
-    } else {
-		return viewCursorFromStickedLine(line);
-    }
-}
-
 void YView::applyStartPosition( const YCursor pos )
 {
     if ( pos.y() >= 0 ) {

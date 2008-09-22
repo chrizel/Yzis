@@ -109,8 +109,9 @@ enum MapMode {
 
 /** Different selection types */
 enum SelectionType {
-	SelectionSearch = 0x8, //!< hlsearch
-	SelectionVisual = 0x10, //!< visual mode
+	SelectionAny = 0x100, //!< any
+	SelectionSearch = 0x108, //!< hlsearch
+	SelectionVisual = 0x110, //!< visual mode
 };
 
 /** YInterval types */

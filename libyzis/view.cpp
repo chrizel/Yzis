@@ -498,12 +498,14 @@ YViewCursor YView::viewCursorMoveHorizontal( int ticks, bool wrap, bool* stopped
 void YView::applyStartPosition( const YCursor pos )
 {
     if ( pos.y() >= 0 ) {
+		YViewCursor dest;
         if ( pos.x() >= 0 ) {
-            gotoLinePositionAndStick( pos );
+			dest = viewCursorFromLinePosition(pos);
         } else {
-            viewCursorGotoLine( pos.y() );
-			stickToColumn();
+			dest = viewCursorFromStickedLine(pos.y());
         }
+		gotoViewCursor(dest);
+		stickToColumn();
     }
 }
 

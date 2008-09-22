@@ -92,7 +92,7 @@ int YDrawCell::widthForLength( int length ) const
 {
 	YASSERT(length >= 0);
 	int w = 0;
-	length = qMax(length, mSteps.count());
+	length = qMin(length, mSteps.count());
 	while ( length-- ) {
 		w += mSteps.at(length);
 	}

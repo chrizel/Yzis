@@ -6,7 +6,7 @@ set(yzis_unittest_SRCS
     testColor.cpp 
     testResource.cpp 
     testBufferChanges.cpp 
-    testDrawBuffer.cpp 
+    testDrawCell.cpp 
 )
 
 # files needing moc
@@ -15,7 +15,7 @@ set(yzis_unittest_MOCS
    testColor.h
    testResource.h
    testBufferChanges.h
-   testDrawBuffer.h
+   testDrawCell.h
 )
 
 qt4_wrap_cpp(yzis_unittest_MOC_SRCS ${yzis_unittest_MOCS})

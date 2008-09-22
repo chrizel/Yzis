@@ -33,25 +33,25 @@ NoGuiView::NoGuiView(YBuffer *buf, YSession *sess, int cols, int lines)
 uint NoGuiView::getCursorX()
 {
     dbg() << HERE() << endl;
-    return viewCursor().bufferX();
+    return viewCursor().position();
 }
 
 uint NoGuiView::getCursorY()
 {
     dbg() << HERE() << endl;
-    return viewCursor().bufferY();
+    return viewCursor().line();
 }
 
 uint NoGuiView::getCursorLine()
 {
     dbg() << HERE() << endl;
-    return viewCursor().bufferY();
+    return viewCursor().line();
 }
 
 uint NoGuiView::getCursorCol()
 {
     dbg() << HERE() << endl;
-    return viewCursor().bufferX();
+    return viewCursor().column();
 }
 
 // Reimplemented to please compilation

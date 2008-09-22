@@ -170,7 +170,7 @@ void NYView::guiDrawCell( YCursor pos, const YDrawCell& cell )
 			yzWarning() << "Unknown color from libyzis, cell.foregroundColor().name() is " << cell.foregroundColor().name() << endl;
 		}
 	}
-	if ( cell.hasSelection(yzis::SelectionSearch) || cell.hasSelection(yzis::SelectionVisual) ) {
+	if ( cell.hasSelection(yzis::SelectionAny) ) {
 		mAttributes |= A_REVERSE;  // TODO, reverse bg/fg
 	}
     //if ( drawUnderline() ) mAttributes |= A_UNDERLINE;

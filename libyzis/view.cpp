@@ -215,7 +215,7 @@ void YView::indent()
     mBuffer->action()->insertNewLine( this, mMainCursor.buffer() );
     ypos++;
     mBuffer->action()->replaceLine( this, ypos, indentString + mBuffer->textline( ypos ).trimmed() );
-    gotoxy( indentString.length(), ypos );
+    gotoLinePosition(ypos , indentString.length());
     //dbg() << "Leaving YView::indent" << endl;
 }
 
@@ -419,40 +419,40 @@ void YView::gotoViewCursor( const YViewCursor& cursor )
 	updateCursor();
 }
 
-void YView::gotoxy( int position, int line )
+void YView::gotoLinePosition( int line, int position )
 {
 	gotoViewCursor(viewCursorFromLinePosition(line, position));
 }
-void YView::gotoxyAndStick( int position, int line ) 
+void YView::gotoLinePositionAndStick( int line, int position ) 
 {
-	gotoViewCursor(viewCursorFromLinePosition(line, position));
+	gotoLinePosition(line, position);
 	stickToColumn();
 }
-void YView::gotoxy( const YCursor& buffer )
+void YView::gotoLinePosition( const YCursor& buffer )
 {
-	gotoViewCursor(viewCursorFromLinePosition(buffer.line(), buffer.column()));
+	gotoLinePosition(buffer.line(), buffer.column());
 }
-void YView::gotoxyAndStick( const YCursor& buffer )
+void YView::gotoLinePositionAndStick( const YCursor& buffer )
 {
-	gotoViewCursor(viewCursorFromLinePosition(buffer.line(), buffer.column()));
-	stickToColumn();
+	gotoLinePositionAndStick(buffer.line(), buffer.column());
 }
-void YView::gotodxdy( int column, int row )
+
+void YView::gotoRowColumn( int row, int column )
 {
 	gotoViewCursor(viewCursorFromRowColumn(row, column));
 }
-void YView::gotodxdy( const YCursor& screen )
+void YView::gotoRowColumn( const YCursor& screen )
 {
-	gotoViewCursor(viewCursorFromRowColumn(screen.line(), screen.column()));
+	gotoRowColumn(screen.line(), screen.column());
 }
 
-YViewCursor YView::moveVertical( int ticks )
+YViewCursor YView::viewCursorMoveVertical( int ticks )
 {
 	int line = qMax(mBuffer->lineCount()-1, qMin(0, mMainCursor.line() + ticks));
 	return viewCursorFromStickedLine(line);
 }
 
-YViewCursor YView::moveHorizontal( int ticks, bool wrap, bool* stopped )
+YViewCursor YView::viewCursorMoveHorizontal( int ticks, bool wrap, bool* stopped )
 {
 	//TODO: check behindEOL
 	int line = mMainCursor.line();
@@ -495,7 +495,7 @@ YViewCursor YView::moveHorizontal( int ticks, bool wrap, bool* stopped )
 	return viewCursorFromLinePosition(line, position);
 }
 
-YViewCursor YView::gotoLine( int line )
+YViewCursor YView::viewCursorGotoLine( int line )
 {
 	line = qMin(line, mBuffer->lineCount() - 1);
     if ( getLocalBooleanOption("startofline") ) {
@@ -509,9 +509,9 @@ void YView::applyStartPosition( const YCursor pos )
 {
     if ( pos.y() >= 0 ) {
         if ( pos.x() >= 0 ) {
-            gotoxyAndStick( pos );
+            gotoLinePositionAndStick( pos );
         } else {
-            gotoLine( pos.y() );
+            viewCursorGotoLine( pos.y() );
 			stickToColumn();
         }
     }
@@ -520,7 +520,7 @@ void YView::applyStartPosition( const YCursor pos )
 QString YView::append ()
 {
     mModePool->change( YMode::ModeInsert );
-    gotoxyAndStick(mMainCursor.position() + 1, mMainCursor.line() );
+    gotoLinePositionAndStick(mMainCursor.line() , mMainCursor.position() + 1);
     return QString();
 }
 

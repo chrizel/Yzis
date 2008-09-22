@@ -351,7 +351,7 @@ int YLuaFuncs::_goto(lua_State *L)
     lua_pop(L, 2);
 
     YView* cView = YSession::self()->currentView();
-    cView->gotoxy(sCol ? sCol - 1 : 0, sLine ? sLine - 1 : 0 );
+    cView->gotoLinePosition(sLine ? sLine - 1 : 0, sCol ? sCol - 1 : 0);
 
     YASSERT_EQUALS( lua_gettop(L), 0 );
     return 0 ;
@@ -365,7 +365,7 @@ int YLuaFuncs::scrgoto(lua_State *L)
     lua_pop(L, 2);
 
     YView* cView = YSession::self()->currentView();
-    cView->gotodxdy(sCol ? sCol - 1 : 0, sLine ? sLine - 1 : 0 );
+    cView->gotoRowColumn( sLine ? sLine - 1 : 0, sCol ? sCol - 1 : 0 );
 
     YASSERT_EQUALS( lua_gettop(L), 0 );
     return 0 ;

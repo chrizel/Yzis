@@ -137,14 +137,14 @@ CmdState YModeVisual::commandAppend( const YCommandArgs& args )
 {
     YCursor pos = qMax(mStartViewCursor[args.view], args.view->viewCursor()).buffer();
     args.view->modePool()->change( ModeInsert );
-    args.view->gotoxy( pos.x(), pos.y() );
+    args.view->gotoLinePosition(pos.y() , pos.x());
     return CmdOk;
 }
 CmdState YModeVisual::commandInsert( const YCommandArgs& args )
 {
     YCursor pos = qMin(mStartViewCursor[args.view], args.view->viewCursor()).buffer();
     args.view->modePool()->change( ModeInsert );
-    args.view->gotoxy( pos.x(), pos.y() );
+    args.view->gotoLinePosition(pos.y() , pos.x());
     return CmdOk;
 }
 CmdState YModeVisual::toLowerCase( const YCommandArgs& args )
@@ -216,7 +216,7 @@ CmdState YModeVisual::yankWholeLines(const YCommandArgs &args)
     args.view->modePool()->pop();
 
     // move cursor to top left corner of selection (yes, this is correct behaviour :)
-    args.view->gotoxy( topLeft.x(), topLeft.y() );
+    args.view->gotoLinePosition(topLeft.y() , topLeft.x());
     args.view->stickToColumn( );
     return CmdOk;
 }
@@ -225,7 +225,7 @@ CmdState YModeVisual::yank( const YCommandArgs& args )
     CmdState state;
     YCursor topLeft = interval( args, &state ).fromPos();
     YModeCommand::yank( args );
-    args.view->gotoxyAndStick( topLeft.x(), topLeft.y() );
+    args.view->gotoLinePositionAndStick(topLeft.y() , topLeft.x());
     args.view->modePool()->pop();
     return CmdOk;
 }

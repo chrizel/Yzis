@@ -27,7 +27,7 @@
 class YDrawBuffer;
 class YCursor;
 
-struct YDrawCellInfo
+struct YZIS_EXPORT YDrawCellInfo
 {
 	enum YDrawCellType {
 		Data,

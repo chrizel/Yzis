@@ -175,7 +175,7 @@ void YZUndoBuffer::undo( YView* pView )
     }
     */
     mCurrentIndex--;
-    pView->gotoxy(item->endCursorX, item->endCursorY);
+    pView->gotoLinePosition(item->endCursorY, item->endCursorX);
     pView->commitPaintEvent();
     setInsideUndo( false );
 }

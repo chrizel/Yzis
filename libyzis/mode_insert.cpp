@@ -55,7 +55,7 @@ void YModeInsert::enter( YView* mView )
 void YModeInsert::leave( YView* mView )
 {
     if ( mView->getBufferCursor().x() > 0 )
-		mView->gotoViewCursor(mView->moveHorizontal(-1));
+		mView->gotoViewCursor(mView->viewCursorMoveHorizontal(-1));
 }
 
 void YModeInsert::initMotionPool()
@@ -284,7 +284,7 @@ CmdState YModeInsert::commandEnter( const YCommandArgs &args )
         if (results.count() > 0 ) {
             if (results[0].length() != 0) {
                 mBuffer->action()->replaceLine( args.view, cur.y() + 1, results[0] + mBuffer->textline( cur.y() + 1 ).trimmed() );
-                args.view->gotoxy(results[0].length(), cur.y() + 1);
+                args.view->gotoLinePosition(cur.y() + 1, results[0].length());
             }
         }
     }
@@ -353,7 +353,7 @@ CmdState YModeReplace::commandInsert( const YCommandArgs &args )
 
 CmdState YModeReplace::backspace( const YCommandArgs &args )
 {
-	args.view->gotoViewCursor(args.view->moveHorizontal(-1));
+	args.view->gotoViewCursor(args.view->viewCursorMoveHorizontal(-1));
     return CmdOk;
 }
 

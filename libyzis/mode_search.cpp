@@ -103,7 +103,7 @@ CmdState YModeSearch::execCommand( YView* view, const YKeySequence& keys, YKeySe
             }
         }
         if ( found ) {
-            view->gotoxy( pos.x(), pos.y() );
+            view->gotoLinePosition(pos.y() , pos.x());
         } else {
             view->displayInfo(_("Pattern not found: ") + what);
         }
@@ -130,7 +130,7 @@ CmdState YModeSearch::execCommand( YView* view, const YKeySequence& keys, YKeySe
     } else if ( *parsePos == Qt::Key_Escape
                 || *parsePos == YKey(Qt::Key_C, Qt::ControlModifier) ) {
         if ( view->getLocalBooleanOption( "incsearch" ) ) {
-            view->gotoxy(mSearchBegin.x(), mSearchBegin.y());
+            view->gotoLinePosition(mSearchBegin.y(), mSearchBegin.x());
             view->setPaintAutoCommit( false );
             incSearchFound = false;
             //view->sendXXXPaintEvent( searchSelection->map() );
@@ -163,9 +163,9 @@ CmdState YModeSearch::execCommand( YView* view, const YKeySequence& keys, YKeySe
                 //XXX  searchSelection->addInterval( YInterval(incSearchResult, endResult) );
                 //view->sendXXXPaintEvent( searchSelection->map() );
             }
-            view->gotoxyAndStick(incSearchResult );
+            view->gotoLinePositionAndStick(incSearchResult );
         } else {
-            view->gotoxy( mSearchBegin.x(), mSearchBegin.y() );
+            view->gotoLinePosition(mSearchBegin.y() , mSearchBegin.x());
             //view->sendXXXPaintEvent( searchSelection->map() );
             //XXX searchSelection->clear();
         }
@@ -192,7 +192,7 @@ YCursor YModeSearchBackward::replaySearch( YView* view, bool * found )
 YCursor YModeSearchBackward::search( YView* view, const QString& s, bool* found )
 {
     //XXX YCursor buffer = view->getBufferCursor();
-    //XXX view->gotoxy( buffer.x() + 1, buffer.y(), false );
+    //XXX view->gotoLinePosition(false , buffer.x() + 1, buffer.y());
     return YSession::self()->search()->backward( view->buffer(), s, found, view->getBufferCursor() );
 }
 YCursor YModeSearchBackward::search( YView* view, const QString& s, const YCursor begin, int* matchlength, bool* found )

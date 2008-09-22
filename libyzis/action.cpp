@@ -63,7 +63,7 @@ void YZAction::insertChar( YView* pView, const YCursor pos, const QString& text 
     else if (pos.y() > mBuffer->lineCount() )
         return ; // can't insert on non-existing lines
     mBuffer->insertChar( pos, text );
-    pView->gotoxyAndStick( pos.x() + text.length(), pos.y() );
+    pView->gotoLinePositionAndStick(pos.y() , pos.x() + text.length());
     commitViewsChanges(mBuffer);
 }
 
@@ -75,7 +75,7 @@ void YZAction::replaceText( YView* pView, const YCursor pos, int replacedLength,
     configureViews(mBuffer);
     mBuffer->delChar( pos, replacedLength );
     mBuffer->insertChar( pos, text );
-    pView->gotoxyAndStick( pos.x() + text.length(), pos.y() );
+    pView->gotoLinePositionAndStick(pos.y() , pos.x() + text.length());
     commitViewsChanges(mBuffer);
 }
 
@@ -86,7 +86,7 @@ bool YZAction::replaceChar( YView* pView, const YCursor pos, const QString& text
     configureViews(mBuffer);
     mBuffer->delChar( pos, text.length() );
     mBuffer->insertChar( pos, text );
-    pView->gotoxyAndStick( pos.x() + text.length(), pos.y() );
+    pView->gotoLinePositionAndStick(pos.y() , pos.x() + text.length());
     commitViewsChanges(mBuffer);
     return false;
 }
@@ -97,7 +97,7 @@ bool YZAction::deleteChar( YView* pView, const YCursor pos, int len )
         return true; // don't try on non-existing lines
     configureViews(mBuffer);
     mBuffer->delChar( pos, len );
-    pView->gotoxyAndStick( pos );
+    pView->gotoLinePositionAndStick( pos );
     commitViewsChanges(mBuffer);
     return false;
 }
@@ -108,7 +108,7 @@ void YZAction::insertNewLine( YView* pView, const YCursor pos )
         return ; // don't try on non-existing lines
     configureViews(mBuffer);
     mBuffer->insertNewLine( pos );
-    pView->gotoxyAndStick( 0, pos.y() + 1 );
+    pView->gotoLinePositionAndStick(pos.y() + 1 , 0);
     commitViewsChanges(mBuffer);
 }
 
@@ -118,7 +118,7 @@ void YZAction::replaceLine( YView* pView, const YCursor pos, const QString &text
         return ; // don't try on non-existing lines
     configureViews(mBuffer);
     mBuffer->replaceLine( text, pos.y() );
-    pView->gotoxyAndStick( text.length(), pos.y() );
+    pView->gotoLinePositionAndStick(pos.y() , text.length());
     commitViewsChanges(mBuffer);
 }
 
@@ -128,7 +128,7 @@ void YZAction::insertLine( YView* pView, const YCursor pos, const QString &text 
         return ; // don't try on non-existing lines
     configureViews(mBuffer);
     mBuffer->insertLine( text, pos.y() );
-    pView->gotoxyAndStick( text.length(), pos.y() );
+    pView->gotoLinePositionAndStick(pos.y() , text.length());
     commitViewsChanges(mBuffer);
 }
 
@@ -140,7 +140,7 @@ void YZAction::deleteLine( YView* pView, const YCursor pos, int len, const QList
         len = mBuffer->lineCount() - pos.y();
     for ( int i = 0; i < len && pos.y() < mBuffer->lineCount(); i++ )
         mBuffer->deleteLine( pos.y() );
-    pView->gotoxyAndStick( 0, pos.y() - (pos.y() == mBuffer->lineCount() ? 1 : 0) );
+    pView->gotoLinePositionAndStick(pos.y() - (pos.y() == mBuffer->lineCount() ? 1 : 0) , 0);
     commitViewsChanges(mBuffer);
 }
 
@@ -241,7 +241,7 @@ void YZAction::deleteArea( YView* pView, const YInterval& i, const QList<QChar> 
     for ( int ab = 0 ; ab < reg.size(); ++ab )
         YSession::self()->setRegister( reg.at(ab), buff );
 
-    pView->gotoxyAndStick( bX, bY );
+    pView->gotoLinePositionAndStick(bY , bX);
 
     commitViewsChanges(mBuffer);
 }
@@ -274,7 +274,7 @@ void YZAction::mergeNextLine( YView* pView, int y, bool stripSpaces )
     }
     mBuffer->replaceLine( line + line2, y );
     mBuffer->deleteLine( y + 1 );
-    pView->gotoxyAndStick( line.length(), y );
+    pView->gotoLinePositionAndStick(y , line.length());
     commitViewsChanges(mBuffer);
 }
 
@@ -443,7 +443,7 @@ void YZAction::pasteContent( YView *view, QChar registr, bool after )
             copy = copy.mid( start );
             deleteChar( view, start, pos.y(), copy.length() );
             insertChar( view, start, pos.y(), list[ 0 ] + ( list.size() == 1 ? copy : "" ) );
-            view->gotoxy( start + list[ 0 ].length() - ( list[ 0 ].length() > 0 ? 1 : 0 ), pos.y() );
+            view->gotoLinePosition(pos.y() , start + list[ 0 ].length() - ( list[ 0 ].length() > 0 ? 1 : 0 ));
         }
         i++;
         while ( i < list.size() - 1 ) {
@@ -454,9 +454,9 @@ void YZAction::pasteContent( YView *view, QChar registr, bool after )
             configureViews(mBuffer);
             mBuffer->insertLine( (list[ i ].isNull() ? "" : list[ i ] ) + copy, pos.y() + i );
             commitViewsChanges(mBuffer);
-            view->gotoxy( list[ i ].length(), pos.y() + i );
+            view->gotoLinePosition(pos.y() + i , list[ i ].length());
         } else if ( copyWholeLinesOnly ) {
-            view->gotoxy( view->buffer()->firstNonBlankChar(pos.y()+1), pos.y() + 1 );
+            view->gotoLinePosition(pos.y() + 1 , view->buffer()->firstNonBlankChar(pos.y()+1));
         }
 
     } else if ( !after ) { //paste whole lines before current char
@@ -465,7 +465,7 @@ void YZAction::pasteContent( YView *view, QChar registr, bool after )
                 mBuffer->insertLine( list[ i ], pos.y() + i - 1 );
            commitViewsChanges(mBuffer);
 
-        view->gotoxy( pos );
+        view->gotoLinePosition( pos );
     }
     view->stickToColumn();
 }

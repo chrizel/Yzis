@@ -132,7 +132,7 @@ void YModeCompletion::doComplete( YView* view, bool forward )
     YZAction *action = view->buffer()->action();
     YCursor currentCursor = view->getBufferCursor();
     action->replaceText( view, mCompletionStart, currentCursor.x() - mCompletionStart.x(), proposal );
-    view->gotoxy( mCompletionStart.x() + proposal.length(), currentCursor.y() );
+    view->gotoLinePosition(currentCursor.y() , mCompletionStart.x() + proposal.length());
 
     // display match number in the display bar
     QString msg( _("Match %1 of %2") );

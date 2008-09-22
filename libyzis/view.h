@@ -236,30 +236,22 @@ class YZIS_EXPORT YView : public YViewIface
 	YViewCursor viewCursorFromStickedLine( int line ) const;
 
 	/* TODO: docstring */
+	YViewCursor viewCursorMoveVertical( int ticks );
+    /* TODO: docstring */
+	YViewCursor viewCursorMoveHorizontal( int ticks, bool wrap = false, bool* stopped = NULL );
+	/* TODO: docstring */
+	YViewCursor viewCursorGotoLine( int line );
+
+	/* TODO: docstring */
 	void gotoViewCursor( const YViewCursor& cursor );
 
-	void gotoxy( int position, int line ) YZIS_DEPRECATED;
-	void gotoxyAndStick( int position, int line ) YZIS_DEPRECATED;
-	void gotoxy( const YCursor& buffer ) YZIS_DEPRECATED;
-	void gotoxyAndStick( const YCursor& buffer ) YZIS_DEPRECATED;
-	void gotodxdy( int column, int row ) YZIS_DEPRECATED;
-	void gotodxdy( const YCursor& screen ) YZIS_DEPRECATED;
-
-    /**
-     * TODO: docstring
-     */
-	YViewCursor moveVertical( int ticks );
-
-    /**
-     * TODO: docstring
-     */
-	YViewCursor moveHorizontal( int ticks, bool wrap = false, bool* stopped = NULL );
-
-    /**
-	 * TODO: docstring
-     */
-	YViewCursor gotoLine( int line );
-
+	/* Shortcuts */
+	void gotoLinePosition( int position, int line );
+	void gotoLinePositionAndStick( int position, int line );
+	void gotoLinePosition( const YCursor& buffer );
+	void gotoLinePositionAndStick( const YCursor& buffer );
+	void gotoRowColumn( int row, int column );
+	void gotoRowColumn( const YCursor& screen );
 
     void applyStartPosition( const YCursor pos );
 

@@ -260,7 +260,7 @@ void QYEdit::mousePressEvent ( QMouseEvent * e )
                 YSession::self()->setRegister( reg, text.split("\n") );
                                 mView->buffer()->action()->pasteContent( mView, reg, false);
                 //mView->pasteContent( reg, false );
-                mView->moveHorizontal(1);
+				mView->gotoViewCursor(mView->viewCursorMoveHorizontal(1));
             }
         }
     }
@@ -276,7 +276,7 @@ void QYEdit::mouseMoveEvent( QMouseEvent *e )
             // already in visual mode - move cursor if the mouse pointer has moved over a new char
             YCursor pos = translateRealToAbsolutePosition( e->pos() );
             if ( pos != mView->getCursor() ) {
-                mView->gotodxdy( pos );
+                mView->gotoRowColumn( pos );
             }
         }
     }

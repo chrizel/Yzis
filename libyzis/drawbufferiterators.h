@@ -39,7 +39,7 @@ struct YDrawCellInfo
 	YDrawCell cell;
 };
 
-class YDrawBufferAbstractIterator
+class YZIS_EXPORT YDrawBufferAbstractIterator
 {
 public:
 	virtual ~YDrawBufferAbstractIterator() {};

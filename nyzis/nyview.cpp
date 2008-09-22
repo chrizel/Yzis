@@ -162,19 +162,21 @@ void NYView::guiDrawCell( YCursor pos, const YDrawCell& cell )
 	 */
 
 	int mAttributes = attribWhite;
-	if ( cell.fg.isValid() ) {
-		int rawcolor = cell.fg.rgb() & RGB_MASK;
+	if ( cell.foregroundColor().isValid() ) {
+		int rawcolor = cell.foregroundColor().rgb() & RGB_MASK;
 		if ( mAttributesMap.contains( rawcolor ) ) {
 			mAttributes = mAttributesMap[ rawcolor ];
 		} else {
-			yzWarning() << "Unknown color from libyzis, cell.fg.name() is " << cell.fg.name() << endl;
+			yzWarning() << "Unknown color from libyzis, cell.foregroundColor().name() is " << cell.foregroundColor().name() << endl;
 		}
 	}
-	if ( cell.sel ) mAttributes |= A_REVERSE; // TODO, reverse bg/fg
+	if ( cell.hasSelection(yzis::SelectionSearch) || cell.hasSelection(yzis::SelectionVisual) ) {
+		mAttributes |= A_REVERSE;  // TODO, reverse bg/fg
+	}
     //if ( drawUnderline() ) mAttributes |= A_UNDERLINE;
 
     /* convert string to wide_char */
-    QByteArray my_char = cell.c.toLocal8Bit();
+    QByteArray my_char = cell.content().toLocal8Bit();
     char* from_char = new char[ my_char.length() + 1 ];
     strcpy( from_char, my_char.constData() );
     size_t needed = mbstowcs( NULL, from_char, strlen(from_char) ) + 1;
@@ -205,7 +207,7 @@ void NYView::drawCursor()
 
 void NYView::guiDrawClearToEOL( YCursor pos, const YDrawCell& cell )
 {
-	QChar clearChar = cell.c[0]; /* TODO */
+	QChar clearChar = cell.content()[0]; /* TODO */
     int x = pos.x();
     if ( !fakeLine )
         x += marginLeft;

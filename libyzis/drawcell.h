@@ -28,7 +28,7 @@
 #include "color.h"
 #include "font.h"
 
-class YDrawCell
+class YZIS_EXPORT YDrawCell
 {
 public:
 	YDrawCell();

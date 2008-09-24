@@ -253,6 +253,7 @@ bool YDrawBuffer::targetBufferColumn( int bcol, int sid, int* lid, int* cid, int
 					my_column += mContent[sid][my_lid][my_cid].widthForLength(bcol - w);
 				}
 				found = true;
+				break;
 			} else {
 				w += cw;
 				if ( column != NULL ) {
@@ -282,6 +283,7 @@ bool YDrawBuffer::targetScreenLine( int sline, int* sid, int* lid, int* bline ) 
 		if ( h + sh > sline ) {
 			my_lid = sline - h;
 			found = true;
+			break;
 		} else {
 			h += sh;
 		}
@@ -314,6 +316,7 @@ bool YDrawBuffer::targetScreenColumn( int scol, int sid, int lid, int* cid, int*
 				my_position += mContent[sid][lid][my_cid].lengthForWidth(scol - w);
 			}
 			found = true;
+			break;
 		} else {
 			w += cw;
 			if ( position != NULL ) {

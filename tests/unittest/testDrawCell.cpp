@@ -13,11 +13,13 @@ void TestDrawCell::testDrawCell()
 	QCOMPARE(cell.length(), 11);
 	QCOMPARE(cell.widthForLength(7), 10);
 	QCOMPARE(cell.lengthForWidth(10), 7);
+	QCOMPARE(cell.stepsShift(), 0);
 
 	c2 = cell.left(6);
 	QCOMPARE(c2.content(), QString("hello "));
 	c2 = cell.mid(6);
 	QCOMPARE(c2.content(), QString("   world"));
 	QCOMPARE(c2.steps().count(), 5);
+	QCOMPARE(c2.stepsShift(), 3);
 }
 

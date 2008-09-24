@@ -58,6 +58,7 @@ public:
 
 	/* steps (buffer <-> draw) */
 	inline const QList<int> steps() const { return mSteps; }
+	inline int stepsShift() const { return mStepsShift; }
 
 	/* splitters */
 	YDrawCell left( int column ) const;

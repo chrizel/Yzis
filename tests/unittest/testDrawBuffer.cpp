@@ -66,14 +66,16 @@ void TestDrawBuffer::testDrawLine()
 	CHECK_CELLSCONTENT(ds[0], QStringList()<<"hel"<<"lo  ");
 	CHECK_STEPS(ds[0], QList<int>()<<1<<1<<1<<1<<1<<2);
 	CHECK_CELLSCONTENT(ds[1], QStringList()<<"  w"<<"orld");
-	CHECK_STEPS(ds[1], QList<int>()<<2<<1<<1<<1<<1<<1);
+	CHECK_STEPS(ds[1], QList<int>()<<1<<1<<1<<1<<1);
+	QCOMPARE(ds[1][0].stepsShift(), 2);
 
 	ds = dl.arrange(6);
 	QCOMPARE(ds.count(), 3);
 	CHECK_CELLSCONTENT(ds[0], QStringList()<<"hel"<<"lo ");
 	CHECK_STEPS(ds[0], QList<int>()<<1<<1<<1<<1<<1<<1);
 	CHECK_CELLSCONTENT(ds[1], QStringList()<<"   w"<<"or");
-	CHECK_STEPS(ds[1], QList<int>()<<3<<1<<1<<1);
+	CHECK_STEPS(ds[1], QList<int>()<<1<<1<<1);
+	QCOMPARE(ds[1][0].stepsShift(), 3);
 	CHECK_CELLSCONTENT(ds[2], QStringList()<<"ld");
 	CHECK_STEPS(ds[2], QList<int>()<<1<<1);
 }

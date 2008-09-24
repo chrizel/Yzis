@@ -61,9 +61,9 @@ public:
 
 	/* splitters */
 	YDrawCell left( int column ) const;
-	YDrawCell right( int column ) const;
+	YDrawCell mid( int column ) const;
 	YDrawCell left_steps( int steps ) const;
-	YDrawCell right_steps( int steps ) const;
+	YDrawCell mid_steps( int steps ) const;
 
 private:
 	int mSelections;

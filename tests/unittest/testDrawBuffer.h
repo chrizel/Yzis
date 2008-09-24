@@ -4,11 +4,6 @@
 
 #include <QtTest/QtTest>
 
-#include <QList>
-#include <QStringList>
-
-class YDrawLine;
-
 class TestDrawBuffer : public QObject
 {
 	Q_OBJECT

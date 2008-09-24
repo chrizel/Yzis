@@ -105,7 +105,7 @@ YDrawSection YDrawLine::arrange( int columns ) const
 	}
 
 	YDrawSection ds;
-	QList<YDrawCell> line;
+	YDrawLine line;
 	int line_width = 0;
 
 	foreach( YDrawCell c, *this ) {
@@ -119,22 +119,18 @@ YDrawSection YDrawLine::arrange( int columns ) const
 			if ( r ) {
 				line << c.left(r);
 			}
-			YDrawLine dl;
-			//dl.mCells = line;
-			dl.flush();
-			ds << dl;
+			line.flush();
+			ds << line;
 			line.clear();
 
-			YDrawCell right = c.right(r);
+			YDrawCell right = c.mid(r);
 			line << right;
 			line_width = right.width();
 		}
 	}
 	if ( line.count() > 0 ) {
-		YDrawLine dl;
-		//dl.mCells = line;
-		dl.flush();
-		ds << dl;
+		line.flush();
+		ds << line;
 	}
 	return ds;
 }

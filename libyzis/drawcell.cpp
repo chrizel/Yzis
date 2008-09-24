@@ -124,7 +124,7 @@ YDrawCell YDrawCell::left_steps( int steps ) const
 	}
 	return c;
 }
-YDrawCell YDrawCell::right_steps( int steps ) const
+YDrawCell YDrawCell::mid_steps( int steps ) const
 {
 	YDrawCell c(*this);
 	if ( steps > 0 ) {
@@ -133,7 +133,7 @@ YDrawCell YDrawCell::right_steps( int steps ) const
 		for ( int i = 0; i < steps; i++ ) {
 			w += mSteps[i];
 		}
-		c.mContent = mContent.right(w);
+		c.mContent = mContent.mid(w);
 		c.mSteps = mSteps.mid(steps);
 	}
 	return c;
@@ -161,11 +161,11 @@ YDrawCell YDrawCell::left( int column ) const
 	}
 	return c;
 }
-YDrawCell YDrawCell::right( int column ) const
+YDrawCell YDrawCell::mid( int column ) const
 {
 	YDrawCell c(*this);
 	if ( column > 0 ) {
-		c.mContent = mContent.right(column);
+		c.mContent = mContent.mid(column);
 		c.mSteps.clear();
 		int r = column;
 		foreach( int s, mSteps ) {

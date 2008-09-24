@@ -187,10 +187,10 @@ void YDrawBufferConstIterator::setupCell( int shift, int cut )
 	if ( shift ) {
 		switch ( mIntervalType ) {
 			case yzis::ScreenInterval :
-				cell = cell.right(shift);
+				cell = cell.mid(shift);
 				break;
 			case yzis::BufferInterval :
-				cell = cell.right_steps(shift);
+				cell = cell.mid_steps(shift);
 				break;
 		}
 	}
@@ -231,11 +231,11 @@ void YDrawBufferIterator::setupCell( int shift, int cut )
 			switch ( mIntervalType ) {
 				case yzis::ScreenInterval :
 					previous = cell.left(shift);
-					cell = cell.right(shift);
+					cell = cell.mid(shift);
 					break;
 				case yzis::BufferInterval :
 					previous = cell.left_steps(shift);
-					cell = cell.right_steps(shift);
+					cell = cell.mid_steps(shift);
 					break;
 			}
 			mDrawBuffer->mContent[mCurBLine][mCurLine][mCurCell] = previous;
@@ -246,11 +246,11 @@ void YDrawBufferIterator::setupCell( int shift, int cut )
 			YDrawCell next;
 			switch ( mIntervalType ) {
 				case yzis::ScreenInterval :
-					next = cell.right(cut);
+					next = cell.mid(cut);
 					cell = cell.left(cut);
 					break;
 				case yzis::BufferInterval :
-					next = cell.right_steps(cut);
+					next = cell.mid_steps(cut);
 					cell = cell.left_steps(cut);
 					break;
 			}

@@ -4,6 +4,7 @@
 #include "testResource.h"
 #include "testBufferChanges.h"
 #include "testDrawCell.h"
+#include "testDrawBuffer.h"
 
 #include <QRegExp>
 
@@ -87,6 +88,7 @@ int main( int argc, char * argv[] )
     RUN_MY_TEST( TestResource )
     //RUN_MY_TEST( TestBufferChanges )
 	RUN_MY_TEST( TestDrawCell )
+	RUN_MY_TEST( TestDrawBuffer )
 
     printf("Unittest status: %d failed tests\n", result );
 

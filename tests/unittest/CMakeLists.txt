@@ -7,6 +7,7 @@ set(yzis_unittest_SRCS
     testResource.cpp 
     testBufferChanges.cpp 
     testDrawCell.cpp 
+	testDrawBuffer.cpp
 )
 
 # files needing moc
@@ -16,6 +17,7 @@ set(yzis_unittest_MOCS
    testResource.h
    testBufferChanges.h
    testDrawCell.h
+	testDrawBuffer.h
 )
 
 qt4_wrap_cpp(yzis_unittest_MOC_SRCS ${yzis_unittest_MOCS})
@@ -47,4 +49,6 @@ add_test(yzis_unittest_TestDebug    yzis_unittest TestDebug )
 add_test(yzis_unittest_TestResource yzis_unittest TestResource )
 add_test(yzis_unittest_TestColor    yzis_unittest TestColor )
 add_test(yzis_unittest_TestBufferChanges  yzis_unittest TestBufferChanges )
+add_test(yzis_unittest_TestDrawCell  yzis_unittest TestDrawCell )
+add_test(yzis_unittest_TestDrawBuffer  yzis_unittest TestDrawBuffer )
 

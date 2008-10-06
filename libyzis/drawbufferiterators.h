@@ -62,7 +62,7 @@ protected:
 	void setup( const YInterval& i, yzis::IntervalType itype );
 	void step();
 
-	virtual void setupCell( int shift, int cut ) = 0;
+	virtual void setupCell( int cut ) = 0;
 	virtual void setupEOLCell() = 0;
 
 	int getCut();
@@ -75,6 +75,7 @@ protected:
 	int mCurLine;
 	int mCurCell;
 	YCursor mPos;
+	int mPosShift;
 };
 
 class YZIS_EXPORT YDrawBufferConstIterator : public YDrawBufferAbstractIterator
@@ -84,7 +85,7 @@ public:
 	const YDrawCellInfo drawCellInfo() const;
 
 protected :
-	virtual void setupCell( int shift, int cut );
+	virtual void setupCell( int cut );
 	virtual void setupEOLCell();
 	YDrawBufferConstIterator( const YDrawBuffer* db ) : YDrawBufferAbstractIterator(db) {}
 	YDrawCellInfo mNext;
@@ -101,7 +102,7 @@ public:
 
 protected:
 	YDrawBuffer* mDrawBuffer;
-	virtual void setupCell( int shift, int cut );
+	virtual void setupCell( int cut );
 	virtual void setupEOLCell();
 	YDrawBufferIterator( const YDrawBuffer* db ) : YDrawBufferAbstractIterator(db) {}
 	YDrawCell* mNext;

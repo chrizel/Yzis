@@ -80,18 +80,18 @@ void YDrawBufferAbstractIterator::setup( const YInterval& i, yzis::IntervalType 
 	if ( !found ) {
 		mStopped = true;
 	} else {
-		int shift = 0;
 		mPos = start;
+		mPosShift = 0;
 		switch ( mIntervalType ) {
 			case yzis::ScreenInterval :
-				found = mDrawBuffer->targetScreenColumn(start.column(), mCurBLine, mCurLine, &mCurCell, &shift);
+				found = mDrawBuffer->targetScreenColumn(start.column(), mCurBLine, mCurLine, &mCurCell, &mPosShift);
 				break;
 			case yzis::BufferInterval :
-				found = mDrawBuffer->targetBufferColumn(start.column(), mCurBLine, &mCurLine, &mCurCell, &shift);
+				found = mDrawBuffer->targetBufferColumn(start.column(), mCurBLine, &mCurLine, &mCurCell, &mPosShift);
 				break;
 		}
 		if ( found ) {
-			setupCell(shift, getCut());
+			setupCell(getCut());
 		} else {
 			setupEOLCell();
 		}
@@ -112,6 +112,7 @@ int YDrawBufferAbstractIterator::getCut() {
 				w = cell.length();
 				break;
 		}
+		w -= mPosShift;
 		if ( mPos.column() + w >= end.column() ) {
 			cut = end.column() - mPos.column();
 		}
@@ -149,16 +150,17 @@ void YDrawBufferAbstractIterator::step()
 		if ( mCurCell >= 0 ) {
 			switch( mIntervalType ) {
 				case yzis::ScreenInterval:
-					mPos.setColumn(mPos.column() + mDrawBuffer->mContent[mCurBLine][mCurLine][mCurCell].width());
+					mPos.setColumn(mPos.column() + mDrawBuffer->mContent[mCurBLine][mCurLine][mCurCell].width() - mPosShift);
 					break;
 				case yzis::BufferInterval:
-					mPos.setColumn(mPos.column() + mDrawBuffer->mContent[mCurBLine][mCurLine][mCurCell].length());
+					mPos.setColumn(mPos.column() + mDrawBuffer->mContent[mCurBLine][mCurLine][mCurCell].length() - mPosShift);
 					break;
 			}
 		}
+		mPosShift = 0;
 		if ( mPos > mI.toPos() || (mI.to().opened() && mPos >= mI.toPos()) ) {
 			/* STOP */
-			return;
+			mStopped = true;
 		} else {
 			++mCurCell;
 			if ( mCurCell >= mDrawBuffer->mContent[mCurBLine][mCurLine].count() ) {
@@ -169,7 +171,7 @@ void YDrawBufferAbstractIterator::step()
 					step();
 				}
 			} else {
-				setupCell(0, getCut());
+				setupCell(getCut());
 			}
 		}
 	}
@@ -179,18 +181,18 @@ void YDrawBufferAbstractIterator::step()
 /*
  * ConstIterator
  */
-void YDrawBufferConstIterator::setupCell( int shift, int cut )
+void YDrawBufferConstIterator::setupCell( int cut )
 {
 	mNext.pos = mPos;
 	mNext.type = YDrawCellInfo::Data;
 	YDrawCell cell = mDrawBuffer->mContent[mCurBLine][mCurLine][mCurCell];
-	if ( shift ) {
+	if ( mPosShift ) {
 		switch ( mIntervalType ) {
 			case yzis::ScreenInterval :
-				cell = cell.mid(shift);
+				cell = cell.mid(mPosShift);
 				break;
 			case yzis::BufferInterval :
-				cell = cell.mid_steps(shift);
+				cell = cell.mid_steps(mPosShift);
 				break;
 		}
 	}
@@ -204,6 +206,7 @@ void YDrawBufferConstIterator::setupCell( int shift, int cut )
 				break;
 		}
 	}
+	dbg() << " => " << cell.content() << endl;
 	mNext.cell = cell;
 }
 void YDrawBufferConstIterator::setupEOLCell()
@@ -222,20 +225,20 @@ const YDrawCellInfo YDrawBufferConstIterator::drawCellInfo() const
  * Iterator
  */
 
-void YDrawBufferIterator::setupCell( int shift, int cut )
+void YDrawBufferIterator::setupCell( int cut )
 {
-	if ( shift || cut ) {
+	if ( mPosShift || cut ) {
 		YDrawCell cell = mDrawBuffer->mContent[mCurBLine][mCurLine][mCurCell];
 		YDrawCell previous;
-		if ( shift ) {
+		if ( mPosShift ) {
 			switch ( mIntervalType ) {
 				case yzis::ScreenInterval :
-					previous = cell.left(shift);
-					cell = cell.mid(shift);
+					previous = cell.left(mPosShift);
+					cell = cell.mid(mPosShift);
 					break;
 				case yzis::BufferInterval :
-					previous = cell.left_steps(shift);
-					cell = cell.mid_steps(shift);
+					previous = cell.left_steps(mPosShift);
+					cell = cell.mid_steps(mPosShift);
 					break;
 			}
 			mDrawBuffer->mContent[mCurBLine][mCurLine][mCurCell] = previous;

@@ -206,7 +206,6 @@ void YDrawBufferConstIterator::setupCell( int cut )
 				break;
 		}
 	}
-	dbg() << " => " << cell.content() << endl;
 	mNext.cell = cell;
 }
 void YDrawBufferConstIterator::setupEOLCell()

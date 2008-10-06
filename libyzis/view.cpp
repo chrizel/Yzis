@@ -345,6 +345,7 @@ YViewCursor YView::viewCursorFromLinePosition( int line, int position ) const
 	int sid, lid, cid, bshift, column;
 	mDrawBuffer.targetBufferLine(line, &sid);
 	mDrawBuffer.targetBufferColumn(position, sid, &lid, &cid, &bshift, &column);
+	dbg() << "viewCursorFromLinePosition(" << line<<","<<position<<") => line,position,column = " << line<<","<<position<<","<<column<< endl;
 	return YViewCursor(line, position, column);
 }
 
@@ -448,7 +449,7 @@ void YView::gotoRowColumn( const YCursor& screen )
 
 YViewCursor YView::viewCursorMoveVertical( int ticks )
 {
-	int line = qMax(mBuffer->lineCount()-1, qMin(0, mMainCursor.line() + ticks));
+	int line = qMin(mBuffer->lineCount()-1, qMax(0, mMainCursor.line() + ticks));
 	return viewCursorFromStickedLine(line);
 }
 

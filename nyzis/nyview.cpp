@@ -51,7 +51,7 @@ QMap<QRgb, unsigned long int> NYView::mAttributesMap;
 
 
 NYView::NYView(YBuffer *b)
-        : YView(b, NYSession::self(), 0, 0)
+        : YView(b, NYSession::self(), 10, 5)
         , editor(0)
         , infobar(this)
 {
@@ -200,8 +200,11 @@ void NYView::guiPaintEvent( const YSelection& drawMap )
 }
 void NYView::drawCursor()
 {
-    int x = getCursor().x() + marginLeft;
-    wmove( editor, getCursor().y(), x );
+	if ( getColumnsVisible() == 0 ) return;
+	int col = currentColumn();
+	int line = currentLine() + col / getColumnsVisible();
+	col %= getColumnsVisible();
+    wmove( editor, line, col + marginLeft );
     wrefresh( editor );
 }
 

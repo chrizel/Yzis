@@ -28,7 +28,7 @@
 YViewCursor::YViewCursor() : 
 	mBuffer(), mColumn(0) {}
 YViewCursor::YViewCursor( int line, int position, int column ) : 
-	mBuffer(line, position), mColumn(column) {}
+	mBuffer(position, line), mColumn(column) {}
 YViewCursor::YViewCursor( const YViewCursor &c ) : 
 	mBuffer(c.mBuffer), mColumn(c.mColumn) {}
 YViewCursor::~YViewCursor() {}

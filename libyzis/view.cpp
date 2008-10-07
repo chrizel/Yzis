@@ -344,7 +344,14 @@ YViewCursor YView::viewCursorFromLinePosition( int line, int position ) const
 	YASSERT(position >= 0);
 	int sid, lid, cid, bshift, column;
 	mDrawBuffer.targetBufferLine(line, &sid);
+	int max_position = mBuffer->getLineLength(line) - 1;
+	bool goBehindEnd = false;
+	if ( position > max_position ) {
+		position = max_position;
+		//TODO goBehindEnd
+	}
 	mDrawBuffer.targetBufferColumn(position, sid, &lid, &cid, &bshift, &column);
+	//TODO goBehindEnd
 	dbg() << "viewCursorFromLinePosition(" << line<<","<<position<<") => line,position,column = " << line<<","<<position<<","<<column<< endl;
 	return YViewCursor(line, position, column);
 }

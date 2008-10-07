@@ -238,6 +238,7 @@ bool YDrawBuffer::targetBufferColumn( int bcol, int sid, int* lid, int* cid, int
 			w += lw;
 		}
 	}
+	if ( !lid_found && my_lid > 0 ) --my_lid;
 	bool found = false;
 	int my_column = 0;
 	if ( column != NULL ) {

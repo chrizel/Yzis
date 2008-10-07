@@ -61,7 +61,7 @@ bool YModeCompletion::initCompletion( YView* view, bool forward )
     CmdState state;
     YBuffer* buffer = view->buffer();
     YMotionArgs arg(view, 1);
-    YCursor cur = view->getBufferCursor();
+    YCursor cur = view->getLinePositionCursor();
     QString line = buffer->textline(cur.y());
 
     //we cant complete from col 0, neither if the line is empty, neither if the word does not end with a letter or number ;)
@@ -130,7 +130,7 @@ void YModeCompletion::doComplete( YView* view, bool forward )
     // replace text
     QString proposal = mProposedCompletions[ mCurrentProposal ];
     YZAction *action = view->buffer()->action();
-    YCursor currentCursor = view->getBufferCursor();
+    YCursor currentCursor = view->getLinePositionCursor();
     action->replaceText( view, mCompletionStart, currentCursor.x() - mCompletionStart.x(), proposal );
     view->gotoLinePosition(currentCursor.y() , mCompletionStart.x() + proposal.length());
 

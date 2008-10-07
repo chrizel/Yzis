@@ -55,7 +55,7 @@ void YModeSearch::enter( YView* view )
 {
     view->guiSetFocusCommandLine();
     view->guiSetCommandLineText( "" );
-    mSearchBegin = view->getBufferCursor();
+    mSearchBegin = view->getLinePositionCursor();
 }
 void YModeSearch::leave( YView* view )
 {
@@ -65,11 +65,11 @@ void YModeSearch::leave( YView* view )
 
 YCursor YModeSearch::replaySearch( YView* view, bool* found )
 {
-    return YSession::self()->search()->replayForward( view->buffer(), found, view->getBufferCursor() );
+    return YSession::self()->search()->replayForward( view->buffer(), found, view->getLinePositionCursor() );
 }
 YCursor YModeSearch::search( YView* view, const QString& s, bool* found )
 {
-    return YSession::self()->search()->forward( view->buffer(), s, found, view->getBufferCursor() );
+    return YSession::self()->search()->forward( view->buffer(), s, found, view->getLinePositionCursor() );
 }
 YCursor YModeSearch::search( YView* view, const QString& s, const YCursor begin, int* matchlength, bool* found )
 {
@@ -187,13 +187,13 @@ YModeSearchBackward::~YModeSearchBackward()
 
 YCursor YModeSearchBackward::replaySearch( YView* view, bool * found )
 {
-    return YSession::self()->search()->replayBackward( view->buffer(), found, view->getBufferCursor() );
+    return YSession::self()->search()->replayBackward( view->buffer(), found, view->getLinePositionCursor() );
 }
 YCursor YModeSearchBackward::search( YView* view, const QString& s, bool* found )
 {
-    //XXX YCursor buffer = view->getBufferCursor();
+    //XXX YCursor buffer = view->getLinePositionCursor();
     //XXX view->gotoLinePosition(false , buffer.x() + 1, buffer.y());
-    return YSession::self()->search()->backward( view->buffer(), s, found, view->getBufferCursor() );
+    return YSession::self()->search()->backward( view->buffer(), s, found, view->getLinePositionCursor() );
 }
 YCursor YModeSearchBackward::search( YView* view, const QString& s, const YCursor begin, int* matchlength, bool* found )
 {

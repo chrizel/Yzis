@@ -46,6 +46,8 @@ YDrawBuffer::~YDrawBuffer()
 
 void YDrawBuffer::setScreenSize( int columns, int lines ) 
 {
+	YASSERT(mScreenWidth > 0);
+	YASSERT(mScreenHeight > 0);
 	mScreenWidth = columns;
 	mScreenHeight = lines;
 }

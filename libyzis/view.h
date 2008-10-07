@@ -429,16 +429,19 @@ class YZIS_EXPORT YView : public YViewIface
 	inline int currentColumn() const { return mMainCursor.column(); }
 
     /**
-     * Get the current cursor information
-     * @return a reference on the current cursor
+	 * TODO: docstring
      */
-    const YCursor getCursor() const;
+    const YCursor getRowColumnCursor() const;
 
     /**
-     * Get the current buffer cursor information
-     * @return a reference on the current buffer cursor
+	 * TODO: docstring
      */
-    const YCursor getBufferCursor() const;
+    const YCursor getLineColumnCursor() const;
+
+    /**
+	 * TODO: docstring
+     */
+    const YCursor getLinePositionCursor() const;
 
     /** Update the GUI when the cursor position has changed.
      * Updates the status bar and notificates the GUI through

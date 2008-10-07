@@ -98,12 +98,12 @@ bool KTEView::setCursorPosition( KTextEditor::Cursor position )
 
 KTextEditor::Cursor KTEView::cursorPosition() const
 {
-    return KTextEditor::Cursor( m_view->getBufferCursor().y(), m_view->getBufferCursor().x() );
+    return KTextEditor::Cursor( m_view->getLinePositionCursor().y(), m_view->getLinePositionCursor().x() );
 }
 
 KTextEditor::Cursor KTEView::cursorPositionVirtual() const
 {
-    return KTextEditor::Cursor( m_view->getBufferCursor().y(), m_view->getBufferCursor().x() );
+    return KTextEditor::Cursor( m_view->getLinePositionCursor().y(), m_view->getLinePositionCursor().x() );
 }
 
 QPoint KTEView::cursorToCoordinate( const KTextEditor::Cursor& cursor ) const

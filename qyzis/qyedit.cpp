@@ -275,7 +275,7 @@ void QYEdit::mouseMoveEvent( QMouseEvent *e )
         } else if (mView->modePool()->current()->isSelMode() ) {
             // already in visual mode - move cursor if the mouse pointer has moved over a new char
             YCursor pos = translateRealToAbsolutePosition( e->pos() );
-            if ( pos != mView->getCursor() ) {
+            if ( pos != mView->getRowColumnCursor() ) {
                 mView->gotoRowColumn( pos );
             }
         }

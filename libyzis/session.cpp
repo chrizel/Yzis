@@ -604,7 +604,7 @@ bool YSession::exitRequest( int errorCode )
 
     getYzisinfo()->updateStartPosition( 
                      mCurBuffer->fileName(),
-                     (currentView())->getCursor());
+                     (currentView())->getRowColumnCursor());
                                           
     getYzisinfo()->writeYzisinfo();*/
 
@@ -728,7 +728,7 @@ void YSession::unregisterModifier ( const QString& mod )
 
 void YSession::saveJumpPosition()
 {
-    mYzisinfo->updateJumpList( mCurBuffer, currentView()->getCursor());
+    mYzisinfo->updateJumpList( mCurBuffer, currentView()->getRowColumnCursor());
 }
 
 void YSession::saveJumpPosition( const QPoint cursor )

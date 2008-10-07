@@ -422,7 +422,7 @@ YCursor YInfo::searchPosition( const YBuffer * )
         }*/
     }
 
-    return YSession::self()->currentView()->getBufferCursor();
+    return YSession::self()->currentView()->getLinePositionCursor();
 }
 
 const YCursor YInfo::previousJumpPosition()
@@ -453,7 +453,7 @@ const YCursor YInfo::previousJumpPosition()
     if ( found ) {
         return mJumpList[mCurrentJumpListItem]->position();
     } else {
-        return YSession::self()->currentView()->getCursor();
+        return YSession::self()->currentView()->getRowColumnCursor();
     }
 }
 

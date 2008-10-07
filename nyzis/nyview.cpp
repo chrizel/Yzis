@@ -200,11 +200,8 @@ void NYView::guiPaintEvent( const YSelection& drawMap )
 }
 void NYView::drawCursor()
 {
-	if ( getColumnsVisible() == 0 ) return;
-	int col = currentColumn();
-	int line = currentLine() + col / getColumnsVisible();
-	col %= getColumnsVisible();
-    wmove( editor, line, col + marginLeft );
+	YCursor pos = getRowColumnCursor();
+    wmove( editor, pos.line(), pos.column() + marginLeft );
     wrefresh( editor );
 }
 

@@ -289,7 +289,7 @@ int YLuaFuncs::winline(lua_State *L)
     if (!YLuaEngine::checkFunctionArguments(L, 0, 0, "winline", "")) return 0;
 
     YView* cView = YSession::self()->currentView();
-    uint result = cView->getBufferCursor().y() + 1;
+    uint result = cView->getLineColumnCursor().y() + 1;
 
     lua_pushnumber( L, result ); // first result
     YASSERT_EQUALS( lua_gettop(L), 1 );
@@ -300,7 +300,7 @@ int YLuaFuncs::wincol(lua_State *L)
 {
     if (!YLuaEngine::checkFunctionArguments(L, 0, 0, "wincol", "")) return 0;
     YView* cView = YSession::self()->currentView();
-    uint result = cView->getBufferCursor().x() + 1;
+    uint result = cView->getLineColumnCursor().x() + 1;
 
     lua_pushnumber( L, result ); // first result
     YASSERT_EQUALS( lua_gettop(L), 1 );
@@ -311,7 +311,7 @@ int YLuaFuncs::scrline(lua_State *L)
 {
     if (!YLuaEngine::checkFunctionArguments(L, 0, 0, "scrline", "")) return 0;
     YView* cView = YSession::self()->currentView();
-    uint result = cView->getCursor().y() + 1;
+    uint result = cView->getRowColumnCursor().y() + 1;
 
     lua_pushnumber( L, result ); // first result
     YASSERT_EQUALS( lua_gettop(L), 1 );
@@ -322,7 +322,7 @@ int YLuaFuncs::scrcol(lua_State *L)
 {
     if (!YLuaEngine::checkFunctionArguments(L, 0, 0, "scrcol", "")) return 0;
     YView* cView = YSession::self()->currentView();
-    uint result = cView->getCursor().x() + 1;
+    uint result = cView->getRowColumnCursor().x() + 1;
 
     lua_pushnumber( L, result ); // first result
     YASSERT_EQUALS( lua_gettop(L), 1 );
@@ -334,8 +334,8 @@ int YLuaFuncs::winpos(lua_State *L)
     if (!YLuaEngine::checkFunctionArguments(L, 0, 0, "winpos", "")) return 0;
 
     YView* cView = YSession::self()->currentView();
-    uint line = cView->getBufferCursor().y() + 1;
-    uint col = cView->getBufferCursor().x() + 1;
+    uint line = cView->getLineColumnCursor().y() + 1;
+    uint col = cView->getLineColumnCursor().x() + 1;
 
     lua_pushnumber( L, col );
     lua_pushnumber( L, line );
@@ -778,7 +778,7 @@ int YLuaFuncs::matchpair(lua_State *L )
 
     bool found = false;
     YView *v = YSession::self()->currentView();
-    YCursor s = v->getBufferCursor();
+    YCursor s = v->getLineColumnCursor();
     YCursor c = v->buffer()->action()->match(v, s, &found);
 
     lua_pushboolean(L , found);

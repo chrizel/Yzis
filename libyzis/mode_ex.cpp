@@ -484,7 +484,7 @@ int YModeEx::rangeLine( const YExRangeArgs& args )
 }
 int YModeEx::rangeCurrentLine( const YExRangeArgs& args )
 {
-    return args.view->getBufferCursor().y();
+    return args.view->getLinePositionCursor().y();
 }
 int YModeEx::rangeLastLine( const YExRangeArgs& args )
 {
@@ -531,7 +531,7 @@ int YModeEx::rangeSearch( const YExRangeArgs& args )
         else
             pat.replace( "\\/", "/" );
         dbg() << "rangeSearch: " << pat << endl;
-        pos = YSession::self()->search()->forward( args.view->buffer(), pat, &found, args.view->getBufferCursor() );
+        pos = YSession::self()->search()->forward( args.view->buffer(), pat, &found, args.view->getLinePositionCursor() );
     }
 
     if ( found ) {

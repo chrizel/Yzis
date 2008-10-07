@@ -679,14 +679,21 @@ void YView::commitNextUndo()
 {
     mBuffer->undoBuffer()->commitUndoItem( mMainCursor.position(), mMainCursor.line() );
 }
-const YCursor YView::getCursor() const
+
+
+const YCursor YView::getRowColumnCursor() const
 {
-	//XXX remove it
-	return YCursor(mMainCursor.column(), mMainCursor.line());
+	int col = currentColumn() % getColumnsVisible();
+	int row = currentLine() + currentColumn() / getColumnsVisible();
+	return YCursor(col, row);
 }
-const YCursor YView::getBufferCursor() const
+const YCursor YView::getLinePositionCursor() const
 {
     return mMainCursor.buffer();
+}
+const YCursor YView::getLineColumnCursor() const
+{
+	return YCursor(currentColumn(), currentLine());
 }
 
 void YView::recordMacro( const QList<QChar> &regs )

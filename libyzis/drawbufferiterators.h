@@ -58,7 +58,7 @@ public:
 	/* TODO: screenColumn */
 
 protected:
-	YDrawBufferAbstractIterator( const YDrawBuffer* db );
+	YDrawBufferAbstractIterator( YDrawBuffer* db );
 	void setup( const YInterval& i, yzis::IntervalType itype );
 	void step();
 
@@ -67,7 +67,7 @@ protected:
 
 	int getCut();
 
-	const YDrawBuffer* mDrawBuffer;
+	YDrawBuffer* mDrawBuffer;
 	YInterval mI;
 	yzis::IntervalType mIntervalType;
 	bool mStopped;
@@ -87,7 +87,7 @@ public:
 protected :
 	virtual void setupCell( int cut );
 	virtual void setupEOLCell();
-	YDrawBufferConstIterator( const YDrawBuffer* db ) : YDrawBufferAbstractIterator(db) {}
+	YDrawBufferConstIterator( YDrawBuffer* db ) : YDrawBufferAbstractIterator(db) {}
 	YDrawCellInfo mNext;
 
 	friend class YDrawBuffer;
@@ -104,7 +104,7 @@ protected:
 	YDrawBuffer* mDrawBuffer;
 	virtual void setupCell( int cut );
 	virtual void setupEOLCell();
-	YDrawBufferIterator( const YDrawBuffer* db ) : YDrawBufferAbstractIterator(db) {}
+	YDrawBufferIterator( YDrawBuffer* db ) : YDrawBufferAbstractIterator(db) {}
 	YDrawCell* mNext;
 
 	friend class YDrawBuffer;

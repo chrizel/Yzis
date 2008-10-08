@@ -25,17 +25,21 @@
 
 #include "drawline.h"
 #include "drawcell.h"
+#include "view.h"
+#include "viewcursor.h"
 
 /************************
  * YDrawBuffer
  ************************/
 
-YDrawBuffer::YDrawBuffer( int columns, int lines ) :
+YDrawBuffer::YDrawBuffer( const YView* view, int columns, int lines ) :
 	mContent(),
 	mScreenOffset(0,0),
-	mEOLCell()
+	mEOLCell(),
+	mView(view)
 {
-	mTopBufferLine = 0;
+	mFirstBufferLine = 0;
+	mScreenTopBufferLine = 0;
 	mEOLCell.step(" ");
 	setScreenSize(columns, lines);
 	mContent << (YDrawSection() << YDrawLine());
@@ -55,15 +59,15 @@ void YDrawBuffer::setScreenSize( int columns, int lines )
 int YDrawBuffer::currentHeight() const
 {
 	int dy = 0;
-	for ( int i = 0; i < mContent.count(); ++i ) {
-		dy += mContent[i].count();
+	for ( int bl = mScreenTopBufferLine; dy < mScreenHeight && bl-mFirstBufferLine < mContent.count(); ++bl ) {
+		dy += mContent[bl-mFirstBufferLine].count();
 	}
 	return dy;
 }
 
 int YDrawBuffer::setBufferDrawSection( int bl, YDrawSection ds, int* shift )
 {
-	int lid = bl - mTopBufferLine;
+	int lid = bl - mFirstBufferLine;
 	YASSERT(lid <= mContent.count());
 	/* compute screenY */
 	int dy = 0;
@@ -94,7 +98,7 @@ int YDrawBuffer::setBufferDrawSection( int bl, YDrawSection ds, int* shift )
 }
 YInterval YDrawBuffer::deleteFromBufferDrawSection( int bl )
 {
-	int lid = bl - mTopBufferLine;
+	int lid = bl - mFirstBufferLine;
 	YASSERT(0 <= lid)
 	YInterval affected;
 	if ( lid >= mContent.count() ) {
@@ -109,31 +113,6 @@ YInterval YDrawBuffer::deleteFromBufferDrawSection( int bl )
 	}
 	affected.setTo(YBound(YCursor(0, dy), true));
 	return affected;
-}
-
-void YDrawBuffer::verticalScroll( int delta ) {
-	dbg() << "verticalScroll "<<delta<<" ; current mTopBufferLine = " << mTopBufferLine << endl;
-	mTopBufferLine += delta;
-	if ( delta < 0 ) {
-		delta = qMin(mScreenHeight, -delta);
-		int i = 0;
-		for ( ; i < delta; ++i ) {
-			mContent.insert(0, YDrawSection() << YDrawLine());
-		}
-		// remove out of screen lines
-		for ( ; i < mContent.size() && delta < mScreenHeight; ++i ) {
-			delta += mContent[i].count();
-		}
-		if ( delta >= mScreenHeight ) {
-			while ( i < mContent.size() ) {
-				mContent.takeAt(i);
-			}
-		}
-	} else {
-		for ( int i = 0; i < delta && mContent.size() > 0; ++i ) {
-			mContent.takeAt(0);
-		}
-	}
 }
 
 YInterval YDrawBuffer::addSelection( yzis::SelectionType sel, const YInterval& i, yzis::IntervalType itype )
@@ -186,7 +165,7 @@ void YDrawBuffer::setEOLCell( const YDrawCell& cell )
 	mEOLCell = cell;
 }
 
-YDrawBufferConstIterator YDrawBuffer::const_iterator( const YInterval& i, yzis::IntervalType itype ) const
+YDrawBufferConstIterator YDrawBuffer::const_iterator( const YInterval& i, yzis::IntervalType itype )
 {
 	YDrawBufferConstIterator it = YDrawBufferConstIterator(this);
 	it.setup(i, itype);
@@ -201,14 +180,14 @@ YDrawBufferIterator YDrawBuffer::iterator( const YInterval& i, yzis::IntervalTyp
 
 const YDrawSection YDrawBuffer::bufferDrawSection( int bl ) const
 {
-	int sid = bl - mTopBufferLine;
+	int sid = bl - mFirstBufferLine;
 	YASSERT(0 <= sid)
 	YASSERT(sid < mContent.count());
 	return mContent[sid];
 }
 int YDrawBuffer::bufferDrawSectionScreenLine( int bl ) const
 {
-	int sid = bl - mTopBufferLine;
+	int sid = bl - mFirstBufferLine;
 	YASSERT(0 <= sid)
 	YASSERT(sid < mContent.count());
 	int sl = 0;
@@ -218,11 +197,76 @@ int YDrawBuffer::bufferDrawSectionScreenLine( int bl ) const
 	return sl;
 }
 
-bool YDrawBuffer::targetBufferLine( int bline, int* sid ) const
+int YDrawBuffer::screenTopBufferLine() const
 {
-	YASSERT(mTopBufferLine <= bline);
-	YASSERT(bline - mTopBufferLine < mContent.count());
-	*sid = bline - mTopBufferLine;
+	return mScreenTopBufferLine;
+}
+int YDrawBuffer::screenBottomBufferLine() const
+{
+	int height = 0;
+	for ( int sid = mScreenTopBufferLine - mFirstBufferLine; sid < mContent.count(); ++sid ) {
+		height += mContent[sid].count();
+		if ( height >= mScreenHeight ) {
+			return sid + mFirstBufferLine;
+		}
+	}
+	return mContent.count() - 1 + mFirstBufferLine;
+}
+
+bool YDrawBuffer::scrollForViewCursor( const YViewCursor& vc, int* scroll_horizontal, int* scroll_vertical )
+{
+	int sid;
+	targetBufferLine( vc.line(), &sid );
+	*scroll_horizontal = 0;
+	int oldScreenTopBufferLine = mScreenTopBufferLine;
+	if ( vc.line() < screenTopBufferLine() ) {
+		mScreenTopBufferLine = vc.line();
+		int delta = 0;
+		for ( int bl = mScreenTopBufferLine; bl < oldScreenTopBufferLine; ++bl ) {
+			delta += mContent[bl-mFirstBufferLine].count();
+		}
+		*scroll_vertical = delta;
+		return true;
+	} else if ( vc.line() > screenBottomBufferLine() ) {
+		int height = 0;
+		int bl = vc.line();
+		for ( ; bl >= 0; --bl ) {
+			height += mContent[bl-mFirstBufferLine].count();
+			if ( height == mScreenHeight ) {
+				mScreenTopBufferLine = bl;
+				break;
+			} else if ( height > mScreenHeight ) {
+				mScreenTopBufferLine = bl + 1; //TODO: what if height(vc.line()) > mScreenHeight?
+				break;
+			}
+		}
+		if ( bl < 0 ) mScreenTopBufferLine = 0;
+
+		YASSERT(mScreenTopBufferLine >= oldScreenTopBufferLine);
+		int delta = 0;
+		for ( int bl = mScreenTopBufferLine; bl > oldScreenTopBufferLine; --bl ) {
+			delta += mContent[bl-mFirstBufferLine].count();
+		}
+		*scroll_vertical = delta;
+		return true;
+	}
+	return false;
+}
+
+bool YDrawBuffer::targetBufferLine( int bline, int* sid )
+{
+	YASSERT(bline >= 0);
+	if ( bline < mFirstBufferLine ) {
+		for ( int bl = mFirstBufferLine - 1; bl >= bline; --bl ) {
+			mContent.insert(0, mView->drawSectionOfBufferLine(bl));
+		}
+		mFirstBufferLine = bline;
+	} else if ( bline - mFirstBufferLine >= mContent.count() ) {
+		for ( int bl = mContent.count() + mFirstBufferLine; bl <= bline; ++bl ) {
+			mContent << mView->drawSectionOfBufferLine(bl);
+		}
+	}
+	*sid = bline - mFirstBufferLine;
 	return true;
 }
 bool YDrawBuffer::targetBufferColumn( int bcol, int sid, int* lid, int* cid, int* bshift, int* column ) const
@@ -277,6 +321,7 @@ bool YDrawBuffer::targetScreenLine( int sline, int* sid, int* lid, int* bline ) 
 {
 	YASSERT(0 <= sline);
 	YASSERT(sline < screenHeight());
+	sline += mScreenTopBufferLine;
 	bool found = false;
 	int my_sid = 0;
 	int my_lid = 0;
@@ -295,7 +340,7 @@ bool YDrawBuffer::targetScreenLine( int sline, int* sid, int* lid, int* bline ) 
 	YASSERT(my_lid < mContent[my_sid].count());
 	*sid = my_sid;
 	*lid = my_lid;
-	if ( bline != NULL ) *bline = my_sid + mTopBufferLine;
+	if ( bline != NULL ) *bline = my_sid + mFirstBufferLine;
 	return found;
 }
 bool YDrawBuffer::targetScreenColumn( int scol, int sid, int lid, int* cid, int* sshift, int* position ) const

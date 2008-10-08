@@ -32,14 +32,14 @@
  * YDrawBufferIterator
  *************************/
 
-YDrawBufferAbstractIterator::YDrawBufferAbstractIterator( const YDrawBuffer* db )
+YDrawBufferAbstractIterator::YDrawBufferAbstractIterator( YDrawBuffer* db )
 {
 	mDrawBuffer = db;
 }
 int YDrawBufferAbstractIterator::bufferLine() const
 {
 	YASSERT(isValid());
-	return mDrawBuffer->topBufferLine() + mCurBLine;
+	return mDrawBuffer->firstBufferLine() + mCurBLine;
 }
 int YDrawBufferAbstractIterator::screenLine() const
 {

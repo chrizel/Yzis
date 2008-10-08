@@ -96,7 +96,7 @@ void TestDrawBuffer::testDrawBuffer()
 
 void TestDrawBuffer::testDrawBufferIterator()
 {
-	YDrawBuffer db(11, 20);
+	YDrawBuffer db(NULL, 11, 20);
 
 	YDrawLine dl;
 	dl.setColor(YColor("red"));
@@ -141,7 +141,7 @@ void TestDrawBuffer::testDrawBufferIterator()
 
 void TestDrawBuffer::testDrawBufferEmpty()
 {
-	YDrawBuffer db(10, 10);
+	YDrawBuffer db(NULL, 10, 10);
 	YDrawCellInfo ci;
 	YDrawBufferConstIterator it = db.const_iterator(YInterval(YCursor(0,0), YCursor(0,0)), yzis::ScreenInterval);
 	NEXT_CELLINFO(ci, it);

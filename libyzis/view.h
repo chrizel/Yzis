@@ -223,17 +223,17 @@ class YZIS_EXPORT YView : public YViewIface
     //-------------------------------------------------------
 
 	/* TODO: docstring */
-	YViewCursor viewCursorFromLinePosition( int line, int position ) const;
+	YViewCursor viewCursorFromLinePosition( int line, int position );
 	/* TODO: docstring */
-	YViewCursor viewCursorFromLinePosition( const YCursor& buffer ) const {
+	YViewCursor viewCursorFromLinePosition( const YCursor& buffer ) {
 		return viewCursorFromLinePosition(buffer.line(), buffer.column());
 	}
 	/* TODO: docstring */
-	YViewCursor viewCursorFromLineColumn( int line, int column ) const;
+	YViewCursor viewCursorFromLineColumn( int line, int column );
 	/* TODO: docstring */
 	YViewCursor viewCursorFromRowColumn( int row, int column ) const;
 	/* TODO: docstring */
-	YViewCursor viewCursorFromStickedLine( int line ) const;
+	YViewCursor viewCursorFromStickedLine( int line );
 
 	/* TODO: docstring */
 	YViewCursor viewCursorMoveVertical( int ticks );
@@ -544,13 +544,15 @@ class YZIS_EXPORT YView : public YViewIface
 	void updateBufferInterval( const YInterval& bi );
 
 	// TODO: docstring
-	YDrawLine drawLineFromYLine( const YLine* yl, int start_column = 0 );
+	YDrawLine drawLineFromYLine( const YLine* yl, int start_column = 0 ) const;
+	// TODO: docstring
+	YDrawSection drawSectionOfBufferLine( int bl ) const;
 
 protected:
 
     void setupKeys();
 
-    bool stringHasOnlySpaces ( const QString& what );
+    bool stringHasOnlySpaces ( const QString& what ) const;
 
     YDrawBuffer mDrawBuffer;
 
@@ -561,7 +563,7 @@ private:
 
 
 	// TODO: docstring
-	int setBufferLineContent( int bl, const YLine* yl );
+	int setBufferLineContent( int bl );
 	/* TODO: docstring */
 	void deleteFromBufferLine( int bl );
 

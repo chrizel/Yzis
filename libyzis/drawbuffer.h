@@ -34,6 +34,8 @@ typedef QList<YDrawLine> YDrawSection;
 
 class YDrawCell;
 class YCursor;
+class YView;
+class YViewCursor;
 
 
 class YZIS_EXPORT YDrawBuffer
@@ -44,20 +46,14 @@ class YZIS_EXPORT YDrawBuffer
 
 public:
 
-    YDrawBuffer( int columns, int height );
+    YDrawBuffer( const YView* view, int columns, int height );
     virtual ~YDrawBuffer();
 
 	/* TODO: docstring */
-	inline int topBufferLine() const {
-		return mTopBufferLine;
-	}
-	/* TODO: docstring */
-	inline int bottomBufferLine() const {
-		return mTopBufferLine + mContent.size() - 1;
-	}
+	int screenTopBufferLine() const;
 
 	/* TODO: docstring */
-	void verticalScroll( int delta );
+	int screenBottomBufferLine() const;
 
 	/* TODO: docstring */
 	void setScreenSize( int columns, int lines );
@@ -68,8 +64,11 @@ public:
 	/* TODO: docstring */
 	inline int screenWidth() const { return mScreenWidth; }
 
+	inline int firstBufferLine() const { return mFirstBufferLine; }
+	inline int lastBufferLine() const { return mFirstBufferLine+mContent.count()-1; }
+
 	/* TODO: docstring */
-	YDrawBufferConstIterator const_iterator( const YInterval& i, yzis::IntervalType itype ) const;
+	YDrawBufferConstIterator const_iterator( const YInterval& i, yzis::IntervalType itype );
 	/* TODO: docstring */
 	YDrawBufferIterator iterator( const YInterval& i, yzis::IntervalType itype );
 
@@ -105,13 +104,16 @@ public:
 	YInterval delSelection( yzis::SelectionType sel, const YInterval& i, yzis::IntervalType itype );
 
 	/* TODO: docstring */
-	bool targetBufferLine( int bline, int* sid ) const;
+	bool targetBufferLine( int bline, int* sid );
 	/* TODO: docstring */
 	bool targetBufferColumn( int bcol, int sid, int* lid, int* cid, int* bshift, int* column = NULL ) const;
 	/* TODO: docstring */
 	bool targetScreenLine( int sline, int* sid, int* lid, int* bline = NULL ) const;
 	/* TODO: docstring */
 	bool targetScreenColumn( int scol, int sid, int lid, int* cid, int* sshift, int* position = NULL ) const;
+
+	/* TODO: docstring */
+	bool scrollForViewCursor( const YViewCursor& vc, int* scrolling_horizontal, int* scroll_vertical );
 
 
 private :
@@ -121,7 +123,10 @@ private :
 	YDrawCell mEOLCell;
 	int mScreenWidth;
 	int mScreenHeight;
-	int mTopBufferLine;
+	int mFirstBufferLine;
+	int mScreenTopBufferLine;
+	
+	const YView* mView;
 
     friend YDebugStream& operator<< ( YDebugStream& out, const YDrawBuffer& buff );
 

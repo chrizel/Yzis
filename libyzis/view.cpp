@@ -63,7 +63,7 @@ static int nextId = 1;
 
 YView::YView(YBuffer *_b, YSession *sess, int cols, int lines)
 		:
-	mDrawBuffer(cols,lines),
+	mDrawBuffer(this, cols, lines),
 	mPreviousChars(""),mLastPreviousChars(""),
 	mSession(sess),
 	mBuffer(_b),
@@ -336,7 +336,7 @@ void YView::alignViewVertically( int line )
 
 
 
-YViewCursor YView::viewCursorFromLinePosition( int line, int position ) const
+YViewCursor YView::viewCursorFromLinePosition( int line, int position ) 
 {
 	//TODO: behindEOL
 	YASSERT(line >= 0);
@@ -370,7 +370,7 @@ YViewCursor YView::viewCursorFromRowColumn( int row, int column ) const
 	return YViewCursor(line, position, column);
 }
 
-YViewCursor YView::viewCursorFromLineColumn( int line, int column ) const
+YViewCursor YView::viewCursorFromLineColumn( int line, int column )
 {
 	//TODO: behindEOL
 	YASSERT(line >= 0);
@@ -389,7 +389,7 @@ YViewCursor YView::viewCursorFromLineColumn( int line, int column ) const
  * Sticky column support
  */
 #define STICK_ENDLINE -1
-YViewCursor YView::viewCursorFromStickedLine( int line ) const
+YViewCursor YView::viewCursorFromStickedLine( int line )
 {
 	if ( mStickyColumn == STICK_ENDLINE ) {
 		return viewCursorFromLinePosition(line, mBuffer->getLineLength(line)-1);
@@ -410,19 +410,11 @@ void YView::stickToEOL()
 void YView::gotoViewCursor( const YViewCursor& cursor )
 {
 	mMainCursor = cursor;
-	//TODO: scroll
-#if 0
-	if ( nexty < mDrawBuffer.topBufferLine() ) {
-		int delta = nexty - mDrawBuffer.topBufferLine();   // mDrawBuffer.topBufferLine+delta == nexty
-		mDrawBuffer.verticalScroll(delta);
-		updateBufferInterval(mDrawBuffer.topBufferLine(), mDrawBuffer.topBufferLine()-delta-1);
-	} else {
-		int previousBottomLine = mDrawBuffer.bottomBufferLine();
-		int delta = nexty - mDrawBuffer.bottomBufferLine();
-		mDrawBuffer.verticalScroll(delta);
-		updateBufferInterval(previousBottomLine+1, nexty);
+	int scroll_horizontal, scroll_vertical;
+	if ( mDrawBuffer.scrollForViewCursor(mMainCursor, &scroll_horizontal, &scroll_vertical) ) {
+		guiScroll(scroll_horizontal, scroll_vertical);
 	}
-#endif
+
 	mModePool->current()->cursorMoved( this );
 	updateCursor();
 }
@@ -758,7 +750,7 @@ void YView::sendRefreshEvent( )
     sendPaintEvent(YInterval(YCursor(0,0), YBound(YCursor(0,mDrawBuffer.screenHeight()), true)));
 }
 
-bool YView::stringHasOnlySpaces ( const QString& what )
+bool YView::stringHasOnlySpaces ( const QString& what ) const
 {
     for (int i = 0 ; i < what.length(); i++)
         if ( !what.at(i).isSpace() ) {
@@ -795,7 +787,7 @@ void YView::internalScroll( int dx, int dy )
 
 int YView::getCurrentTop() const
 {
-	return mDrawBuffer.topBufferLine();
+	return mDrawBuffer.screenTopBufferLine();
 }
 int YView::getLinesVisible() const
 {
@@ -817,21 +809,20 @@ void YView::updateBufferInterval( const YInterval& bi )
 void YView::updateBufferInterval( int bl, int bl_last )
 {
 	YASSERT(bl <= bl_last);
-	if ( mDrawBuffer.topBufferLine() > bl_last ||
-			(mDrawBuffer.bottomBufferLine()+(mDrawBuffer.full()?0:1) < bl) ) {
-		dbg() << "ignoring updateBufferInterval from line "<<bl<<" to " << bl_last << " ["<<mDrawBuffer.topBufferLine()<<" to "<<mDrawBuffer.bottomBufferLine()<<" full=" << mDrawBuffer.full()<<"]" << endl;
+	if ( mDrawBuffer.firstBufferLine() > bl_last || mDrawBuffer.lastBufferLine()+(mDrawBuffer.full()?0:1) < bl ) {
+		dbg() << "ignoring updateBufferInterval from line "<<bl<<" to " << bl_last << " ["<<mDrawBuffer.firstBufferLine()<<" to "<<mDrawBuffer.lastBufferLine()<<" full=" << mDrawBuffer.full()<<"]" << endl;
 		return;
 	}
 
 	/* clipping */
-	bl = qMax(bl, mDrawBuffer.topBufferLine());
+	bl = qMax(bl, mDrawBuffer.firstBufferLine());
 	dbg() << "updateBufferInterval from line "<<bl<<" to " << bl_last << endl;
 
 	setPaintAutoCommit(false);
 	int nextScreenLine = 0;
 	/* update requested lines */
 	for( ; bl < mBuffer->lineCount() && bl <= bl_last && nextScreenLine < mDrawBuffer.screenHeight(); ++bl ) {
-		nextScreenLine = setBufferLineContent(bl, mBuffer->yzline(bl));
+		nextScreenLine = setBufferLineContent(bl);
 	}
 	if ( bl <= bl_last ) {
 		deleteFromBufferLine(bl);
@@ -840,7 +831,8 @@ void YView::updateBufferInterval( int bl, int bl_last )
 }
 
 
-YDrawLine YView::drawLineFromYLine( const YLine* yl, int start_column ) {
+YDrawLine YView::drawLineFromYLine( const YLine* yl, int start_column ) const
+{
 	YDrawLine dl;
 
 	QString data = yl->data();
@@ -936,8 +928,8 @@ YDrawLine YView::drawLineFromYLine( const YLine* yl, int start_column ) {
 	return dl;
 }
 
-int YView::setBufferLineContent( int bl, const YLine* yl )
-{
+YDrawSection YView::drawSectionOfBufferLine( int bl ) const {
+	const YLine* yl = mBuffer->yzline(bl);
 	YDrawLine dl = drawLineFromYLine(yl);
 	YDrawSection ds;
 	if ( wrap ) {
@@ -945,6 +937,12 @@ int YView::setBufferLineContent( int bl, const YLine* yl )
 	} else {
 		ds << dl;
 	}
+	return ds;
+}
+
+int YView::setBufferLineContent( int bl )
+{
+	YDrawSection ds = drawSectionOfBufferLine(bl);
 
 	int shift = 0;
 	int dy = mDrawBuffer.setBufferDrawSection(bl, ds, &shift);
@@ -952,7 +950,7 @@ int YView::setBufferLineContent( int bl, const YLine* yl )
 	if ( shift != 0 ) {
 		if ( shift < 0 ) {
 			/* try to add new lines */
-			int start_bl = mDrawBuffer.bottomBufferLine() + 1;
+			int start_bl = mDrawBuffer.lastBufferLine() + 1;
 			if ( start_bl < mBuffer->lineCount() ) {
 				updateBufferInterval(start_bl, mBuffer->lineCount()-1);	
 			}

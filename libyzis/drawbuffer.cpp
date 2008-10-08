@@ -274,45 +274,41 @@ bool YDrawBuffer::targetBufferLine( int bline, int* sid )
 int YDrawBuffer::targetBufferColumn( int bcol, int sid, int* lid, int* cid, int* bshift, int* column ) const
 {
 	YASSERT(0 <= bcol);
-	bool lid_found = false;
 	int w = 0;
 	int my_lid = 0;
 	*bshift = -1;
-	for( ; !lid_found && my_lid < mContent[sid].count(); ++my_lid ) {
+	int max_lid = mContent[sid].count() - 1;
+	for( ; my_lid <= max_lid; ++my_lid ) {
 		int lw = mContent[sid][my_lid].length();
-		if ( w + lw > bcol ) {
-			lid_found = true;
+		if ( w + lw > bcol || my_lid == max_lid ) {
 			break;
 		} else {
 			w += lw;
 		}
 	}
-	if ( !lid_found && my_lid > 0 ) --my_lid;
 	int my_column = 0;
 	if ( column != NULL ) {
 		my_column = my_lid * mScreenWidth;
 	}
-	if ( lid_found ) {
-		int my_cid = 0;
-		for( ; my_cid < mContent[sid][my_lid].count(); ++my_cid ) {
-			int cw = mContent[sid][my_lid][my_cid].length();
-			if ( w + cw > bcol ) {
-				*bshift = bcol - w;
-				if ( column != NULL ) {
-					my_column += mContent[sid][my_lid][my_cid].widthForLength(bcol - w);
-				}
-				break;
-			} else {
-				*bshift = 0;
-				w += cw;
-				if ( column != NULL ) {
-					my_column += mContent[sid][my_lid][my_cid].width();
-				}
+	int my_cid = 0;
+	for( ; my_cid < mContent[sid][my_lid].count(); ++my_cid ) {
+		int cw = mContent[sid][my_lid][my_cid].length();
+		if ( w + cw > bcol ) {
+			*bshift = bcol - w;
+			if ( column != NULL ) {
+				my_column += mContent[sid][my_lid][my_cid].widthForLength(bcol - w);
+			}
+			break;
+		} else {
+			*bshift = 0;
+			w += cw;
+			if ( column != NULL ) {
+				my_column += mContent[sid][my_lid][my_cid].width();
 			}
 		}
-		*lid = my_lid;
-		*cid = my_cid;
 	}
+	*lid = my_lid;
+	*cid = my_cid;
 	if ( column != NULL ) {
 		*column = my_column;
 	}

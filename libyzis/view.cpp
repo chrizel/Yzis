@@ -344,7 +344,7 @@ YViewCursor YView::viewCursorFromLinePosition( int line, int position )
 	YASSERT(position >= 0);
 	int sid, lid, cid, bshift, column;
 	mDrawBuffer.targetBufferLine(line, &sid);
-	int max_position = mBuffer->getLineLength(line) - 1;
+	int max_position = qMax(0, mBuffer->getLineLength(line) - 1);
 	bool goBehindEnd = false;
 	if ( position > max_position ) {
 		position = max_position;
@@ -392,7 +392,7 @@ YViewCursor YView::viewCursorFromLineColumn( int line, int column )
 YViewCursor YView::viewCursorFromStickedLine( int line )
 {
 	if ( mStickyColumn == STICK_ENDLINE ) {
-		return viewCursorFromLinePosition(line, mBuffer->getLineLength(line)-1);
+		return viewCursorFromLinePosition(line, qMax(0,mBuffer->getLineLength(line)-1));
 	} else {
 		return viewCursorFromLineColumn(line, mStickyColumn);
 	}

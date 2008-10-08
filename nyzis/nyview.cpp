@@ -121,8 +121,9 @@ void NYView::updateVis()
 	setVisibleArea(width-marginLeft, height-2);
 }
 
-void NYView::guiScroll( int /* dx */, int dy )
+void NYView::guiScroll( int dx, int dy )
 {
+	Q_UNUSED(dx); //TODO
 	if ( dy >= getLinesVisible() ) {
 		guiPaintEvent(YSelection(YInterval(YCursor(0, 0), YCursor(getColumnsVisible()-1, getLinesVisible()-1))));
 	} else {

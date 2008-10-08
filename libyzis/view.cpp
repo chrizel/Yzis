@@ -819,14 +819,18 @@ void YView::updateBufferInterval( int bl, int bl_last )
 	dbg() << "updateBufferInterval from line "<<bl<<" to " << bl_last << endl;
 
 	setPaintAutoCommit(false);
-	int nextScreenLine = 0;
+
+	/* delete extra lines */
+	if ( bl_last >= mBuffer->lineCount() ) {
+		deleteFromBufferLine(mBuffer->lineCount());
+	}
+	bl_last = qMin(bl_last, mBuffer->lineCount()-1);
+
 	/* update requested lines */
-	for( ; bl < mBuffer->lineCount() && bl <= bl_last && nextScreenLine < mDrawBuffer.screenHeight(); ++bl ) {
-		nextScreenLine = setBufferLineContent(bl);
+	for( ; bl <= bl_last; ++bl ) {
+		setBufferLineContent(bl);
 	}
-	if ( bl <= bl_last ) {
-		deleteFromBufferLine(bl);
-	}
+
 	commitPaintEvent();
 }
 
@@ -940,25 +944,11 @@ YDrawSection YView::drawSectionOfBufferLine( int bl ) const {
 	return ds;
 }
 
-int YView::setBufferLineContent( int bl )
+void YView::setBufferLineContent( int bl )
 {
 	YDrawSection ds = drawSectionOfBufferLine(bl);
-
-	int shift = 0;
-	int dy = mDrawBuffer.setBufferDrawSection(bl, ds, &shift);
-	int ndy = dy+ds.count();
-	if ( shift != 0 ) {
-		if ( shift < 0 ) {
-			/* try to add new lines */
-			int start_bl = mDrawBuffer.lastBufferLine() + 1;
-			if ( start_bl < mBuffer->lineCount() ) {
-				updateBufferInterval(start_bl, mBuffer->lineCount()-1);	
-			}
-		}
-		sendPaintEvent(YInterval(YCursor(0,ndy), YBound(YCursor(0,mDrawBuffer.screenHeight()), true))); //XXX optimize with guiScroll
-	}
-	sendPaintEvent(YInterval(YCursor(0,dy), YBound(YCursor(0,ndy), true)));
-	return ndy;
+	YInterval affected = mDrawBuffer.setBufferDrawSection(bl, ds);
+	sendPaintEvent(affected);
 }
 void YView::deleteFromBufferLine( int bl )
 {

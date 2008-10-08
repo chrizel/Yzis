@@ -59,42 +59,40 @@ void YDrawBuffer::setScreenSize( int columns, int lines )
 int YDrawBuffer::currentHeight() const
 {
 	int dy = 0;
-	for ( int bl = mScreenTopBufferLine; dy < mScreenHeight && bl-mFirstBufferLine < mContent.count(); ++bl ) {
+	for ( int bl = mScreenTopBufferLine; dy < mScreenHeight && bl <= lastBufferLine(); ++bl ) {
 		dy += mContent[bl-mFirstBufferLine].count();
 	}
 	return dy;
 }
 
-int YDrawBuffer::setBufferDrawSection( int bl, YDrawSection ds, int* shift )
+YInterval YDrawBuffer::setBufferDrawSection( int bl, YDrawSection ds )
 {
 	int lid = bl - mFirstBufferLine;
+	YASSERT(lid >= 0);
 	YASSERT(lid <= mContent.count());
-	/* compute screenY */
-	int dy = 0;
-	for ( int i = 0; i < lid; ++i ) {
-		dy += mContent[i].count();
-	}
-	YASSERT(dy < mScreenHeight);
-	int m_shift = 0;
-	/* apply section */
+	YInterval affected;
+
+	int delta = 0;
 	if ( lid == mContent.count() ) {
 		mContent << ds;
 	} else {
-		 /* section size changed? */
-		m_shift = ds.count() - mContent[lid].count();
+		delta = ds.count() - mContent[lid].count();
 		mContent.replace(lid, ds);
-		if ( m_shift > 0 ) { 
-			/* remove out of screen lines */
-			int my_h = currentHeight();
-			int i = mContent.size() - 1;
-			while ( my_h - mContent[i].count() > mScreenHeight ) {
-				my_h -= mContent[i].count();
-				mContent.takeAt(i);
+	}
+
+	if ( bl >= mScreenTopBufferLine ) {
+		int screen_line = bufferDrawSectionScreenLine(bl);
+		if ( bl < mScreenHeight ) {
+			affected.setFrom(YBound(YCursor(0, screen_line)));
+			if ( delta != 0 ) { // repaint all bottom
+				affected.setTo(YBound(YCursor(0, mScreenHeight),true));
+			} else { // repaint only the line
+				affected.setTo(YBound(YCursor(0, screen_line+ds.count()), true));
 			}
 		}
 	}
-	if ( shift ) *shift = m_shift;
-	return dy;
+
+	return affected;
 }
 YInterval YDrawBuffer::deleteFromBufferDrawSection( int bl )
 {
@@ -104,14 +102,19 @@ YInterval YDrawBuffer::deleteFromBufferDrawSection( int bl )
 	if ( lid >= mContent.count() ) {
 		return affected;
 	}
-	/* compute screenY */
-	int dy = bufferDrawSectionScreenLine(bl);
-	affected.setFrom(YBound(YCursor(0,dy)));
+	int height = 0;
 	while ( lid < mContent.count() ) {
-		dy += mContent[lid].count();
+		height += mContent[lid].count();
 		mContent.takeAt(lid);
 	}
-	affected.setTo(YBound(YCursor(0, dy), true));
+	if ( bl >= mScreenTopBufferLine ) {
+		/* compute screenY */
+		int dy = bufferDrawSectionScreenLine(bl);
+		if ( dy < mScreenHeight ) {
+			affected.setFrom(YBound(YCursor(0,dy)));
+			affected.setTo(YBound(YCursor(0,qMin(mScreenHeight, dy+height)), true));
+		}
+	}
 	return affected;
 }
 
@@ -187,12 +190,11 @@ const YDrawSection YDrawBuffer::bufferDrawSection( int bl ) const
 }
 int YDrawBuffer::bufferDrawSectionScreenLine( int bl ) const
 {
-	int sid = bl - mFirstBufferLine;
-	YASSERT(0 <= sid)
-	YASSERT(sid < mContent.count());
+	YASSERT(bl >= mScreenTopBufferLine);
+	YASSERT(bl <= lastBufferLine()+1);
 	int sl = 0;
-	for ( int i = 0; i < sid; ++i ) {
-		sl += mContent[i].count();
+	for ( int l = mScreenTopBufferLine; l < bl; ++l ) {
+		sl += mContent[l-mFirstBufferLine].count();
 	}
 	return sl;
 }

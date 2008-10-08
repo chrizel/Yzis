@@ -563,7 +563,7 @@ private:
 
 
 	// TODO: docstring
-	int setBufferLineContent( int bl );
+	void setBufferLineContent( int bl );
 	/* TODO: docstring */
 	void deleteFromBufferLine( int bl );
 

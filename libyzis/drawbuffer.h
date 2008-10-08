@@ -76,7 +76,7 @@ public:
 	inline const QList<YDrawSection> sections() { return mContent; }
 
 	/* TODO: docstring */
-	int setBufferDrawSection( int bl, YDrawSection ds, int* shift = NULL );
+	YInterval setBufferDrawSection( int bl, YDrawSection ds );
 
 	/* TODO: docstring */
 	YInterval deleteFromBufferDrawSection( int bl );

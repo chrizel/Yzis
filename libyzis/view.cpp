@@ -676,7 +676,7 @@ void YView::commitNextUndo()
 const YCursor YView::getRowColumnCursor() const
 {
 	int col = currentColumn() % getColumnsVisible();
-	int row = currentLine() + currentColumn() / getColumnsVisible();
+	int row = currentLine() - mDrawBuffer.screenTopBufferLine() + currentColumn() / getColumnsVisible();
 	return YCursor(col, row);
 }
 const YCursor YView::getLinePositionCursor() const

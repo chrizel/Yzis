@@ -338,41 +338,47 @@ void YView::alignViewVertically( int line )
 
 YViewCursor YView::viewCursorFromLinePosition( int line, int position ) 
 {
-	//TODO: behindEOL
 	YASSERT(line >= 0);
 	YASSERT(line < mBuffer->lineCount());
 	YASSERT(position >= 0);
 	int sid, lid, cid, bshift, column;
 	mDrawBuffer.targetBufferLine(line, &sid);
-	int max_position = qMax(0, mBuffer->getLineLength(line) - 1);
-	bool goBehindEnd = false;
-	if ( position > max_position ) {
-		position = max_position;
-		//TODO goBehindEnd
+	int my_position = mDrawBuffer.targetBufferColumn(position, sid, &lid, &cid, &bshift, &column);
+	if ( my_position < position ) {
+		position = my_position;
+		if ( mBuffer->getLineLength(line) > 0 && mModePool->current()->isEditMode() ) {
+			position += 1;
+			column += 1;
+		}
 	}
-	mDrawBuffer.targetBufferColumn(position, sid, &lid, &cid, &bshift, &column);
-	//TODO goBehindEnd
 	dbg() << "viewCursorFromLinePosition(" << line<<","<<position<<") => line,position,column = " << line<<","<<position<<","<<column<< endl;
 	return YViewCursor(line, position, column);
 }
 
-YViewCursor YView::viewCursorFromRowColumn( int row, int column ) const
+YViewCursor YView::viewCursorFromRowColumn( int row, int scol ) const
 {
 	//TODO: behindEOL
 	YASSERT(row >= 0);
 	YASSERT(row < mDrawBuffer.screenHeight());
-	YASSERT(column >= 0);
-	YASSERT(column < mDrawBuffer.screenWidth());
+	YASSERT(scol >= 0);
+	YASSERT(scol < mDrawBuffer.screenWidth());
 	int sid, lid, line;
 	mDrawBuffer.targetScreenLine(row, &sid, &lid, &line);
 	int cid, sshift, position;
-	mDrawBuffer.targetScreenColumn(column, sid, lid, &cid, &sshift, &position);
+	int my_scol = mDrawBuffer.targetScreenColumn(scol, sid, lid, &cid, &sshift, &position);
+	int column = lid * mDrawBuffer.screenWidth() + my_scol;
+	if ( my_scol < scol ) {
+		if ( mBuffer->getLineLength(line) > 0 && mModePool->current()->isEditMode() ) {
+			position += 1;
+			column += 1;
+		}
+	}
+	dbg() << "viewCursorFromRowColumn("<<row<<","<<column<<") => line,position,column = " << line<<","<<position<<","<<column<< endl;
 	return YViewCursor(line, position, column);
 }
 
 YViewCursor YView::viewCursorFromLineColumn( int line, int column )
 {
-	//TODO: behindEOL
 	YASSERT(line >= 0);
 	YASSERT(line < mBuffer->lineCount());
 	YASSERT(column >= 0);
@@ -381,7 +387,15 @@ YViewCursor YView::viewCursorFromLineColumn( int line, int column )
 	int lid = column / mDrawBuffer.screenWidth();
 	int scol = column % mDrawBuffer.screenWidth();
 	int cid, sshift, position;
-	mDrawBuffer.targetScreenColumn(scol, sid, lid, &cid, &sshift, &position);
+	int my_scol = mDrawBuffer.targetScreenColumn(scol, sid, lid, &cid, &sshift, &position);
+	if ( my_scol < scol ) {
+		column = lid * mDrawBuffer.screenWidth() + my_scol;
+		if ( mBuffer->getLineLength(line) > 0 && mModePool->current()->isEditMode() ) {
+			position += 1;
+			column += 1;
+		}
+	}
+	dbg() << "viewCursorFromLineColumn("<<line<<","<<column<<") => line,position,column = " << line<<","<<position<<","<<column<< endl;
 	return YViewCursor(line, position, column);
 }
 
@@ -658,11 +672,15 @@ MapOption YView::getLocalMapOption( const QString& option ) const
         return YSession::self()->getOptions()->readMapOption( "Global\\" + option );
 }
 
-QString YView::getCharBelow( int delta )
+QString YView::getCharBelow( int delta ) // TODO: get it out of YView
 {
 	int target_line = qMin(qMax(0, mMainCursor.line() + delta), mBuffer->lineCount());
 	int target_column = mMainCursor.column();
-	// TODO: use ConstIterator
+	YViewCursor target = viewCursorFromLineColumn(target_line, target_column);
+	if ( target.column() == target_column && target.line() == target_line &&
+			target.column() < mBuffer->getLineLength(target.line()) ) {
+		return mBuffer->textline(target.line()).at(target.position());
+	}
 	return QString();
 }
 

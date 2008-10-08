@@ -84,10 +84,10 @@ void YDrawBufferAbstractIterator::setup( const YInterval& i, yzis::IntervalType 
 		mPosShift = 0;
 		switch ( mIntervalType ) {
 			case yzis::ScreenInterval :
-				found = mDrawBuffer->targetScreenColumn(start.column(), mCurBLine, mCurLine, &mCurCell, &mPosShift);
+				found = (start.column() == mDrawBuffer->targetScreenColumn(start.column(), mCurBLine, mCurLine, &mCurCell, &mPosShift));
 				break;
 			case yzis::BufferInterval :
-				found = mDrawBuffer->targetBufferColumn(start.column(), mCurBLine, &mCurLine, &mCurCell, &mPosShift);
+				found = (start.column() == mDrawBuffer->targetBufferColumn(start.column(), mCurBLine, &mCurLine, &mCurCell, &mPosShift));
 				break;
 		}
 		if ( found ) {

@@ -106,11 +106,11 @@ public:
 	/* TODO: docstring */
 	bool targetBufferLine( int bline, int* sid );
 	/* TODO: docstring */
-	bool targetBufferColumn( int bcol, int sid, int* lid, int* cid, int* bshift, int* column = NULL ) const;
+	int targetBufferColumn( int bcol, int sid, int* lid, int* cid, int* bshift, int* column = NULL ) const;
 	/* TODO: docstring */
 	bool targetScreenLine( int sline, int* sid, int* lid, int* bline = NULL ) const;
 	/* TODO: docstring */
-	bool targetScreenColumn( int scol, int sid, int lid, int* cid, int* sshift, int* position = NULL ) const;
+	int targetScreenColumn( int scol, int sid, int lid, int* cid, int* sshift, int* position = NULL ) const;
 
 	/* TODO: docstring */
 	bool scrollForViewCursor( const YViewCursor& vc, int* scrolling_horizontal, int* scroll_vertical );

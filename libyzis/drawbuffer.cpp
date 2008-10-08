@@ -271,12 +271,13 @@ bool YDrawBuffer::targetBufferLine( int bline, int* sid )
 	*sid = bline - mFirstBufferLine;
 	return true;
 }
-bool YDrawBuffer::targetBufferColumn( int bcol, int sid, int* lid, int* cid, int* bshift, int* column ) const
+int YDrawBuffer::targetBufferColumn( int bcol, int sid, int* lid, int* cid, int* bshift, int* column ) const
 {
 	YASSERT(0 <= bcol);
 	bool lid_found = false;
 	int w = 0;
 	int my_lid = 0;
+	*bshift = -1;
 	for( ; !lid_found && my_lid < mContent[sid].count(); ++my_lid ) {
 		int lw = mContent[sid][my_lid].length();
 		if ( w + lw > bcol ) {
@@ -287,23 +288,22 @@ bool YDrawBuffer::targetBufferColumn( int bcol, int sid, int* lid, int* cid, int
 		}
 	}
 	if ( !lid_found && my_lid > 0 ) --my_lid;
-	bool found = false;
 	int my_column = 0;
 	if ( column != NULL ) {
 		my_column = my_lid * mScreenWidth;
 	}
 	if ( lid_found ) {
 		int my_cid = 0;
-		for( ; !found && my_cid < mContent[sid][my_lid].count(); ++my_cid ) {
+		for( ; my_cid < mContent[sid][my_lid].count(); ++my_cid ) {
 			int cw = mContent[sid][my_lid][my_cid].length();
 			if ( w + cw > bcol ) {
 				*bshift = bcol - w;
 				if ( column != NULL ) {
 					my_column += mContent[sid][my_lid][my_cid].widthForLength(bcol - w);
 				}
-				found = true;
 				break;
 			} else {
+				*bshift = 0;
 				w += cw;
 				if ( column != NULL ) {
 					my_column += mContent[sid][my_lid][my_cid].width();
@@ -316,7 +316,9 @@ bool YDrawBuffer::targetBufferColumn( int bcol, int sid, int* lid, int* cid, int
 	if ( column != NULL ) {
 		*column = my_column;
 	}
-	return found;
+	int position = w + *bshift;
+	dbg() << "targetBufferColumn " << bcol << " -> " << position << endl;
+	return position;
 }
 
 bool YDrawBuffer::targetScreenLine( int sline, int* sid, int* lid, int* bline ) const
@@ -345,29 +347,29 @@ bool YDrawBuffer::targetScreenLine( int sline, int* sid, int* lid, int* bline ) 
 	if ( bline != NULL ) *bline = my_sid + mFirstBufferLine;
 	return found;
 }
-bool YDrawBuffer::targetScreenColumn( int scol, int sid, int lid, int* cid, int* sshift, int* position ) const
+int YDrawBuffer::targetScreenColumn( int scol, int sid, int lid, int* cid, int* sshift, int* position ) const
 {
 	YASSERT(0 <= scol);
 	YASSERT(scol < screenWidth());
-	bool found = false;
 	int my_cid = 0;
 	int w = 0;
+	*sshift = -1;
 	int my_position = 0;
 	if ( position != NULL ) {
 		for ( int i = 0; i < lid; ++i ) {
 			my_position += mContent[sid][i].length();
 		}
 	}
-	for( ; !found && my_cid < mContent[sid][lid].count(); ++my_cid ) {
+	for( ; my_cid < mContent[sid][lid].count(); ++my_cid ) {
 		int cw = mContent[sid][lid][my_cid].width();
 		if ( w + cw > scol ) {
 			*sshift = scol - w;
 			if ( position != NULL ) {
 				my_position += mContent[sid][lid][my_cid].lengthForWidth(scol - w);
 			}
-			found = true;
 			break;
 		} else {
+			*sshift = 0;
 			w += cw;
 			if ( position != NULL ) {
 				my_position += mContent[sid][lid][my_cid].length();
@@ -376,6 +378,8 @@ bool YDrawBuffer::targetScreenColumn( int scol, int sid, int lid, int* cid, int*
 	}
 	*cid = my_cid;
 	if ( position != NULL ) *position = my_position;
-	return found;
+	int column = w + *sshift;
+	dbg() << "targetScreenColumn " << scol << " -> " << column << endl;
+	return column;
 }
 

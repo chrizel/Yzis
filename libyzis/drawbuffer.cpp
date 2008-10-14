@@ -132,7 +132,7 @@ YInterval YDrawBuffer::addSelection( yzis::SelectionType sel, const YInterval& i
 		lastScreenLine = it.screenLine();
 		/*lastScreenColumn = it.screenColumn() + it.cell()->width();*/
 	}
-	return YInterval(begin, YCursor(lastScreenColumn, lastScreenColumn));
+	return YInterval(begin, YCursor(lastScreenColumn, lastScreenLine));
 }
 
 YInterval YDrawBuffer::delSelection( yzis::SelectionType sel, const YInterval& i, yzis::IntervalType itype )
@@ -149,7 +149,7 @@ YInterval YDrawBuffer::delSelection( yzis::SelectionType sel, const YInterval& i
 		lastScreenLine = it.screenLine();
 		/*lastScreenColumn = it.screenColumn() + it.cell()->width();*/
 	}
-	return YInterval(begin, YCursor(lastScreenColumn, lastScreenColumn));
+	return YInterval(begin, YCursor(lastScreenColumn, lastScreenLine));
 }
 
 YDebugStream& operator<< ( YDebugStream& out, const YDrawBuffer& buff )
@@ -313,7 +313,6 @@ int YDrawBuffer::targetBufferColumn( int bcol, int sid, int* lid, int* cid, int*
 		*column = my_column;
 	}
 	int position = w + *bshift;
-	dbg() << "targetBufferColumn " << bcol << " -> " << position << endl;
 	return position;
 }
 
@@ -375,7 +374,6 @@ int YDrawBuffer::targetScreenColumn( int scol, int sid, int lid, int* cid, int* 
 	*cid = my_cid;
 	if ( position != NULL ) *position = my_position;
 	int column = w + *sshift;
-	dbg() << "targetScreenColumn " << scol << " -> " << column << endl;
 	return column;
 }
 

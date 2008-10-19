@@ -127,7 +127,6 @@ void NYView::guiScroll( int dx, int dy )
 	if ( dy >= getLinesVisible() ) {
 		guiPaintEvent(YSelection(YInterval(YCursor(0, 0), YCursor(getColumnsVisible()-1, getLinesVisible()-1))));
 	} else {
-		dbg() << "guiScroll " << dy << endl;
 		scrollok( editor, true );
 		wscrl( editor, dy );
 		scrollok( editor, false );

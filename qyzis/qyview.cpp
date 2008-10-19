@@ -132,9 +132,13 @@ void QYView::guiSetFocusCommandLine()
 
 void QYView::guiScroll( int dx, int dy )
 {
-    mEdit->scroll( dx, dy );
-    mLineNumbers->scroll( dy );
-    // TODO scroll QScrollBar
+	if ( dy >= getLinesVisible() ) {
+		guiPaintEvent(YSelection(YInterval(YCursor(0, 0), YCursor(getColumnsVisible()-1, getLinesVisible()-1))));
+	} else {
+		mEdit->scroll( dx, dy );
+		mLineNumbers->scroll( dy );
+		// TODO scroll QScrollBar
+	}
 }
 
 void QYView::setVisibleArea( int columns, int lines )

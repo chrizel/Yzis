@@ -225,7 +225,7 @@ void QYView::wheelEvent( QWheelEvent * e )
 {
     if ( e->orientation() == Qt::Vertical ) {
         int n = - ( e->delta() * mVScroll->singleStep() ) / 40; // WHEEL_DELTA(120) / 3 XXX
-        scrollView( getCurrentTop() + n );
+        scrollView( topLine() + n );
     } else {
         // TODO : scroll horizontally
     }
@@ -322,8 +322,9 @@ void QYView::scrollView( int value )
         value = buffer()->lineCount() - 1;
 
     // only redraw if the view actually moves
-    if (value != getCurrentTop()) {
-        alignViewBufferVertically( value );
+    if (value != topLine()) {
+        scrollLineToTop(value);
+		gotoViewCursor(viewCursorFromScreen());
 
         if (!mVScroll->isSliderDown())
             mVScroll->setValue( value );

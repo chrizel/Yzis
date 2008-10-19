@@ -154,7 +154,7 @@ static void doJumpToTag ( const YTagStackItem &entry )
         int pos = rx.indexIn(b->textline(i));
 
         if ( pos != -1 ) {
-            YSession::self()->currentView()->centerViewVertically( i );
+            YSession::self()->currentView()->scrollLineToCenter(i);
             YSession::self()->currentView()->gotoLinePosition(i , 0);
             YSession::self()->saveJumpPosition();
             break;
@@ -179,8 +179,8 @@ static bool jumpToJumpRecord(const YInfoJumpListRecord *record)
     }
 
     const YCursor &cursor = record->position();
-    YSession::self()->currentView()->centerViewVertically( cursor.y() );
-    YSession::self()->currentView()->gotoRowColumn( cursor );
+    YSession::self()->currentView()->scrollLineToCenter(cursor.line());
+    YSession::self()->currentView()->gotoLinePosition(cursor);
 
     return true;
 }

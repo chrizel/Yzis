@@ -127,6 +127,7 @@ void NYView::guiScroll( int dx, int dy )
 	if ( dy >= getLinesVisible() ) {
 		guiPaintEvent(YSelection(YInterval(YCursor(0, 0), YCursor(getColumnsVisible()-1, getLinesVisible()-1))));
 	} else {
+		dbg() << "guiScroll " << dy << endl;
 		scrollok( editor, true );
 		wscrl( editor, dy );
 		scrollok( editor, false );
@@ -136,7 +137,7 @@ void NYView::guiScroll( int dx, int dy )
 		int n = qAbs(dy);
 		if ( dy > 0 ) {
 			/* redraw the new bottom */
-			top += getLinesVisible() - n;
+			top += getLinesVisible()-n;
 		}
 		guiPaintEvent(YSelection(YInterval(YCursor(0, top), YCursor(getColumnsVisible()-1, top + n - 1))));
 	}

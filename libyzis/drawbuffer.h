@@ -114,6 +114,12 @@ public:
 
 	/* TODO: docstring */
 	bool scrollForViewCursor( const YViewCursor& vc, int* scrolling_horizontal, int* scroll_vertical );
+	/* TODO: docstring */
+	bool scrollLineToTop( int line, int* scrolling_horizontal, int* scroll_vertical );
+	/* TODO: docstring */
+	bool scrollLineToCenter( int line, int* scrolling_horizontal, int* scroll_vertical );
+	/* TODO: docstring */
+	bool scrollLineToBottom( int line, int* scrolling_horizontal, int* scroll_vertical );
 
 
 private :

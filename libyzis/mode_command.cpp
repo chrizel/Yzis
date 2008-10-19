@@ -447,96 +447,41 @@ YCursor YModeCommand::moveUp(const YMotionArgs &args, CmdState *state, MotionSti
 	return args.view->viewCursorMoveVertical(-args.count).buffer();
 }
 
-YCursor YModeCommand::scrollPageUp(const YMotionArgs &args, CmdState *state, MotionStick* )
+YCursor YModeCommand::scrollPageUp(const YMotionArgs &args, CmdState *state, MotionStick* stick )
 {
-    int line = args.view->getCurrentTop() - args.view->getLinesVisible();
-    
-    if (line < 0)
-        line = 0;
-
-    if (line == (int)args.view->getCurrentTop()) {
-	*state = CmdStopped;
-	return args.view->viewCursor().buffer();
-    }
-        
-    args.view->alignViewBufferVertically( line );
+	if ( stick != NULL ) *stick = MotionNoStick;
+    int line = qMin(args.view->topLine()+1, args.view->buffer()->lineCount()-1);
+	args.view->scrollLineToBottom(line);
     *state = CmdOk;
-    return args.view->viewCursor().buffer();
+	return args.view->viewCursorFromStickedLine(line).buffer();
 }
 
-YCursor YModeCommand::scrollLineUp(const YMotionArgs &args, CmdState *state, MotionStick* )
+YCursor YModeCommand::scrollLineUp(const YMotionArgs &args, CmdState *state, MotionStick* stick )
 {
-    int line = args.view->getCurrentTop() - 1;
-
-    if (line < 0)
-        line = 0;
-
-    if (line == (int)args.view->getCurrentTop()) {
-	*state = CmdStopped;
-        return args.view->viewCursor().buffer();
-    }
-    
-    args.view->alignViewBufferVertically( line );
+	if ( stick != NULL ) *stick = MotionNoStick;
+    int line = qMax(args.view->currentLine()-1, 0);
+	args.view->scrollLineToTop(line);
     *state = CmdOk;
-    return args.view->viewCursor().buffer();
+	return args.view->viewCursorFromScreen().buffer();
 }
 
-YCursor YModeCommand::scrollPageDown(const YMotionArgs &args, CmdState *state, MotionStick* )
+YCursor YModeCommand::scrollPageDown(const YMotionArgs &args, CmdState *state, MotionStick* stick )
 {
-	/* TODO */
-#if 0
-    int line = args.view->getCurrentTop() + args.view->getLinesVisible();
-    YView *view = args.view;
+	if ( stick != NULL ) *stick = MotionNoStick;
 
-    if (view->getLocalBooleanOption("wrap")) {
-        YViewCursor temp = view->viewCursor();
-        view->gotoRowColumn( &temp, view->getDrawCurrentLeft(), view->getDrawCurrentTop() + view->getLinesVisible() );
-
-        line = temp.bufferY();
-    }
-
-    // don't scroll below the last line of the buffer
-    if (line > view->buffer()->lineCount())
-        line = view->buffer()->lineCount();
-
-    if (line == view->getCurrentTop()) {
-	*state = CmdStopped;
-	return args.view->viewCursor().buffer();
-    }
-    
-    view->alignViewBufferVertically( line );
-#endif
+    int line = qMax(args.view->bottomLine()-1, 0);
+	args.view->scrollLineToTop(line);
     *state = CmdOk;
-    return args.view->viewCursor().buffer();
+	return args.view->viewCursorFromStickedLine(line).buffer();
 }
 
-YCursor YModeCommand::scrollLineDown(const YMotionArgs &args, CmdState *state, MotionStick* )
+YCursor YModeCommand::scrollLineDown(const YMotionArgs &args, CmdState *state, MotionStick* stick )
 {
-	/* TODO */
-#if 0
-    int line = args.view->getCurrentTop() + args.view->getLinesVisible();
-    YView *view = args.view;
-
-    if (view->getLocalBooleanOption("wrap")) {
-        YViewCursor temp = view->viewCursor();
-        view->gotoRowColumn( &temp, view->getDrawCurrentLeft(), view->getDrawCurrentTop() + 1 );
-
-        line = temp.bufferY();
-    }
-
-    // don't scroll below the last line of the buffer
-    if (line > view->buffer()->lineCount())
-        line = view->buffer()->lineCount();
-
-    if (line == view->getCurrentTop()) {
-	*state = CmdStopped;
-	return args.view->viewCursor().buffer();
-    }
-    
-    view->alignViewBufferVertically( line );
-#endif
+	if ( stick != NULL ) *stick = MotionNoStick;
+    int line = qMin(args.view->currentLine()+1, args.view->buffer()->lineCount()-1);
+	args.view->scrollLineToTop(line);
     *state = CmdOk;
-    return args.view->viewCursor().buffer();
+	return args.view->viewCursorFromScreen().buffer();
 }
 
 YCursor YModeCommand::previousEmptyLine(const YMotionArgs &args, CmdState *state, MotionStick* )
@@ -1283,7 +1228,7 @@ CmdState YModeCommand::execMotion( const YCommandArgs &args )
     YCursor dest = (this->*(m->motionMethod()))(YMotionArgs(args.view, args.count, args.inputs, 
                                                           args.parsePos, args.cmd->keySeq().toString(),
                                                           args.usercount, true), &state, &stick);
-    args.view->gotoViewCursor(args.view->viewCursorFromLinePosition(dest));
+    args.view->gotoLinePosition(dest);
 	switch ( stick ) {
 		case MotionStickColumn:
 			args.view->stickToColumn();
@@ -1473,18 +1418,18 @@ CmdState YModeCommand::gotoLineAtTop(const YCommandArgs &args)
 {
     int line;
 
-    line = ( args.usercount ) ? args.count - 1 : args.view->getLinePositionCursor().y();
-    args.view->alignViewVertically( line );
-	args.view->gotoViewCursor(args.view->viewCursorFromLinePosition(line, args.view->buffer()->firstNonBlankChar(line)));
+    line = args.usercount ? args.count - 1 : args.view->currentLine();
+    args.view->scrollLineToTop(line);
+	args.view->gotoLinePositionAndStick(line, args.view->buffer()->firstNonBlankChar(line));
     return CmdOk;
 }
 
 CmdState YModeCommand::gotoLineAtCenter(const YCommandArgs &args)
 {
     int line;
-    line = ( args.usercount ) ? args.count - 1 : args.view->getLinePositionCursor().y();
-    args.view->centerViewVertically( line );
-    args.view->gotoLinePosition(line , args.view->viewCursor().position());
+    line = args.usercount ? args.count - 1 : args.view->currentLine();
+    args.view->scrollLineToCenter(line);
+	args.view->gotoLinePositionAndStick(line, args.view->buffer()->firstNonBlankChar(line));
     return CmdOk;
 }
 
@@ -1493,9 +1438,9 @@ CmdState YModeCommand::gotoLineAtBottom(const YCommandArgs &args)
     int line;
     //int linesFromCenter;
 
-    line = ( args.usercount ) ? args.count - 1 : args.view->getLinePositionCursor().y();
-	args.view->bottomViewVertically( line );
-	args.view->gotoViewCursor(args.view->viewCursorFromLinePosition(line, args.view->buffer()->firstNonBlankChar(line)));
+    line = args.usercount ? args.count - 1 : args.view->currentLine();
+	args.view->scrollLineToBottom(line);
+	args.view->gotoLinePositionAndStick(line, args.view->buffer()->firstNonBlankChar(line));
     return CmdOk;
 }
 
@@ -1937,8 +1882,8 @@ CmdState YModeCommand::tagPrev( const YCommandArgs & /*args*/ )
 CmdState YModeCommand::undoJump( const YCommandArgs & /*args*/ )
 {
     const YCursor cursor = YSession::self()->previousJumpPosition();
-    YSession::self()->currentView()->centerViewVertically( cursor.y() );
-    YSession::self()->currentView()->gotoRowColumn( cursor );
+    YSession::self()->currentView()->scrollLineToCenter(cursor.line());
+    YSession::self()->currentView()->gotoLinePosition(cursor);
     return CmdOk;
 }
 

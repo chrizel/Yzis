@@ -728,7 +728,7 @@ void YSession::unregisterModifier ( const QString& mod )
 
 void YSession::saveJumpPosition()
 {
-    mYzisinfo->updateJumpList( mCurBuffer, currentView()->getRowColumnCursor());
+    mYzisinfo->updateJumpList( mCurBuffer, currentView()->getLinePositionCursor());
 }
 
 void YSession::saveJumpPosition( const QPoint cursor )

@@ -255,6 +255,74 @@ bool YDrawBuffer::scrollForViewCursor( const YViewCursor& vc, int* scroll_horizo
 	return false;
 }
 
+bool YDrawBuffer::scrollLineToTop( int line, int* scroll_horizontal, int* scroll_vertical )
+{
+	int sid;
+	targetBufferLine(line, &sid);
+	*scroll_horizontal = 0;
+	if ( line < mScreenTopBufferLine ) {
+		int delta = 0;
+		for ( int bl = line; bl < mScreenTopBufferLine; ++bl ) {
+			delta += mContent[bl-mFirstBufferLine].count();
+		}
+		mScreenTopBufferLine = line;
+		*scroll_vertical = -delta;
+		return true;
+	} else if ( line > mScreenTopBufferLine ) {
+		int delta = 0;
+		for ( int bl = mScreenTopBufferLine; bl < line; ++bl ) {
+			delta += mContent[bl-mFirstBufferLine].count();
+		}
+		mScreenTopBufferLine = line;
+		*scroll_vertical = delta;
+		return true;
+	}
+	return false;
+}
+
+bool YDrawBuffer::scrollLineToBottom( int line, int* scroll_horizontal, int* scroll_vertical )
+{
+	int currentBottomLine = screenBottomBufferLine();
+	if ( currentBottomLine == line ) {
+		return false;
+	}
+	int sid;
+	targetBufferLine(line, &sid);
+	int height = mContent[line-mFirstBufferLine].count();
+	int topLine = line;
+	while ( topLine > 0 && height < mScreenHeight ) {
+		YASSERT(topLine > mFirstBufferLine); // TODO
+		int h = mContent[topLine-1-mFirstBufferLine].count();
+		if ( height + h <= mScreenHeight ) {
+			height += h;
+			--topLine;
+		} else {
+			break;
+		}
+	}
+	return scrollLineToTop(topLine, scroll_horizontal, scroll_vertical);
+}
+
+bool YDrawBuffer::scrollLineToCenter( int line, int* scroll_horizontal, int* scroll_vertical )
+{
+	int sid;
+	targetBufferLine(line, &sid);
+	int halfHeight = mScreenHeight/2 - 1 + mScreenHeight%2;
+	int topLine = line;
+	int height = 0;
+	while ( topLine > 0 && height < halfHeight ) {
+		YASSERT(topLine > mFirstBufferLine); // TODO
+		int h = mContent[topLine-1-mFirstBufferLine].count();
+		if ( height + h <= halfHeight + 1 ) {
+			--topLine;
+			height += h;
+		} else {
+			break;
+		}
+	}
+	return scrollLineToTop(topLine, scroll_horizontal, scroll_vertical);
+}
+
 bool YDrawBuffer::targetBufferLine( int bline, int* sid )
 {
 	YASSERT(bline >= 0);

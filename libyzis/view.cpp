@@ -239,13 +239,13 @@ void YView::updateCursor()
 
     if (y != lasty) {
         int nblines = mBuffer->lineCount();
-        if (getCurrentTop() < 1)
-            if ((getCurrentTop() + getLinesVisible()) >= nblines)
+        if (topLine() < 1)
+            if ((topLine() + getLinesVisible()) >= nblines)
                     percentage = _("All");
             else
                     percentage =  _("Top");
 
-        else if ((getCurrentTop() + getLinesVisible()) >= nblines)
+        else if ((topLine() + getLinesVisible()) >= nblines)
             percentage = _("Bot");
 
         else
@@ -299,42 +299,37 @@ void YView::displayInfo(const QString& message)
     guiDisplayInfo(message);
 }
 
-void YView::centerViewHorizontally( int column)
+void YView::scrollLineToBottom( int line )
 {
-	/* TODO */
-    // dbg() << "YView::centerViewHorizontally " << column << endl;
+	int scroll_horizontal, scroll_vertical;
+	if ( mDrawBuffer.scrollLineToBottom(line, &scroll_horizontal, &scroll_vertical) ) {
+		guiScroll(scroll_horizontal, scroll_vertical);
+	}
 }
-
-void YView::centerViewVertically( int line )
+void YView::scrollLineToTop( int line )
 {
-	//TODO
-#if 0
-    if ( line == -1 )
-        line = mMainCursor.screenY();
-    int newcurrent = 0;
-    if ( line > mDrawBuffer.screenHeight() / 2 ) newcurrent = line - mDrawBuffer.screenHeight() / 2;
-    alignViewVertically ( newcurrent );
-#endif
+	int scroll_horizontal, scroll_vertical;
+	if ( mDrawBuffer.scrollLineToTop(line, &scroll_horizontal, &scroll_vertical) ) {
+		guiScroll(scroll_horizontal, scroll_vertical);
+	}
 }
-
-void YView::bottomViewVertically( int line )
+void YView::scrollLineToCenter( int line )
 {
-    int newcurrent = 0;
-    if ( line >= mDrawBuffer.screenHeight() ) newcurrent = (line - mDrawBuffer.screenHeight()) + 1;
-    alignViewVertically( newcurrent );
+	int scroll_horizontal, scroll_vertical;
+	if ( mDrawBuffer.scrollLineToCenter(line, &scroll_horizontal, &scroll_vertical) ) {
+		guiScroll(scroll_horizontal, scroll_vertical);
+	}
 }
-
-void YView::alignViewBufferVertically( int line )
+YViewCursor YView::viewCursorFromScreen()
 {
-	/* TODO */
+	YViewCursor vc = viewCursor();
+	if ( vc.line() < topLine() ) {
+		return viewCursorFromStickedLine(topLine());
+	} else if ( vc.line() > bottomLine() ) {
+		return viewCursorFromStickedLine(bottomLine());
+	}
+	return vc;
 }
-void YView::alignViewVertically( int line )
-{
-	/* TODO */
-    // dbg() << "YView::alignViewVertically " << line << endl;
-}
-
-
 
 YViewCursor YView::viewCursorFromLinePosition( int line, int position ) 
 {
@@ -351,7 +346,6 @@ YViewCursor YView::viewCursorFromLinePosition( int line, int position )
 			column += 1;
 		}
 	}
-	dbg() << "viewCursorFromLinePosition(" << line<<","<<position<<") => line,position,column = " << line<<","<<position<<","<<column<< endl;
 	return YViewCursor(line, position, column);
 }
 
@@ -373,7 +367,6 @@ YViewCursor YView::viewCursorFromRowColumn( int row, int scol ) const
 			column += 1;
 		}
 	}
-	dbg() << "viewCursorFromRowColumn("<<row<<","<<column<<") => line,position,column = " << line<<","<<position<<","<<column<< endl;
 	return YViewCursor(line, position, column);
 }
 
@@ -395,7 +388,6 @@ YViewCursor YView::viewCursorFromLineColumn( int line, int column )
 			column += 1;
 		}
 	}
-	dbg() << "viewCursorFromLineColumn("<<line<<","<<column<<") => line,position,column = " << line<<","<<position<<","<<column<< endl;
 	return YViewCursor(line, position, column);
 }
 
@@ -803,9 +795,13 @@ void YView::internalScroll( int dx, int dy )
     guiScroll( dx, dy );
 }
 
-int YView::getCurrentTop() const
+int YView::topLine() const
 {
 	return mDrawBuffer.screenTopBufferLine();
+}
+int YView::bottomLine() const
+{
+	return mDrawBuffer.screenBottomBufferLine();
 }
 int YView::getLinesVisible() const
 {

@@ -115,7 +115,9 @@ class YZIS_EXPORT YView : public YViewIface
 		/**
 		 * Returns the index of the first line displayed on the view
 		 */
-		int getCurrentTop() const;
+		int topLine() const;
+
+		int bottomLine() const;
 
 		/**
 		 * returns the number of line this view can display
@@ -170,28 +172,15 @@ class YZIS_EXPORT YView : public YViewIface
     /**
      * Adjust view vertically to show @arg line on bottom
      */
-    void bottomViewVertically( int line );
-
+    void scrollLineToBottom( int line );
     /**
-     * Center view vertically on the given @arg line
-     * if line == -1, then center on the current line
+     * Adjust view vertically to show @arg line on top
      */
-    void centerViewVertically( int line = -1 );
-
+    void scrollLineToTop( int line );
     /**
-     * Center view horizontally on the given @arg column
+     * Adjust view vertically to show @arg line on center
      */
-    void centerViewHorizontally( int column );
-
-    /**
-     * align view vertically on the given buffer @arg line
-     */
-    void alignViewBufferVertically(int line);
-
-    /**
-     * align view vertically on the given screen @arg line
-     */
-    void alignViewVertically(int line);
+    void scrollLineToCenter( int line );
 
     //-------------------------------------------------------
     // ----------------- Command Input Buffer
@@ -234,6 +223,8 @@ class YZIS_EXPORT YView : public YViewIface
 	YViewCursor viewCursorFromRowColumn( int row, int column ) const;
 	/* TODO: docstring */
 	YViewCursor viewCursorFromStickedLine( int line );
+	/* TODO: docstring */
+	YViewCursor viewCursorFromScreen();
 
 	/* TODO: docstring */
 	YViewCursor viewCursorMoveVertical( int ticks );

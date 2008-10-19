@@ -101,7 +101,6 @@ public:
 	/* TODO: flush -> try to join splitted cells */
 
 protected:
-	YDrawBuffer* mDrawBuffer;
 	virtual void setupCell( int cut );
 	virtual void setupEOLCell();
 	YDrawBufferIterator( YDrawBuffer* db ) : YDrawBufferAbstractIterator(db) {}

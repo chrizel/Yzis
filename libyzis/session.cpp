@@ -231,7 +231,7 @@ void YSession::parseCommandLine( int argc, char * argv[] )
     if ( !first ) {
         /* no view opened */
         first = YSession::self()->createBufferAndView();
-        first->myBuffer()->openNewFile();
+        first->buffer()->openNewFile();
         first->displayIntro();
     }
 
@@ -504,7 +504,7 @@ void YSession::setCurrentView( YView* view )
     view->guiSetFocusMainWindow();
 
     mCurView = view;
-    mCurBuffer = view->myBuffer();
+    mCurBuffer = view->buffer();
 }
 
 const YViewList YSession::getAllViews() const
@@ -527,7 +527,7 @@ YView* YSession::findViewByBuffer( const YBuffer *buffer )
 {
     if (buffer == NULL) return NULL;
     foreach( YView *view, mViewList )
-    if ( view->myBuffer() == buffer )
+    if ( view->buffer() == buffer )
         return view;
     return NULL;
 }
@@ -604,7 +604,7 @@ bool YSession::exitRequest( int errorCode )
 
     getYzisinfo()->updateStartPosition( 
                      mCurBuffer->fileName(),
-                     (currentView())->getCursor());
+                     (currentView())->getRowColumnCursor());
                                           
     getYzisinfo()->writeYzisinfo();*/
 
@@ -728,7 +728,7 @@ void YSession::unregisterModifier ( const QString& mod )
 
 void YSession::saveJumpPosition()
 {
-    mYzisinfo->updateJumpList( mCurBuffer, currentView()->getCursor());
+    mYzisinfo->updateJumpList( mCurBuffer, currentView()->getLinePositionCursor());
 }
 
 void YSession::saveJumpPosition( const QPoint cursor )

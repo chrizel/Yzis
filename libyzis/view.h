@@ -1,24 +1,24 @@
 /* This file is part of the Yzis libraries
-*  Copyright (C) 2003-2005 Mickael Marchand <marchand@kde.org>,
-*  Copyright (C) 2003-2004 Thomas Capricelli <orzel@freehackers.org>
-*  Copyright (C) 2005 Scott Newton <scottn@ihug.co.nz>
-*  Copyright (C) 2008 Loic Pauleve <panard@inzenet.org>
-*
-*  This library is free software; you can redistribute it and/or
-*  modify it under the terms of the GNU Library General Public
-*  License as published by the Free Software Foundation; either
-*  version 2 of the License, or (at your option) any later version.
-*
-*  This library is distributed in the hope that it will be useful,
-*  but WITHOUT ANY WARRANTY; without even the implied warranty of
-*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-*  Library General Public License for more details.
-*
-*  You should have received a copy of the GNU Library General Public License
-*  along with this library; see the file COPYING.LIB.  If not, write to
-*  the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-*  Boston, MA 02110-1301, USA.
-**/
+ *  Copyright (C) 2003-2005 Mickael Marchand <marchand@kde.org>,
+ *  Copyright (C) 2003-2004 Thomas Capricelli <orzel@freehackers.org>
+ *  Copyright (C) 2005 Scott Newton <scottn@ihug.co.nz>
+ *  Copyright (C) 2008 Loic Pauleve <panard@inzenet.org>
+ *
+ *  This library is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU Library General Public
+ *  License as published by the Free Software Foundation; either
+ *  version 2 of the License, or (at your option) any later version.
+ *
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *  Library General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Library General Public License
+ *  along with this library; see the file COPYING.LIB.  If not, write to
+ *  the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ *  Boston, MA 02110-1301, USA.
+ **/
 
 #ifndef YZ_VIEW_H
 #define YZ_VIEW_H
@@ -30,13 +30,12 @@
 #include "viewcursor.h"
 #include "mode_pool.h"
 #include "drawbuffer.h"
+#include "buffer.h"
 
 class YViewCursor;
 class YColor;
 class YCursor;
-class YBuffer;
 class YSession;
-class YSelectionPool;
 class YzisAttribute;
 class YLine;
 class YLineSearch;
@@ -59,115 +58,106 @@ class YZFoldPool;
 class YZIS_EXPORT YView : public YViewIface
 {
 
-public:
-    //-------------------------------------------------------
-    // ----------------- Constructor/Destructor and ID
-    //-------------------------------------------------------
-    /**
-     * Each view is bound to a buffer, @arg lines is the initial
-     * number of columns and @arg lines the initial
-     * number of lines that this view can display
-     */
-    YView(YBuffer *_b, YSession *sess, int cols, int lines);
+	public:
+		//-------------------------------------------------------
+		// ----------------- Constructor/Destructor and ID
+		//-------------------------------------------------------
+		/**
+		 * Each view is bound to a buffer, @arg lines is the initial
+		 * number of columns and @arg lines the initial
+		 * number of lines that this view can display
+		 */
+		YView(YBuffer *_b, YSession *sess, int cols, int lines);
 
-    /**
-     * The destructor
-     */
-    virtual ~YView();
+		/**
+		 * The destructor
+		 */
+		virtual ~YView();
 
-    /**
-     * Accessor to the list of foldings
-     */
-    inline YZFoldPool* folds() const
-    {
-        return mFoldPool;
-    }
+		/**
+		 * Accessor to the list of foldings
+		 */
+		inline YZFoldPool* folds() const
+		{
+			return mFoldPool;
+		}
 
-    /**
-     * A global UID for this view
-     *   only used for local options (<filename>-view-<id>)
-     **/
-    inline const int getId() const { return id; }
+		/**
+		 * A global UID for this view
+		 *   only used for local options (<filename>-view-<id>)
+		 **/
+		inline const int getId() const { return id; }
 
-    /** Return a string description of the view.
-     *
-     * The string description contains:
-     * - the id
-     * - the buffer filename
-     * - the this pointer
-     *
-     **/
-    QString toString() const;
+		/** Return a string description of the view.
+		 *
+		 * The string description contains:
+		 * - the id
+		 * - the buffer filename
+		 * - the this pointer
+		 *
+		 **/
+		QString toString() const;
 
-    //-------------------------------------------------------
-    // ----------------- Visible Areas
-    //-------------------------------------------------------
-    /**
-     * Updates the number of visible @arg c columns and @arg l lines
-	 * 	it will cause a screen recalculation.
-     * @arg c is the number of columns
-     * @arg l is the number of lines
-     */
-    void setVisibleArea( int c, int l );
+		//-------------------------------------------------------
+		// ----------------- Visible Areas
+		//-------------------------------------------------------
+		/**
+		 * Updates the number of visible @arg c columns and @arg l lines
+		 * 	it will cause a screen recalculation.
+		 * @arg c is the number of columns
+		 * @arg l is the number of lines
+		 */
+		void setVisibleArea( int c, int l );
 
-    //-------------------------------------------------------
-    // ----------------- Line Visibility
-    //-------------------------------------------------------
-    /**
-     * Returns the index of the first line displayed on the view
-     */
-    int getCurrentTop() const;
+		//-------------------------------------------------------
+		// ----------------- Line Visibility
+		//-------------------------------------------------------
+		/**
+		 * Returns the index of the first line displayed on the view
+		 */
+		int topLine() const;
 
-    /**
-     * returns the number of line this view can display
-     */
-    int getLinesVisible() const;
+		int bottomLine() const;
 
-    /**
-     * returns the number of lines this view can display
-     * @return the number of visible lines
-     */
-    int getColumnsVisible() const;
+		/**
+		 * returns the number of line this view can display
+		 */
+		int getLinesVisible() const;
 
-    /**
-     * Returns true if the line @arg l is visible. False otherwise.
-     */
-    bool isLineVisible(int l) const;
+		/**
+		 * returns the number of lines this view can display
+		 * @return the number of visible lines
+		 */
+		int getColumnsVisible() const;
 
-    /**
-     * Returns true if the column @arg c is visible for @arg line ( expanding TABs ). False otherwise
-     */
-    bool isColumnVisible(int column, int line) const;
+		/**
+		 * Returns true if the line @arg l is visible. False otherwise.
+		 */
+		bool isLineVisible(int l) const;
 
-    //-------------------------------------------------------
-    // ----------------- Associated Objects
-    //-------------------------------------------------------
-    /**
-     * Return my current buffer
-     */
-    YBuffer *myBuffer() const
-    {
-        return mBuffer;
-    }
-    //  const YBuffer *myBuffer() const { return mBuffer; }
+		/**
+		 * Returns true if the column @arg c is visible for @arg line ( expanding TABs ). False otherwise
+		 */
+		bool isColumnVisible(int column, int line) const;
 
-    /**
-     * Return my current line search
-     */
-    YLineSearch* myLineSearch()
-    {
-        return mLineSearch;
-    }
+		//-------------------------------------------------------
+		// ----------------- Associated Objects
+		//-------------------------------------------------------
+		/**
+		 * Return my current buffer
+		 */
+		YBuffer* buffer() const { return mBuffer; }
+		//  const YBuffer *myBuffer() const { return mBuffer; }
 
-    /**
-     * Accessor to the list of current selections
-     */
-    YSelectionPool* getSelectionPool() const
-    {
-        return selectionPool;
-    }
+		/**
+		 * Return my current line search
+		 */
+		YLineSearch* myLineSearch()
+		{
+			return mLineSearch;
+		}
 
-    /**
+		/**
      * Accessor to the list of recorded registers
      * @return a QList of @ref YRegisters
      */
@@ -176,36 +166,21 @@ public:
         return mRegs;
     }
 
-    YSelectionMap visualSelection() const;
-
     //-------------------------------------------------------
     // ----------------- Scrolling
     //-------------------------------------------------------
     /**
      * Adjust view vertically to show @arg line on bottom
      */
-    void bottomViewVertically( int line );
-
+    void scrollLineToBottom( int line );
     /**
-     * Center view vertically on the given @arg line
-     * if line == -1, then center on the current line
+     * Adjust view vertically to show @arg line on top
      */
-    void centerViewVertically( int line = -1 );
-
+    void scrollLineToTop( int line );
     /**
-     * Center view horizontally on the given @arg column
+     * Adjust view vertically to show @arg line on center
      */
-    void centerViewHorizontally( int column );
-
-    /**
-     * align view vertically on the given buffer @arg line
-     */
-    void alignViewBufferVertically(int line);
-
-    /**
-     * align view vertically on the given screen @arg line
-     */
-    void alignViewVertically(int line);
+    void scrollLineToCenter( int line );
 
     //-------------------------------------------------------
     // ----------------- Command Input Buffer
@@ -235,118 +210,47 @@ public:
     //-------------------------------------------------------
     // ----------------- Cursor Motion
     //-------------------------------------------------------
-    // Return value is whether motion stopped by constraints of buffer
-    /**
-     * moves the cursor of the current view down
-     */
-    bool moveDown( int nb_lines = 1, bool applyCursor = true );
-    bool moveDown( YViewCursor* viewCursor, int nb_lines = 1, bool applyCursor = true );
 
-    /**
-     * moves the cursor of the current view up
-     */
-    bool moveUp( int nb_lines = 1, bool applyCursor = true );
-    bool moveUp( YViewCursor* viewCursor, int nb_lines = 1, bool applyCursor = true );
+	/* TODO: docstring */
+	YViewCursor viewCursorFromLinePosition( int line, int position );
+	/* TODO: docstring */
+	YViewCursor viewCursorFromLinePosition( const YCursor& buffer ) {
+		return viewCursorFromLinePosition(buffer.line(), buffer.column());
+	}
+	/* TODO: docstring */
+	YViewCursor viewCursorFromLineColumn( int line, int column );
+	/* TODO: docstring */
+	YViewCursor viewCursorFromRowColumn( int row, int column ) const;
+	/* TODO: docstring */
+	YViewCursor viewCursorFromStickedLine( int line );
+	/* TODO: docstring */
+	YViewCursor viewCursorFromScreen();
 
-    /**
-     * moves the cursor of the current view to the left
-     */
-    bool moveLeft(int nb_cols = 1, bool wrap = false, bool applyCursor = true);
-    bool moveLeft( YViewCursor* viewCursor, int nb_cols = 1, bool wrap = false, bool applyCursor = true);
+	/* TODO: docstring */
+	YViewCursor viewCursorMoveVertical( int ticks );
+    /* TODO: docstring */
+	YViewCursor viewCursorMoveHorizontal( int ticks, bool wrap = false, bool* stopped = NULL );
 
-    /**
-     * moves the cursor of the current view to the right
-     */
-    bool moveRight(int nb_cols = 1, bool wrap = false, bool applyCursor = true);
-    bool moveRight( YViewCursor* viewCursor, int nb_cols = 1, bool wrap = false, bool applyCursor = true);
+	/* TODO: docstring */
+	void gotoViewCursor( const YViewCursor& cursor );
 
-    /**
-     * moves the cursor of the current view to the first non-blank character
-     * of the current line
-     */
-    QString moveToFirstNonBlankOfLine();
-    QString moveToFirstNonBlankOfLine( YViewCursor* viewCursor, bool applyCursor = true );
-
-    /**
-     * moves the cursor of the current view to the start of the current line
-     */
-    QString moveToStartOfLine();
-    QString moveToStartOfLine( YViewCursor* viewCursor, bool applyCursor = true );
-
-    /**
-     * moves the cursor of the current view to the end of the current line
-     */
-    QString moveToEndOfLine();
-    QString moveToEndOfLine( YViewCursor* viewCursor, bool applyCursor = true );
-
-    /**
-     * Moves the draw cursor to @arg nextx, @arg nexty
-     */
-    void gotodxdy(QPoint nextpos, bool applyCursor = true );
-    // TODO : remoev
-    void gotodxdy(int nextx, int nexty, bool applyCursor = true )
-    {
-        gotodxdy(QPoint(nextx, nexty), applyCursor);
-    }
-    void gotodxdy( YViewCursor* viewCursor, QPoint nextpos, bool applyCursor = true );
-    void gotodxdy( YViewCursor* viewCursor, const int x, const int y, bool applyCursor = true )
-    {
-        gotodxdy(viewCursor, QPoint(x, y), applyCursor);
-    }
-
-    /**
-     * Moves the cursor to @arg draw nextx, @arg buffer nexty
-     */
-    void gotodxy(int nextx, int nexty, bool applyCursor = true );
-    void gotodxy( YViewCursor* viewCursor, int nextx, int nexty, bool applyCursor = true );
-
-    /**
-     * Moves the buffer cursor to @arg nextx, @arg nexty
-     */
-    void gotoxy(const QPoint nextpos, bool applyCursor = true );
-    void gotoxy( YViewCursor* viewCursor, const QPoint nextpos, bool applyCursor = true );
-    void gotoxy(int nextx, int nexty, bool applyCursor = true )
-    {
-        gotoxy(QPoint(nextx, nexty), applyCursor);
-    }
-    void gotoxy( YViewCursor* viewCursor, int nextx, int nexty, bool applyCursor = true )
-    {
-        gotoxy(viewCursor, QPoint(nextx, nexty), applyCursor);
-    }
-
-    /**
-     * Moves the buffer cursor to @arg cursor and stick the column
-     */
-    void gotoxyAndStick( const QPoint cursor );
-    void gotoxyAndStick( const int x, const int y)
-    {
-        gotoxyAndStick(QPoint(x, y));
-    }
-    void gotodxdyAndStick( const QPoint cursor );
-    void gotodxdyAndStick( const int x, const int y )
-    {
-        gotodxdyAndStick(QPoint(x, y));
-    }
-
-    /**
-     * Go to line of file
-     */
-    void gotoLine( int line );
-    void gotoLine( YViewCursor* viewCursor, int line, bool applyCursor = true );
-
-    /**
-     * Go to last line of the file
-     */
-    void gotoLastLine();
-    void gotoLastLine( YViewCursor* viewCursor, bool applyCursor = true );
-
-    /**
-     * move the cursor to the sticky column
-     */
-    void gotoStickyCol( int Y );
-    void gotoStickyCol( YViewCursor* viewCursor, int Y, bool applyCursor = true );
+	/* Shortcuts */
+	void gotoLinePosition( int position, int line );
+	void gotoLinePositionAndStick( int position, int line );
+	void gotoLinePosition( const YCursor& buffer );
+	void gotoLinePositionAndStick( const YCursor& buffer );
+	void gotoRowColumn( int row, int column );
+	void gotoRowColumn( const YCursor& screen );
 
     void applyStartPosition( const YCursor pos );
+
+	//-------------------------------------------------------
+    // ----------------- Selection
+    //-------------------------------------------------------
+
+	/*TODO: docstring */
+	YRawData setSelection( yzis::SelectionType type, const YInterval& bufferInterval );
+
 
     //-------------------------------------------------------
     // ----------------- Drawing
@@ -461,17 +365,16 @@ public:
     //-------------------------------------------------------
     virtual void guiPaintEvent( const YSelection& drawMap );
 
-	void sendPaintEvent( const YInterval& i );
-    void sendPaintEvent( const YCursor from, const YCursor to ) YZIS_DEPRECATED;
-    void sendPaintEvent( int curx, int cury, int curw, int curh ) YZIS_DEPRECATED;
-    void sendPaintEvent( YSelectionMap map, bool isBufferMap = true ) YZIS_DEPRECATED;
 
     /**
      * Ask for refresh screen
      */
     void sendRefreshEvent();
 
-    void removePaintEvent( const YCursor from, const YCursor to ) YZIS_DEPRECATED;
+	/*
+	 * Ask for repainting interval @arg i of screen.
+	 */
+	void sendPaintEvent( const YInterval& i );
 
     /**
      * @arg enable is true, future paint events will be directly applied
@@ -482,7 +385,7 @@ public:
     /**
      * drop all pending paint events and returns into autocommit mode
      */
-    void abortPaintEvent();
+    void resetPaintEvent();
 
     /**
      * If the number of calls of commitPaintEvent is equals to the number of 
@@ -504,33 +407,32 @@ public:
     //-------------------------------------------------------
     // ----------------- Cursors
     //-------------------------------------------------------
-    void sendCursor( YViewCursor cursor );
-
     /**
      * Get the view cursor
      * @return a constant ref to the view cursor ( YViewCursor )
      */
     const YViewCursor &viewCursor() const
     {
-        return mainCursor;
+        return mMainCursor;
     }
+	inline int currentLine() const { return mMainCursor.line(); }
+	inline int currentPosition() const { return mMainCursor.position(); }
+	inline int currentColumn() const { return mMainCursor.column(); }
 
     /**
-     * Get the current cursor information
-     * @return a reference on the current cursor
+	 * TODO: docstring
      */
-    const YCursor getCursor() const;
+    const YCursor getRowColumnCursor() const;
 
     /**
-     * Get the current buffer cursor information
-     * @return a reference on the current buffer cursor
+	 * TODO: docstring
      */
-    const YCursor getBufferCursor() const;
+    const YCursor getLineColumnCursor() const;
 
-    YViewCursor* visualCursor()
-    {
-        return &mVisualCursor;
-    }
+    /**
+	 * TODO: docstring
+     */
+    const YCursor getLinePositionCursor() const;
 
     /** Update the GUI when the cursor position has changed.
      * Updates the status bar and notificates the GUI through
@@ -576,19 +478,10 @@ public:
     // ----------------- Sticky
     //-------------------------------------------------------
     /**
-     * Updates stickyCol
+     * set current column as sticky
      */
-    void setStickyCol( int col )
-    {
-        stickyCol = col;
-    }
-
-    void updateStickyCol( );
-
-    /**
-     * update stickCol to according to viewCursor
-     */
-    void updateStickyCol( YViewCursor* viewCursor );
+    void stickToColumn();
+	void stickToEOL();
 
     //-------------------------------------------------------
     // ----------------- Mode
@@ -630,11 +523,6 @@ public:
 
     QString getCharBelow( int delta );
 
-    /*
-     * @returns current screen YCursor relative to top-left screen corner
-     */
-    YCursor getRelativeScreenCursor() const;
-
     /**
      * returns a YSelection which fit view
      */
@@ -647,28 +535,28 @@ public:
 	void updateBufferInterval( const YInterval& bi );
 
 	// TODO: docstring
-	YDrawLine drawLineFromYLine( const YLine* yl, int start_column = 0 );
+	YDrawLine drawLineFromYLine( const YLine* yl, int start_column = 0 ) const;
+	// TODO: docstring
+	YDrawSection drawSectionOfBufferLine( int bl ) const;
 
 protected:
 
     void setupKeys();
 
-    bool stringHasOnlySpaces ( const QString& what );
+    bool stringHasOnlySpaces ( const QString& what ) const;
 
     YDrawBuffer mDrawBuffer;
 
 private:
+
 	/* update internal attributes */
 	void updateInternalAttributes();
 
 
 	// TODO: docstring
-	int setBufferLineContent( int bl, const YLine* yl );
+	void setBufferLineContent( int bl );
 	/* TODO: docstring */
 	void deleteFromBufferLine( int bl );
-
-	YDrawSection mWorkDrawSection;
-	YDrawLine mWorkDrawLine;
 
     /*
      * scroll draw buffer and view
@@ -683,24 +571,19 @@ private:
     YKeySequence mLastPreviousChars;
 
     /**
+     * The current session, provided by the GUI
+     */
+    YSession* mSession;
+
+    /**
      * The buffer we depend on
      */
-    YBuffer *mBuffer;
+    YBuffer* mBuffer;
 
     /**
       * This is the main cursor, the one which is displayed
      */
-    YViewCursor mainCursor;
-
-    /**
-     * Searching backward
-     */
-    bool reverseSearch;
-
-    /**
-     * The current session, provided by the GUI
-     */
-    YSession *mSession;
+    YViewCursor mMainCursor;
 
     /**
      * Line search
@@ -710,18 +593,11 @@ private:
     /**
      * This is the worker cursor, the one which we directly modify in our draw engine
      */
-    YViewCursor workCursor;
 
     YzisAttribute* mHighlightAttributes;
 
-    void gotoy( int y );
-    void gotody( int y );
-    void gotox( int x, bool forceGoBehindEOL = false );
-    void gotodx( int x );
-    void applyGoto( YViewCursor* viewCursor, bool applyCursor = true );
-    void initGoto( YViewCursor* viewCursor );
-
-    int stickyCol;
+	/* TODO: docstring */
+    int mStickyColumn;
 
     QChar m_lineFiller;
     QChar m_lineMarker;
@@ -731,17 +607,13 @@ private:
     bool wrap;
     bool rightleft;
 
-    YSelectionPool * selectionPool;
-    YSelection* mPaintSelection;
-
-    //Visual Mode stuff
-    YViewCursor mVisualCursor; // TODO : this one is only used by external class, not by this very one ?
+    QMap<yzis::SelectionType, YInterval> mSelectionPool;
+    YSelection mPaintSelection;
 
 
     /// which regs to store macros in
     QList<QChar> mRegs;
     int m_paintAutoCommit;
-    YViewCursor keepCursor;
 
     YModePool* mModePool;
 

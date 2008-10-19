@@ -669,9 +669,9 @@ bool YBuffer::save()
 
 void YBuffer::saveYzisInfo( YView* view )
 {
-    YASSERT( view->myBuffer() == this );
+    YASSERT( view->buffer() == this );
     /* save buffer cursor */
-    YSession::self()->getYzisinfo()->updateStartPosition( this, view->getBufferCursor() );
+    YSession::self()->getYzisinfo()->updateStartPosition( this, view->getLinePositionCursor() );
     YSession::self()->getYzisinfo()->write();
 }
 
@@ -905,15 +905,6 @@ QString YBuffer::getWordAt( const YCursor at ) const
         return reg.cap( 1 );
     }
     return QString();
-}
-
-QStringList YBuffer::getText(const YCursor from, const YCursor to) const
-{
-	return dataRegion(YInterval(from, to));
-}
-QStringList YBuffer::getText( const YInterval& i ) const
-{
-	return dataRegion(i);
 }
 
 int YBuffer::getLocalIntegerOption( const QString& option ) const

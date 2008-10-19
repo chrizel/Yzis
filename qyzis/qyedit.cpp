@@ -230,8 +230,8 @@ void QYEdit::mousePressEvent ( QMouseEvent * e )
     /*
     FIXME: How to handle mouse events commented out now so kyzis will compile
 
-    if ( mView->myBuffer()->introShown() ) {
-     mView->myBuffer()->clearIntro();
+    if ( mView->buffer()->introShown() ) {
+     mView->buffer()->clearIntro();
      mView->gotodxdy( 0, 0 );
      return;
     }
@@ -245,7 +245,10 @@ void QYEdit::mousePressEvent ( QMouseEvent * e )
 
     if (( e->button() == Qt::LeftButton ) || ( e->button() == Qt::RightButton )) {
         if ( mView->modePool()->currentType() != YMode::ModeEx ) {
-            mView->gotodxdyAndStick( translateRealToAbsolutePosition( e->pos() ) );
+			YCursor screenPosition = translateRealToAbsolutePosition(e->pos());
+			YViewCursor dest = mView->viewCursorFromRowColumn(screenPosition.line(), screenPosition.column());
+			mView->gotoViewCursor(dest);
+			mView->stickToColumn();
         }
     } else if ( e->button() == Qt::MidButton ) {
         QString text = QApplication::clipboard()->text( QClipboard::Selection );
@@ -255,9 +258,9 @@ void QYEdit::mousePressEvent ( QMouseEvent * e )
             if ( mView->modePool()->current()->isEditMode() ) {
                 QChar reg = '\"';
                 YSession::self()->setRegister( reg, text.split("\n") );
-                                mView->myBuffer()->action()->pasteContent( mView, reg, false);
+                                mView->buffer()->action()->pasteContent( mView, reg, false);
                 //mView->pasteContent( reg, false );
-                mView->moveRight();
+				mView->gotoViewCursor(mView->viewCursorMoveHorizontal(1));
             }
         }
     }
@@ -272,8 +275,8 @@ void QYEdit::mouseMoveEvent( QMouseEvent *e )
         } else if (mView->modePool()->current()->isSelMode() ) {
             // already in visual mode - move cursor if the mouse pointer has moved over a new char
             YCursor pos = translateRealToAbsolutePosition( e->pos() );
-            if ( pos != mView->getCursor() ) {
-                mView->gotodxdy( pos );
+            if ( pos != mView->getRowColumnCursor() ) {
+                mView->gotoRowColumn( pos );
             }
         }
     }
@@ -281,19 +284,19 @@ void QYEdit::mouseMoveEvent( QMouseEvent *e )
 
 void QYEdit::focusInEvent ( QFocusEvent * )
 {
-    dbg() << "focusInEvent() for " << mView->myBuffer()->fileNameShort() << endl;
+    dbg() << "focusInEvent() for " << mView->buffer()->fileNameShort() << endl;
     YSession::self()->setCurrentView( mView );
     updateCursor();
 }
 void QYEdit::focusOutEvent ( QFocusEvent * )
 {
-    dbg() << "focusOutEvent() for " << mView->myBuffer()->fileNameShort() << endl;
+    dbg() << "focusOutEvent() for " << mView->buffer()->fileNameShort() << endl;
     updateCursor();
 }
 
 void QYEdit::resizeEvent(QResizeEvent* e)
 {
-    dbg() << "resizeEvent(" << *e << ") - filename=" << mView->myBuffer()->fileNameShort() << endl;
+    dbg() << "resizeEvent(" << *e << ") - filename=" << mView->buffer()->fileNameShort() << endl;
     updateArea();
 }
 
@@ -338,32 +341,32 @@ void QYEdit::scroll( int dx, int dy )
 
 void QYEdit::guiDrawCell( YCursor pos , const YDrawCell& cell, QPainter* p )
 {
-    //dbg() << "QYEdit::guiDrawCell(" << x << "," << y <<",'" << cell.c << "')" << endl;
+    //dbg() << "QYEdit::guiDrawCell(" << x << "," << y <<",'" << cell.content() << "')" << endl;
     p->save();
     bool has_bg = false;
-    if ( !cell.sel ) {
-        if ( cell.fg.isValid() )
-            p->setPen( cell.fg.rgb() );
-        if ( cell.bg.isValid() ) {
-            has_bg = true;
-            p->setBackground( QColor(cell.bg.rgb()) );
-        }
-    } else if ( cell.sel & YSelectionPool::Visual ) {
+	if ( cell.hasSelection(yzis::SelectionVisual) ) {
         has_bg = true;
         p->setBackground( QColor(181, 24, 181) ); //XXX setting
         p->setPen( Qt::white );
-    } else {
+	} else if ( cell.hasSelection(yzis::SelectionAny) ) {
         has_bg = true;
-        p->setBackground( cell.fg.isValid() ? QColor(cell.fg.rgb()) : palette().color( QPalette::WindowText ) );
-        p->setPen( cell.bg.isValid() ? QColor(cell.bg.rgb()) : palette().color( QPalette::Window ) );
+        p->setBackground( cell.foregroundColor().isValid() ? QColor(cell.foregroundColor().rgb()) : palette().color( QPalette::WindowText ) );
+        p->setPen( cell.backgroundColor().isValid() ? QColor(cell.backgroundColor().rgb()) : palette().color( QPalette::Window ) );
+	} else {
+        if ( cell.foregroundColor().isValid() )
+            p->setPen( cell.foregroundColor().rgb() );
+        if ( cell.backgroundColor().isValid() ) {
+            has_bg = true;
+            p->setBackground( QColor(cell.backgroundColor().rgb()) );
+        }
     }
-    QRect r( pos.x()*fontMetrics().maxWidth(), pos.y()*fontMetrics().lineSpacing(), cell.c.length()*fontMetrics().maxWidth(), fontMetrics().lineSpacing() );
+    QRect r( pos.x()*fontMetrics().maxWidth(), pos.y()*fontMetrics().lineSpacing(), cell.content().length()*fontMetrics().maxWidth(), fontMetrics().lineSpacing() );
 
     //dbg() << "guiDrawCell: r=" << r.topLeft() << "," << r.bottomRight() << " has_bg=" << has_bg << endl;
     //dbg() << "guiDrawCell: fg=" << p->pen().color().name() << endl;
     if ( has_bg )
         p->eraseRect( r );
-    p->drawText( r, cell.c );
+    p->drawText( r, cell.content() );
     p->restore();
 }
 

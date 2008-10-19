@@ -54,8 +54,8 @@ void YModeInsert::enter( YView* mView )
 
 void YModeInsert::leave( YView* mView )
 {
-    if ( mView->getBufferCursor().x() > 0 )
-        mView->moveLeft();
+    if ( mView->getLinePositionCursor().x() > 0 )
+		mView->gotoViewCursor(mView->viewCursorMoveHorizontal(-1));
 }
 
 void YModeInsert::initMotionPool()
@@ -142,7 +142,7 @@ CmdState YModeInsert::execCommand( YView* mView, const YKeySequence& inputs,
     else
         text = parsePos->toString();
     ret = addText( mView, text );
-    QStringList ikeys = mView->myBuffer()->getLocalListOption("indentkeys");
+    QStringList ikeys = mView->buffer()->getLocalListOption("indentkeys");
     if ( ikeys.contains(text) )
         YSession::self()->eventCall("INDENT_ON_KEY", mView);
 
@@ -190,11 +190,11 @@ CmdState YModeInsert::completionPrevious( const YCommandArgs &args )
 
 CmdState YModeInsert::deleteWordBefore( const YCommandArgs &args )
 {
-    YCursor cur = args.view->getBufferCursor();
-    YBuffer* mBuffer = args.view->myBuffer();
+    YCursor cur = args.view->getLinePositionCursor();
+    YBuffer* mBuffer = args.view->buffer();
     if ( cur.x() == 0 && cur.y() > 0 && args.view->getLocalStringOption( "backspace" ).contains( "eol" ) ) {
         mBuffer->action()->mergeNextLine( args.view, cur.y() - 1 );
-        //mBuffer->action()->deleteChar( mView, *mView->getBufferCursor(), 1 ); see bug #158
+        //mBuffer->action()->deleteChar( mView, *mView->getLinePositionCursor(), 1 ); see bug #158
     } else {
         QString line = mBuffer->textline( cur.y() );
         QChar tmp;
@@ -234,8 +234,8 @@ CmdState YModeInsert::deleteWordBefore( const YCommandArgs &args )
 
 CmdState YModeInsert::deleteLineBefore( const YCommandArgs &args )
 {
-    YCursor cur = args.view->getBufferCursor();
-    YBuffer* mBuffer = args.view->myBuffer();
+    YCursor cur = args.view->getLinePositionCursor();
+    YBuffer* mBuffer = args.view->buffer();
     if ( cur.x() == 0 && cur.y() > 0 && args.view->getLocalStringOption( "backspace" ).contains( "eol" ) ) {
         mBuffer->action()->mergeNextLine( args.view, cur.y() - 1 );
     } else {
@@ -248,8 +248,8 @@ CmdState YModeInsert::deleteChar( const YCommandArgs &args )
 {
     dbg() << HERE() << endl ; 
 
-    YCursor cur = args.view->getBufferCursor();
-    YBuffer* mBuffer = args.view->myBuffer();
+    YCursor cur = args.view->getLinePositionCursor();
+    YBuffer* mBuffer = args.view->buffer();
     if ( cur.x() == mBuffer->textline( cur.y() ).length()
             && args.view->getLocalStringOption( "backspace" ).contains( "eol" ) ) {
         mBuffer->action()->mergeNextLine( args.view, cur.y(), false );
@@ -261,11 +261,11 @@ CmdState YModeInsert::deleteChar( const YCommandArgs &args )
 
 CmdState YModeInsert::backspace( const YCommandArgs &args )
 {
-    YCursor cur = args.view->getBufferCursor();
-    YBuffer* mBuffer = args.view->myBuffer();
+    YCursor cur = args.view->getLinePositionCursor();
+    YBuffer* mBuffer = args.view->buffer();
     if ( cur.x() == 0 && cur.y() > 0 && args.view->getLocalStringOption( "backspace" ).contains( "eol" ) ) {
         mBuffer->action()->mergeNextLine( args.view, cur.y() - 1 );
-        //mBuffer->action()->deleteChar( mView, *mView->getBufferCursor(), 1 ); see bug #158
+        //mBuffer->action()->deleteChar( mView, *mView->getLinePositionCursor(), 1 ); see bug #158
     } else if ( cur.x() > 0 ) {
         mBuffer->action()->deleteChar( args.view, cur.x() - 1, cur.y(), 1 );
     }
@@ -274,8 +274,8 @@ CmdState YModeInsert::backspace( const YCommandArgs &args )
 
 CmdState YModeInsert::commandEnter( const YCommandArgs &args )
 {
-    YCursor cur = args.view->getBufferCursor();
-    YBuffer* mBuffer = args.view->myBuffer();
+    YCursor cur = args.view->getLinePositionCursor();
+    YBuffer* mBuffer = args.view->buffer();
     if ( args.view->getLocalBooleanOption("cindent") ) {
         args.view->indent();
     } else {
@@ -284,19 +284,19 @@ CmdState YModeInsert::commandEnter( const YCommandArgs &args )
         if (results.count() > 0 ) {
             if (results[0].length() != 0) {
                 mBuffer->action()->replaceLine( args.view, cur.y() + 1, results[0] + mBuffer->textline( cur.y() + 1 ).trimmed() );
-                args.view->gotoxy(results[0].length(), cur.y() + 1);
+                args.view->gotoLinePosition(cur.y() + 1, results[0].length());
             }
         }
     }
-    args.view->updateStickyCol();
+    args.view->stickToColumn();
     return CmdOk;
 }
 CmdState YModeInsert::addText( YView* mView, const QString& key )
 {
     dbg() << HERE() << endl;
-    mView->myBuffer()->action()->insertChar( mView, mView->getBufferCursor(), key );
+    mView->buffer()->action()->insertChar( mView, mView->getLinePositionCursor(), key );
     if ( mView->getLocalBooleanOption( "cindent" ) && key == "}" )
-        mView->reindent( QPoint(mView->getBufferCursor().x() - 1, mView->getBufferCursor().y()));
+        mView->reindent( QPoint(mView->getLinePositionCursor().x() - 1, mView->getLinePositionCursor().y()));
     return CmdOk;
 }
 
@@ -307,13 +307,13 @@ void YModeInsert::imBegin( YView* )
 void YModeInsert::imCompose( YView* mView, const QString& entry )
 {
     if ( !m_imPreedit.isEmpty() ) { // replace current one
-        YCursor pos = mView->getBufferCursor();
+        YCursor pos = mView->getLinePositionCursor();
         int len = m_imPreedit.length();
         if ( pos.x() >= len )
             pos.setX( pos.x() - len );
         else
             pos.setX( 0 );
-        mView->myBuffer()->action()->replaceText( mView, pos, len, entry );
+        mView->buffer()->action()->replaceText( mView, pos, len, entry );
     } else {
         YKey input;
         input.fromString(entry);
@@ -353,13 +353,13 @@ CmdState YModeReplace::commandInsert( const YCommandArgs &args )
 
 CmdState YModeReplace::backspace( const YCommandArgs &args )
 {
-    args.view->moveLeft();
+	args.view->gotoViewCursor(args.view->viewCursorMoveHorizontal(-1));
     return CmdOk;
 }
 
 CmdState YModeReplace::addText( YView* mView, const QString &text )
 {
-    mView->myBuffer()->action()->replaceChar( mView, mView->getBufferCursor(), text );
+    mView->buffer()->action()->replaceChar( mView, mView->getLinePositionCursor(), text );
     return CmdOk;
 }
 

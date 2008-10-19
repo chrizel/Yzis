@@ -51,7 +51,7 @@ QMap<QRgb, unsigned long int> NYView::mAttributesMap;
 
 
 NYView::NYView(YBuffer *b)
-        : YView(b, NYSession::self(), 0, 0)
+        : YView(b, NYSession::self(), 10, 5)
         , editor(0)
         , infobar(this)
 {
@@ -121,21 +121,26 @@ void NYView::updateVis()
 	setVisibleArea(width-marginLeft, height-2);
 }
 
-void NYView::guiScroll( int /* dx */, int dy )
+void NYView::guiScroll( int dx, int dy )
 {
-	/* TODO */
-    scrollok( editor, true );
-    wscrl( editor, -dy );
-    scrollok( editor, false );
+	Q_UNUSED(dx); //TODO
+	if ( dy >= getLinesVisible() ) {
+		guiPaintEvent(YSelection(YInterval(YCursor(0, 0), YCursor(getColumnsVisible()-1, getLinesVisible()-1))));
+	} else {
+		dbg() << "guiScroll " << dy << endl;
+		scrollok( editor, true );
+		wscrl( editor, dy );
+		scrollok( editor, false );
 
-    int left = 0;
-    int top = 0;
-    int n = qAbs(dy);
-    if ( dy < 0 ) {
-        /* redraw the new bottom */
-        top += getLinesVisible() - n;
-    }
-    sendPaintEvent(YCursor(left, top ), YCursor( left + getColumnsVisible(), top + n ) );
+		int left = 0;
+		int top = 0;
+		int n = qAbs(dy);
+		if ( dy > 0 ) {
+			/* redraw the new bottom */
+			top += getLinesVisible()-n;
+		}
+		guiPaintEvent(YSelection(YInterval(YCursor(0, top), YCursor(getColumnsVisible()-1, top + n - 1))));
+	}
 }
 
 void NYView::guiNotifyContentChanged( const YSelection& s )
@@ -162,19 +167,21 @@ void NYView::guiDrawCell( YCursor pos, const YDrawCell& cell )
 	 */
 
 	int mAttributes = attribWhite;
-	if ( cell.fg.isValid() ) {
-		int rawcolor = cell.fg.rgb() & RGB_MASK;
+	if ( cell.foregroundColor().isValid() ) {
+		int rawcolor = cell.foregroundColor().rgb() & RGB_MASK;
 		if ( mAttributesMap.contains( rawcolor ) ) {
 			mAttributes = mAttributesMap[ rawcolor ];
 		} else {
-			yzWarning() << "Unknown color from libyzis, cell.fg.name() is " << cell.fg.name() << endl;
+			yzWarning() << "Unknown color from libyzis, cell.foregroundColor().name() is " << cell.foregroundColor().name() << endl;
 		}
 	}
-	if ( cell.sel ) mAttributes |= A_REVERSE; // TODO, reverse bg/fg
+	if ( cell.hasSelection(yzis::SelectionAny) ) {
+		mAttributes |= A_REVERSE;  // TODO, reverse bg/fg
+	}
     //if ( drawUnderline() ) mAttributes |= A_UNDERLINE;
 
     /* convert string to wide_char */
-    QByteArray my_char = cell.c.toLocal8Bit();
+    QByteArray my_char = cell.content().toLocal8Bit();
     char* from_char = new char[ my_char.length() + 1 ];
     strcpy( from_char, my_char.constData() );
     size_t needed = mbstowcs( NULL, from_char, strlen(from_char) ) + 1;
@@ -198,14 +205,14 @@ void NYView::guiPaintEvent( const YSelection& drawMap )
 }
 void NYView::drawCursor()
 {
-    int x = getCursor().x() + marginLeft;
-    wmove( editor, getCursor().y(), x );
+	YCursor pos = getRowColumnCursor();
+    wmove( editor, pos.line(), pos.column() + marginLeft );
     wrefresh( editor );
 }
 
 void NYView::guiDrawClearToEOL( YCursor pos, const YDrawCell& cell )
 {
-	QChar clearChar = cell.c[0]; /* TODO */
+	QChar clearChar = cell.content()[0]; /* TODO */
     int x = pos.x();
     if ( !fakeLine )
         x += marginLeft;
@@ -413,9 +420,9 @@ if ( changecolorok )
 
 void NYView::guiUpdateFileName()
 {
-    QString filename = myBuffer()->fileName();
-    int lineCount = myBuffer()->lineCount();
-    int wholeLength = myBuffer()->getWholeTextLength();
+    QString filename = buffer()->fileName();
+    int lineCount = buffer()->lineCount();
+    int wholeLength = buffer()->getWholeTextLength();
     displayInfo(QString("\"%1\" %2L, %3C" ).arg(filename).arg(lineCount).arg(wholeLength));
     restoreFocus();
 }

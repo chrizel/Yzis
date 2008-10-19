@@ -59,9 +59,9 @@ void YModeCompletion::leave( YView* /*view*/ )
 bool YModeCompletion::initCompletion( YView* view, bool forward )
 {
     CmdState state;
-    YBuffer* buffer = view->myBuffer();
+    YBuffer* buffer = view->buffer();
     YMotionArgs arg(view, 1);
-    YCursor cur = view->getBufferCursor();
+    YCursor cur = view->getLinePositionCursor();
     QString line = buffer->textline(cur.y());
 
     //we cant complete from col 0, neither if the line is empty, neither if the word does not end with a letter or number ;)
@@ -74,7 +74,7 @@ bool YModeCompletion::initCompletion( YView* view, bool forward )
     mCompletionStart = YSession::self()->getCommandPool()->moveWordBackward( arg, &state );
     YCursor stop( cur.x() - 1, cur.y() );
     dbg() << "Start : " << mCompletionStart << ", End:" << stop << endl;
-    QStringList list = buffer->getText(mCompletionStart, stop);
+	YRawData list = buffer->dataRegion(YInterval(mCompletionStart, stop));
     dbg() << "Completing word : " << list[0] << endl;
 
     // if there's nothing to complete, abort
@@ -129,10 +129,10 @@ void YModeCompletion::doComplete( YView* view, bool forward )
 
     // replace text
     QString proposal = mProposedCompletions[ mCurrentProposal ];
-    YZAction *action = view->myBuffer()->action();
-    YCursor currentCursor = view->getBufferCursor();
+    YZAction *action = view->buffer()->action();
+    YCursor currentCursor = view->getLinePositionCursor();
     action->replaceText( view, mCompletionStart, currentCursor.x() - mCompletionStart.x(), proposal );
-    view->gotoxy( mCompletionStart.x() + proposal.length(), currentCursor.y() );
+    view->gotoLinePosition(currentCursor.y() , mCompletionStart.x() + proposal.length());
 
     // display match number in the display bar
     QString msg( _("Match %1 of %2") );
@@ -284,7 +284,7 @@ void YModeCompletion::completeFromFileNames( QStringList & /*proposed*/ )
 
 void YModeCompletion::completeFromCurrentBuffer( const YCursor cursor, bool forward, QStringList &proposed )
 {
-    YBuffer *buffer = YSession::self()->currentView()->myBuffer();
+    YBuffer *buffer = YSession::self()->currentView()->buffer();
 
     QStringList matches;
     QList<YCursor> cursorlist;

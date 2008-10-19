@@ -57,8 +57,8 @@ QStringList YEvents::exec(const QString& event, YView *view)
     QMap<QString, QStringList>::Iterator it = mEvents.begin(), end = mEvents.end();
     QStringList results;
     QString hlName;
-    if ( view && view->myBuffer()->highlight() )
-        hlName = view->myBuffer()->highlight()->name();
+    if ( view && view->buffer()->highlight() )
+        hlName = view->buffer()->highlight()->name();
     hlName = hlName.toLower();
     hlName.replace("+", "p");
     for ( ; it != end; ++it ) {
@@ -78,17 +78,17 @@ QStringList YEvents::exec(const QString& event, YView *view)
                     QByteArray b = view->getInputBuffer().toString().toUtf8();
                     const char *inputs = b.data();
                     QRegExp rx("^(\\s*).*$"); //regexp to get all tabs and spaces
-                    QString curLine = view->myBuffer()->textline(view->getBufferCursor().y());
+                    QString curLine = view->buffer()->textline(view->getLineColumnCursor().y());
                     rx.exactMatch(curLine);
                     int nbCurTabs = rx.cap(1).count("\t");
                     int nbCurSpaces = rx.cap(1).count(" ");
                     QString nextLine;
-                    if (view->getBufferCursor().y() + 1 < view->myBuffer()->lineCount())
-                        nextLine = view->myBuffer()->textline(view->getBufferCursor().y() + 1);
+                    if (view->getLineColumnCursor().y() + 1 < view->buffer()->lineCount())
+                        nextLine = view->buffer()->textline(view->getLineColumnCursor().y() + 1);
                     rx.exactMatch(nextLine);
                     int nbNextTabs = rx.cap(1).count("\t");
                     int nbNextSpaces = rx.cap(1).count(" ");
-                    QString prevLine = view->myBuffer()->textline(view->getBufferCursor().y() - 1);
+                    QString prevLine = view->buffer()->textline(view->getLineColumnCursor().y() - 1);
                     rx.exactMatch(prevLine);
                     int nbPrevTabs = rx.cap(1).count("\t");
                     int nbPrevSpaces = rx.cap(1).count(" ");
@@ -98,11 +98,11 @@ QStringList YEvents::exec(const QString& event, YView *view)
                     YLuaEngine::self()->exe(action, "siiiiiisss", inputs, nbPrevTabs, nbPrevSpaces, nbCurTabs, nbCurSpaces, nbNextTabs, nbNextSpaces, cur.data(), prev.data(), next.data());
                 } else if ( QString::compare(event, "INDENT_ON_ENTER") == 0 ) {
                     QRegExp rx("^(\\s*).*$"); //regexp to get all tabs and spaces
-                    QString nextLine = view->myBuffer()->textline(view->getBufferCursor().y());
+                    QString nextLine = view->buffer()->textline(view->getLineColumnCursor().y());
                     rx.exactMatch(nextLine);
                     int nbNextTabs = rx.cap(1).count("\t");
                     int nbNextSpaces = rx.cap(1).count(" ");
-                    QString prevLine = view->myBuffer()->textline(view->getBufferCursor().y() - 1);
+                    QString prevLine = view->buffer()->textline(view->getLineColumnCursor().y() - 1);
                     rx.exactMatch(prevLine);
                     int nbPrevTabs = rx.cap(1).count("\t");
                     int nbPrevSpaces = rx.cap(1).count(" ");

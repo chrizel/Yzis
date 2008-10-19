@@ -95,6 +95,9 @@ public:
     int blue() const;
 
     bool operator!=( const YColor& color ) const;
+    bool operator==( const YColor& color ) const;
+	
+	YColor& operator=( const YColor& color );
 
 private:
 

@@ -64,7 +64,7 @@ static tagFile* doOpenTagFile( QString &filename )
     // first, if the filename starts with ./, replace the dot with
     // the current buffer's path
     if ( filename.startsWith( QString(".") + QDir::separator() ) ) {
-        QFileInfo file( YSession::self()->currentView()->myBuffer()->fileName() );
+        QFileInfo file( YSession::self()->currentView()->buffer()->fileName() );
         filename.replace( 0, 1, file.absoluteDir().absolutePath() );
     }
 
@@ -125,14 +125,14 @@ static void switchToViewOfFilename( const QString &filename )
 
 static void doJumpToTag ( const YTagStackItem &entry )
 {
-    YBuffer * b = YSession::self()->currentView()->myBuffer();
+    YBuffer * b = YSession::self()->currentView()->buffer();
 
     QFileInfo file( entry.filename );
     QString filepath = file.absoluteFilePath();
     QString pattern = entry.pattern;
 
     // if the tag is in a different file, we have to change buffers
-    if ( filepath != YSession::self()->currentView()->myBuffer()->fileName() ) {
+    if ( filepath != YSession::self()->currentView()->buffer()->fileName() ) {
         switchToViewOfFilename( filepath );
     }
 
@@ -154,8 +154,8 @@ static void doJumpToTag ( const YTagStackItem &entry )
         int pos = rx.indexIn(b->textline(i));
 
         if ( pos != -1 ) {
-            YSession::self()->currentView()->centerViewVertically( i );
-            YSession::self()->currentView()->gotoxy( 0, i, true );
+            YSession::self()->currentView()->scrollLineToCenter(i);
+            YSession::self()->currentView()->gotoLinePosition(i , 0);
             YSession::self()->saveJumpPosition();
             break;
         }
@@ -164,7 +164,7 @@ static void doJumpToTag ( const YTagStackItem &entry )
 
 static bool jumpToJumpRecord(const YInfoJumpListRecord *record)
 {
-    YBuffer *buffer = YSession::self()->currentView()->myBuffer();
+    YBuffer *buffer = YSession::self()->currentView()->buffer();
 
     // check to see if we have to change buffers before jumping
     if ( record->filename() != buffer->fileName() ) {
@@ -179,8 +179,8 @@ static bool jumpToJumpRecord(const YInfoJumpListRecord *record)
     }
 
     const YCursor &cursor = record->position();
-    YSession::self()->currentView()->centerViewVertically( cursor.y() );
-    YSession::self()->currentView()->gotodxdy( cursor, true );
+    YSession::self()->currentView()->scrollLineToCenter(cursor.line());
+    YSession::self()->currentView()->gotoLinePosition(cursor);
 
     return true;
 }

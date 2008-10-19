@@ -50,6 +50,7 @@ bool YBound::closed() const
 {
     return !mOpen;
 }
+
 // operators on bounds
 bool operator==( const YBound& left, const YBound& right )
 {
@@ -128,6 +129,37 @@ const YCursor YInterval::toPos() const
 {
     return mTo.pos();
 }
+
+YCursor YInterval::closedStartCursor() const
+{
+	if ( mFrom.opened() ) {
+		return YCursor(mFrom.pos().column()+1, mFrom.pos().line());
+	} else {
+		return mFrom.pos();
+	}
+}
+YCursor YInterval::closedEndCursor( int column_max ) const
+{
+	if ( mTo.opened() ) {
+		if ( mTo.pos().column() == 0 ) {
+			YASSERT(1 <= mTo.pos().line());
+			return YCursor(column_max, mTo.pos().line()-1);
+		} else {
+			return YCursor(mTo.pos().column()-1, mTo.pos().line());
+		}
+	} else {
+		return mTo.pos();
+	}
+}
+YCursor YInterval::openedEndCursor() const
+{
+	if ( mTo.closed() ) {
+		return YCursor(mTo.pos().column()+1, mTo.pos().line());
+	} else {
+		return mTo.pos();
+	}
+}
+
 
 bool YInterval::contains( const YBound& pos ) const 
 {
@@ -481,86 +513,4 @@ const YSelection YSelection::operator-( const YCursor pos ) const
     return ret;
 }
 
-YDoubleSelection::YDoubleSelection( const QString& name )
-{
-    bSelection = new YSelection( name + " buffer" );
-    sSelection = new YSelection( name + " screen" );
-}
-YDoubleSelection::~YDoubleSelection()
-{
-    delete bSelection;
-    delete sSelection;
-}
-YSelectionMap YDoubleSelection::bufferMap() const
-{
-    return bSelection->map();
-}
-YSelectionMap YDoubleSelection::screenMap() const
-{
-    return sSelection->map();
-}
-bool YDoubleSelection::isEmpty() const
-{
-    return bSelection->isEmpty();
-}
-
-void YDoubleSelection::addInterval( const YInterval& bi, const YInterval& si )
-{
-    bSelection->addInterval( bi );
-    sSelection->addInterval( si );
-}
-void YDoubleSelection::delInterval( const YInterval& bi, const YInterval& si )
-{
-    bSelection->delInterval( bi );
-    sSelection->delInterval( si );
-}
-
-bool YDoubleSelection::contains( const YCursor pos ) const
-{
-    return bSelection->contains( pos );
-}
-void YDoubleSelection::clear()
-{
-    bSelection->clear();
-    sSelection->clear();
-}
-
-YDebugStream& operator<<( YDebugStream& out, const YDoubleSelection& s )
-{
-    out << *s.bSelection << *s.sSelection;
-    return out;
-}
-
-
-
-/*
- * YSelectionPool
- **/
-
-YSelectionPool::YSelectionPool()
-{
-    mSearch = new YSelection( "SEARCH" );
-    mVisual = new YDoubleSelection( "VISUAL" );
-}
-YSelectionPool::~YSelectionPool( )
-{
-    delete mSearch;
-    delete mVisual;
-}
-void YSelectionPool::setSearch( YSelection* s )
-{
-    mSearch->setMap( s->map() );
-}
-YSelection* YSelectionPool::search()
-{
-    return mSearch;
-}
-YDoubleSelection* YSelectionPool::visual()
-{
-    return mVisual;
-}
-bool YSelectionPool::isSelected( const YCursor pos ) const
-{
-    return mSearch->contains( pos ) || mVisual->contains( pos );
-}
 

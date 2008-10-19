@@ -32,7 +32,7 @@
 #include "option.h"
 #include "statusbariface.h"
 
-struct YDrawCell;
+class YDrawCell;
 
 /** \brief The view interface that must be re-implemented by the GUI
   * frontend.

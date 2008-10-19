@@ -113,7 +113,7 @@ void YZPrinter::doPrint( )
     double red, green, blue;
 
     if ( number ) {
-        marginLeft = ( 2 + QString::number( mView->myBuffer()->lineCount() ).length() );
+        marginLeft = ( 2 + QString::number( mView->buffer()->lineCount() ).length() );
     }
 
     YOptionValue* ov_wrap = mView->getLocalOption( "wrap" );
@@ -155,7 +155,7 @@ void YZPrinter::doPrint( )
             ++pageNumber;
             convertColor(Qt::black, red, green, blue);
             PS_setcolor(doc, "fillstroke", "rgb", red, green, blue, 0.0);
-            QByteArray n = ( ' ' + mView->myBuffer()->fileName() ).toLatin1();
+            QByteArray n = ( ' ' + mView->buffer()->fileName() ).toLatin1();
             PS_show_boxed(doc, n.data(),
                           titleRect.x(), titleRect.y(), titleRect.width(),
                           titleRect.height(), "left", "");

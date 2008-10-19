@@ -186,20 +186,20 @@ void YModeIntro::enter( YView* mView )
 	}
 
     /* Don't record these in the undo list */
-    mView->myBuffer()->undoBuffer()->setInsideUndo(true);
+    mView->buffer()->undoBuffer()->setInsideUndo(true);
 
-    mView->gotoxy(0, 0);
-	mView->myBuffer()->clearText();
-	mView->myBuffer()->insertRegion(YCursor(0,0), content);
-	mView->myBuffer()->setChanged(false);
+    mView->gotoLinePosition(0, 0);
+	mView->buffer()->clearText();
+	mView->buffer()->insertRegion(YCursor(0,0), content);
+	mView->buffer()->setChanged(false);
 
-    mView->myBuffer()->undoBuffer()->setInsideUndo(false);
+    mView->buffer()->undoBuffer()->setInsideUndo(false);
 }
 void YModeIntro::leave( YView* mView )
 {
-    YBuffer* mBuffer = mView->myBuffer();
+    YBuffer* mBuffer = mView->buffer();
     mBuffer->undoBuffer()->setInsideUndo( true );
-    mView->gotoxy( 0, 0 );
+    mView->gotoLinePosition(0 , 0);
     mBuffer->clearText();
     mBuffer->undoBuffer()->setInsideUndo( false );
     mBuffer->setChanged( false );

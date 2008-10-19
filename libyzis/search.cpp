@@ -183,7 +183,7 @@ void YSearch::Private::setCurrentSearch( const QString& pattern )
             int matchedLength = 0;
             int pos = 0;
             do {
-                from = b->action()->search( v->myBuffer(), mCurrentSearch, cur, end, &matchedLength, &found );
+                from = b->action()->search( v->buffer(), mCurrentSearch, cur, end, &matchedLength, &found );
                 if ( found && matchedLength > 0 ) {
                     cur = from;
                     cur.setX( cur.x() + matchedLength - 1 );
@@ -210,27 +210,26 @@ void YSearch::highlightLine( YBuffer* buffer, int line )
         YCursor cur( from );
         YCursor end( buffer->textline( line ).length(), line );
 
-        YSelection* searchMap = v->getSelectionPool()->search();
-        searchMap->delInterval( YInterval( from, end ) );
+        //XXX YSelection* searchMap = v->getSelectionPool()->search();
+        //XXX searchMap->delInterval( YInterval( from, end ) );
 
         if ( end.x() > 0 ) end.setX( end.x() - 1 );
 
         bool found;
         int matchedLength = 0;
         do {
-            from = buffer->action()->search( v->myBuffer(), d->mCurrentSearch, cur, end, &matchedLength, &found );
+            from = buffer->action()->search( v->buffer(), d->mCurrentSearch, cur, end, &matchedLength, &found );
             if ( found && matchedLength > 0 ) {
                 cur = from;
                 cur.setX( cur.x() + matchedLength - 1 );
-                searchMap->addInterval( YInterval( from, cur ) );
+                //XXX searchMap->addInterval( YInterval( from, cur ) );
                 cur.setX( cur.x() + 1 );
                 //    dbg() << "cur = " << cur << "; end = " << end << endl;
             }
         } while ( found );
 
         foreach( YView *view, views ) {
-            view->getSelectionPool()->setSearch( searchMap );
-            view->sendPaintEvent( 0, line, qMax( (int)(buffer->textline( line ).length() - 1), 0 ), line );
+            //XXX view->getSelectionPool()->setSearch( searchMap );
         }
     }
 }
@@ -242,6 +241,8 @@ void YSearch::shiftHighlight( YBuffer* buffer, int fromLine, int shift )
         return ;
     YView* v = views.front();
     if ( v ) {
+		//TODO
+#if 0
         YSelectionMap searchMap = v->getSelectionPool()->search()->map();
 
         if ( shift + fromLine < 0 ) fromLine = -shift;
@@ -260,21 +261,23 @@ void YSearch::shiftHighlight( YBuffer* buffer, int fromLine, int shift )
 
         foreach( YView *view, views )
         d->highlightSearch( view, searchMap );
+#endif
     }
 }
 
 void YSearch::Private::highlightSearch( YView *view, YSelectionMap searchMap )
 {
+	//TODO
+#if 0
     view->setPaintAutoCommit( false );
     YSelection* vMap = view->getSelectionPool()->search();
-    view->sendPaintEvent( vMap->map(), false );
     vMap->clear();
     if ( YSession::self()->getBooleanOption( "hlsearch" ) ) {
         vMap->setMap( searchMap );
         //  dbg() << "new search Map : " << *(vMap) << endl;
-        view->sendPaintEvent( vMap->map() );
     }
     view->commitPaintEvent();
+#endif
 }
 
 void YSearch::update()

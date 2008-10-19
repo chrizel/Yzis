@@ -46,10 +46,10 @@ YLineSearch::~YLineSearch()
 
 YCursor YLineSearch::forward( const QString& ch, bool& found, unsigned int times )
 {
-    YCursor cur = mView->getBufferCursor();
+    YCursor cur = mView->getLineColumnCursor();
     int x = cur.x() + 1; // Start search after cursor pos
     int y = cur.y();
-    const QString& current = mView->myBuffer()->textline( y );
+    const QString& current = mView->buffer()->textline( y );
     int index = 0;
     unsigned int nfound = 0;
     while ( nfound < times && x < current.length() ) {
@@ -81,11 +81,11 @@ YCursor YLineSearch::forwardBefore( const QString& ch, bool& found, unsigned int
 
 YCursor YLineSearch::reverse( const QString& ch, bool& found, unsigned int times )
 {
-    YCursor cur = mView->getBufferCursor();
+    YCursor cur = mView->getLineColumnCursor();
     unsigned int x = cur.x();
     unsigned int y = cur.y();
     if ( x ) x--; // Start search before current cursor
-    const QString& current = mView->myBuffer()->textline( y );
+    const QString& current = mView->buffer()->textline( y );
     int index = 0;
     unsigned int nfound = 0;
     while ( nfound < times && x > 0 ) {

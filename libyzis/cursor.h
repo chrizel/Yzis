@@ -43,7 +43,7 @@ class YZIS_EXPORT YCursor : public QPoint
 {
 
 public :
-    YCursor() : QPoint( -1, -1)
+    YCursor() : QPoint(0, 0)
     { }
     YCursor( const QPoint &p ) : QPoint(p)
     { } // handles YCursor(const YCursor&) as well

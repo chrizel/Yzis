@@ -21,8 +21,8 @@
 #ifndef YZ_VIEWCURSOR_H
 #define YZ_VIEWCURSOR_H
 
-#include "cursor.h"
 #include "yzismacros.h"
+#include "cursor.h"
 
 /**
   * @short Handle both buffer/drawing cursors
@@ -30,80 +30,43 @@
   * Coumpound object containing a YCursor for the buffer, and another one
   * for the display
   */
-struct YCursorPos
-{
-    YCursor mBuffer;  /* buffer position */
-    YCursor mScreen; /* display position */
-
-    QString toString() const
-    {
-        QString s;
-        s = "buffer pos=" + mBuffer.toString() + ", screen pos=" + mScreen.toString();
-        return s;
-    }
-};
-
-
-
-/**
-  * @short Handle both buffer/drawing cursors
-  *
-  * Coumpound object containing a YCursor for the buffer, and another one
-  * for the display
-  */
-class YZIS_EXPORT YViewCursor : public YCursorPos
+class YZIS_EXPORT YViewCursor
 {
 
 public:
     YViewCursor();
+    YViewCursor( int line, int position, int column );
     YViewCursor( const YViewCursor &c);
     virtual ~YViewCursor();
 
     YViewCursor &operator=( const YViewCursor &c );
 
-    void reset();
+	/* buffer line */
+	inline int line() const { return mBuffer.line(); } 
+    inline void setLine( int value ) { mBuffer.setLine(value); }
+	/* buffer position */
+	inline int position() const { return mBuffer.column(); }
+	inline void setPosition( int value ) { mBuffer.setColumn(value); }
 
-    int bufferX() const;
-    int bufferY() const;
-    int screenX() const;
-    int screenY() const;
+	inline YCursor buffer() const { return mBuffer; }
 
-    // toggle valid token to false
-    void invalidate();
+	/* view column */
+	inline int column() const { return mColumn; }
+	inline void setColumn( int value ) { mColumn = value; }
 
-    bool valid() const;
-
-    inline const YCursor buffer() const
-    {
-        return mBuffer;
-    }
-    inline const YCursor screen() const
-    {
-        return mScreen;
-    }
-
-    void setBuffer( const YCursor value )
-    {
-        mBuffer = value;
-    }
-    void setScreen( const YCursor value )
-    {
-        mScreen = value;
-    }
-
-    void setBufferX( int value );
-    void setBufferY( int value );
-    void setScreenX( int value );
-    void setScreenY( int value );
+    /*
+     * operators
+     */
+    bool operator== ( const YViewCursor right ) const;
+    bool operator!= ( const YViewCursor right ) const;
+    bool operator< ( const YViewCursor right ) const;
+    bool operator<= ( const YViewCursor right ) const;
+    bool operator> ( const YViewCursor right ) const;
+    bool operator>= ( const YViewCursor right ) const;
 
 private :
-    void copyFields( const YViewCursor &rhs );
-
-    /**
-     * valid token
-     */
-    bool mValid;
-
+	YCursor mBuffer;
+	int mColumn;
 };
 
 #endif

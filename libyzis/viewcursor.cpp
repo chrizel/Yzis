@@ -21,91 +21,47 @@
 **/
 
 #include "viewcursor.h"
-#include "debug.h"
 
 /**
  * class YViewCursor
  */
-
-#define dbg()    yzDebug("YViewCursor")
-#define err()    yzError("YViewCursor")
-
-YViewCursor::YViewCursor()
-{
-    reset();
-}
-
-YViewCursor::YViewCursor( const YViewCursor &c )
-        : YCursorPos()
-{
-    copyFields( c );
-}
-
-YViewCursor::~YViewCursor( )
-{}
-
-void YViewCursor::copyFields( const YViewCursor &c )
-{
-    mScreen = c.mScreen;
-    mBuffer = c.mBuffer;
-}
+YViewCursor::YViewCursor() : 
+	mBuffer(), mColumn(0) {}
+YViewCursor::YViewCursor( int line, int position, int column ) : 
+	mBuffer(position, line), mColumn(column) {}
+YViewCursor::YViewCursor( const YViewCursor &c ) : 
+	mBuffer(c.mBuffer), mColumn(c.mColumn) {}
+YViewCursor::~YViewCursor() {}
 
 YViewCursor &YViewCursor::operator=( const YViewCursor& c )
 {
-    mValid = true;
-    copyFields( c );
+    mBuffer = c.mBuffer;
+	mColumn = c.mColumn;
     return *this;
 }
 
-void YViewCursor::reset()
+bool YViewCursor::operator== (const YViewCursor right ) const
 {
-    mValid = true;
-    mBuffer.setLineColumn(0, 0);
-    mScreen.setLineColumn(0, 0);
+	return mBuffer == right.mBuffer;
 }
-
-void YViewCursor::invalidate()
+bool YViewCursor::operator!= (const YViewCursor right ) const
 {
-    mValid = false;
+	return mBuffer != right.mBuffer;
 }
-bool YViewCursor::valid() const
+bool YViewCursor::operator< (const YViewCursor right ) const
 {
-    return mValid;
+	return mBuffer < right.mBuffer;
 }
-
-int YViewCursor::bufferX() const
+bool YViewCursor::operator<= (const YViewCursor right ) const
 {
-    return mBuffer.x();
+	return mBuffer <= right.mBuffer;
 }
-int YViewCursor::bufferY() const
+bool YViewCursor::operator> (const YViewCursor right ) const
 {
-    return mBuffer.y();
+	return mBuffer > right.mBuffer;
 }
-int YViewCursor::screenX() const
+bool YViewCursor::operator>= (const YViewCursor right ) const
 {
-    return mScreen.x();
+	return mBuffer >= right.mBuffer;
 }
-int YViewCursor::screenY() const
-{
-    return mScreen.y();
-}
-
-
-void YViewCursor::setBufferX( int value )
-{
-    mBuffer.setX( value );
-}
-void YViewCursor::setBufferY( int value )
-{
-    mBuffer.setY( value );
-}
-void YViewCursor::setScreenX( int value )
-{
-    mScreen.setX( value );
-}
-void YViewCursor::setScreenY( int value )
-{
-    mScreen.setY( value );
-}
-
 

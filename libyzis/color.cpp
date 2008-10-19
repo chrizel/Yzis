@@ -344,8 +344,21 @@ int YColor::blue() const
     return m_blue >> 8;
 }
 
+bool YColor::operator==( const YColor& color ) const
+{
+    return m_valid == color.m_valid && (!m_valid || (m_red == color.m_red && m_green == color.m_green && m_blue == color.m_blue));
+}
 bool YColor::operator!=( const YColor& color ) const
 {
-    return m_red == color.m_red && m_green == color.m_green && m_blue == color.m_blue;
+    return !(*this == color);
+}
+
+YColor& YColor::operator=( const YColor& color )
+{
+	m_valid = color.m_valid;
+	m_red = color.m_red;
+	m_green = color.m_green;
+	m_blue = color.m_blue;
+	return *this;
 }
 

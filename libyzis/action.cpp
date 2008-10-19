@@ -63,7 +63,7 @@ void YZAction::insertChar( YView* pView, const YCursor pos, const QString& text 
     else if (pos.y() > mBuffer->lineCount() )
         return ; // can't insert on non-existing lines
     mBuffer->insertChar( pos, text );
-    pView->gotoxyAndStick( pos.x() + text.length(), pos.y() );
+    pView->gotoLinePositionAndStick(pos.y() , pos.x() + text.length());
     commitViewsChanges(mBuffer);
 }
 
@@ -75,7 +75,7 @@ void YZAction::replaceText( YView* pView, const YCursor pos, int replacedLength,
     configureViews(mBuffer);
     mBuffer->delChar( pos, replacedLength );
     mBuffer->insertChar( pos, text );
-    pView->gotoxyAndStick( pos.x() + text.length(), pos.y() );
+    pView->gotoLinePositionAndStick(pos.y() , pos.x() + text.length());
     commitViewsChanges(mBuffer);
 }
 
@@ -86,7 +86,7 @@ bool YZAction::replaceChar( YView* pView, const YCursor pos, const QString& text
     configureViews(mBuffer);
     mBuffer->delChar( pos, text.length() );
     mBuffer->insertChar( pos, text );
-    pView->gotoxyAndStick( pos.x() + text.length(), pos.y() );
+    pView->gotoLinePositionAndStick(pos.y() , pos.x() + text.length());
     commitViewsChanges(mBuffer);
     return false;
 }
@@ -97,7 +97,7 @@ bool YZAction::deleteChar( YView* pView, const YCursor pos, int len )
         return true; // don't try on non-existing lines
     configureViews(mBuffer);
     mBuffer->delChar( pos, len );
-    pView->gotoxyAndStick( pos );
+    pView->gotoLinePositionAndStick( pos );
     commitViewsChanges(mBuffer);
     return false;
 }
@@ -108,7 +108,7 @@ void YZAction::insertNewLine( YView* pView, const YCursor pos )
         return ; // don't try on non-existing lines
     configureViews(mBuffer);
     mBuffer->insertNewLine( pos );
-    pView->gotoxyAndStick( 0, pos.y() + 1 );
+    pView->gotoLinePositionAndStick(pos.y() + 1 , 0);
     commitViewsChanges(mBuffer);
 }
 
@@ -118,7 +118,7 @@ void YZAction::replaceLine( YView* pView, const YCursor pos, const QString &text
         return ; // don't try on non-existing lines
     configureViews(mBuffer);
     mBuffer->replaceLine( text, pos.y() );
-    pView->gotoxyAndStick( text.length(), pos.y() );
+    pView->gotoLinePositionAndStick(pos.y() , text.length());
     commitViewsChanges(mBuffer);
 }
 
@@ -128,7 +128,7 @@ void YZAction::insertLine( YView* pView, const YCursor pos, const QString &text 
         return ; // don't try on non-existing lines
     configureViews(mBuffer);
     mBuffer->insertLine( text, pos.y() );
-    pView->gotoxyAndStick( text.length(), pos.y() );
+    pView->gotoLinePositionAndStick(pos.y() , text.length());
     commitViewsChanges(mBuffer);
 }
 
@@ -140,7 +140,7 @@ void YZAction::deleteLine( YView* pView, const YCursor pos, int len, const QList
         len = mBuffer->lineCount() - pos.y();
     for ( int i = 0; i < len && pos.y() < mBuffer->lineCount(); i++ )
         mBuffer->deleteLine( pos.y() );
-    pView->gotoxyAndStick( 0, pos.y() - (pos.y() == mBuffer->lineCount() ? 1 : 0) );
+    pView->gotoLinePositionAndStick(pos.y() - (pos.y() == mBuffer->lineCount() ? 1 : 0) , 0);
     commitViewsChanges(mBuffer);
 }
 
@@ -191,71 +191,16 @@ void YZAction::copyArea( YView* , const YInterval& i, const QList<QChar> &reg )
             buff << mBuffer->textline( eY ).left( eX );
     }
 
-    YSession::self()->guiSetClipboardText( mBuffer->getText( i ).join("\n"), Clipboard::Clipboard );
+	YSession::self()->guiSetClipboardText(mBuffer->dataRegion(i).join("\n"), Clipboard::Clipboard);
 
     dbg() << "Copied " << buff << endl;
     for ( int ab = 0 ; ab < reg.size(); ++ab )
         YSession::self()->setRegister( reg.at(ab), buff );
 }
 
-void YZAction::replaceArea( YView* /*pView*/, const YInterval& i, const QStringList& text )
+void YZAction::replaceArea( YView* /*pView*/, const YInterval& i, const YRawData& text )
 {
-    configureViews(mBuffer);
-    QStringList t = text;
-
-    int bX = i.fromPos().x();
-    int bY = i.fromPos().y();
-    int eX = i.toPos().x();
-    int eY = i.toPos().y();
-
-    if ( i.from().opened() ) ++bX;
-    if ( i.to().opened() && eX > 0 ) --eX;
-    if ( i.to().opened() && eX == 0 ) {
-        --eY;
-        eX = mBuffer->textline( eY ).length() - 1;
-    }
-    QString bL = mBuffer->textline( bY ).left( bX );
-    QString eL = mBuffer->textline( eY ).mid( eX + 1 );
-
-    int rH = text.size();
-    int dH = eY - bY + 1;
-    if ( rH == 0 ) {
-        t << "";
-        rH = 1;
-    }
-
-    if ( rH > 1 ) {
-        mBuffer->replaceLine( bL + t[ 0 ], bY );
-        if ( eY == bY ) {
-            mBuffer->insertLine( t[ rH - 1 ] + eL, eY + 1 );
-        } else {
-            mBuffer->replaceLine( t[ rH - 1 ] + eL, eY );
-            --dH;
-        }
-        --rH;
-    } else {
-        mBuffer->replaceLine( bL + t[ 0 ] + eL, bY );
-        if ( eY != bY ) {
-            mBuffer->deleteLine( eY );
-            --dH;
-        }
-    }
-    int j;
-    int max = qMin( rH, dH );
-    for ( j = 1; j < max; j++ ) {
-        mBuffer->replaceLine( t[ j ], bY + j );
-    }
-    if ( j == rH ) { // remove lines
-        for ( ; j < dH; j++ ) {
-            mBuffer->deleteLine( bY + rH );
-        }
-    } else { // insert lines
-        for ( ; j < rH; j++ ) {
-            mBuffer->insertLine( t[ j ], bY + j );
-        }
-    }
-
-    commitViewsChanges(mBuffer);
+	mBuffer->replaceRegion(i, text);
 }
 
 void YZAction::deleteArea( YView* pView, const YInterval& i, const QList<QChar> &reg )
@@ -263,7 +208,7 @@ void YZAction::deleteArea( YView* pView, const YInterval& i, const QList<QChar> 
     dbg() << "YZAction::deleteArea " << i << endl;
     configureViews(mBuffer);
 
-    QStringList buff = mBuffer->getText( i );
+	YRawData buff = mBuffer->dataRegion(i);
 
     int bX = i.fromPos().x();
     int bY = i.fromPos().y();
@@ -296,7 +241,7 @@ void YZAction::deleteArea( YView* pView, const YInterval& i, const QList<QChar> 
     for ( int ab = 0 ; ab < reg.size(); ++ab )
         YSession::self()->setRegister( reg.at(ab), buff );
 
-    pView->gotoxyAndStick( bX, bY );
+    pView->gotoLinePositionAndStick(bY , bX);
 
     commitViewsChanges(mBuffer);
 }
@@ -329,7 +274,7 @@ void YZAction::mergeNextLine( YView* pView, int y, bool stripSpaces )
     }
     mBuffer->replaceLine( line + line2, y );
     mBuffer->deleteLine( y + 1 );
-    pView->gotoxyAndStick( line.length(), y );
+    pView->gotoLinePositionAndStick(y , line.length());
     commitViewsChanges(mBuffer);
 }
 
@@ -350,15 +295,15 @@ void YZAction::indentLine( YView* pView, int Y, int count )
             line = line.replace( reg, "" );
     }
     replaceLine( pView, Y, line );
-    pView->moveToFirstNonBlankOfLine();
+    pView->gotoViewCursor(pView->viewCursorFromLinePosition(Y, pView->buffer()->firstNonBlankChar(Y)));
     commitViewsChanges(mBuffer);
 }
 
 YCursor YZAction::match( YView* pView, const YCursor cursor, bool *found ) const
 {
-    QString matchers = pView->myBuffer()->getLocalStringOption("matchpairs");
+    QString matchers = pView->buffer()->getLocalStringOption("matchpairs");
 
-    QString current = pView->myBuffer()->textline( cursor.y() );
+    QString current = pView->buffer()->textline( cursor.y() );
     QChar cchar = current.at(cursor.x());
 
     int i = 0;
@@ -373,12 +318,12 @@ YCursor YZAction::match( YView* pView, const YCursor cursor, bool *found ) const
             back = ( abs( i / 2 ) * 2 ) != i;
             QChar c = matchers[ back ? i - 1 : i + 1 ]; //the character to match
             //now do the real search
-            while ( curY < pView->myBuffer()->lineCount() && count > 0 ) {
-                current = pView->myBuffer()->textline( curY );
+            while ( curY < pView->buffer()->lineCount() && count > 0 ) {
+                current = pView->buffer()->textline( curY );
                 if ( back && cursor.y() == curY ) {
                     if ( cursor.x() == 0) {
                         curY--;
-                        current = pView->myBuffer()->textline( curY );
+                        current = pView->buffer()->textline( curY );
                         start = current.length() - 1;
                     } else
                         start = cursor.x() - 1;
@@ -395,7 +340,7 @@ YCursor YZAction::match( YView* pView, const YCursor cursor, bool *found ) const
                     }
                 }
                 if ( count > 0 ) { //let's do another loop
-                    //current = pView->myBuffer()->textline( back ? --curY : ++curY );
+                    //current = pView->buffer()->textline( back ? --curY : ++curY );
                     if ( back ) --curY;
                     else curY++;
                 }
@@ -498,7 +443,7 @@ void YZAction::pasteContent( YView *view, QChar registr, bool after )
             copy = copy.mid( start );
             deleteChar( view, start, pos.y(), copy.length() );
             insertChar( view, start, pos.y(), list[ 0 ] + ( list.size() == 1 ? copy : "" ) );
-            view->gotoxy( start + list[ 0 ].length() - ( list[ 0 ].length() > 0 ? 1 : 0 ), pos.y() );
+            view->gotoLinePosition(pos.y() , start + list[ 0 ].length() - ( list[ 0 ].length() > 0 ? 1 : 0 ));
         }
         i++;
         while ( i < list.size() - 1 ) {
@@ -509,10 +454,9 @@ void YZAction::pasteContent( YView *view, QChar registr, bool after )
             configureViews(mBuffer);
             mBuffer->insertLine( (list[ i ].isNull() ? "" : list[ i ] ) + copy, pos.y() + i );
             commitViewsChanges(mBuffer);
-            view->gotoxy( list[ i ].length(), pos.y() + i );
+            view->gotoLinePosition(pos.y() + i , list[ i ].length());
         } else if ( copyWholeLinesOnly ) {
-            view->gotoxy( 0, pos.y() + 1 );
-            view->moveToFirstNonBlankOfLine();
+            view->gotoLinePosition(pos.y() + 1 , view->buffer()->firstNonBlankChar(pos.y()+1));
         }
 
     } else if ( !after ) { //paste whole lines before current char
@@ -521,7 +465,7 @@ void YZAction::pasteContent( YView *view, QChar registr, bool after )
                 mBuffer->insertLine( list[ i ], pos.y() + i - 1 );
            commitViewsChanges(mBuffer);
 
-        view->gotoxy( pos );
+        view->gotoLinePosition( pos );
     }
-    view->updateStickyCol();
+    view->stickToColumn();
 }

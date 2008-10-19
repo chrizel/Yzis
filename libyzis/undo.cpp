@@ -56,10 +56,10 @@ void YBufferOperation::performOperation( YView* pView, bool opposite)
 
     switch ( t) {
 		case OpAddRegion:
-			pView->myBuffer()->insertRegion(interval.fromPos(), data);
+			pView->buffer()->insertRegion(interval.fromPos(), data);
 			break;
 		case OpDelRegion:
-			pView->myBuffer()->deleteRegion(interval);
+			pView->buffer()->deleteRegion(interval);
 			break;
     }
 
@@ -175,7 +175,7 @@ void YZUndoBuffer::undo( YView* pView )
     }
     */
     mCurrentIndex--;
-    pView->gotoxy(item->endCursorX, item->endCursorY);
+    pView->gotoLinePosition(item->endCursorY, item->endCursorX);
     pView->commitPaintEvent();
     setInsideUndo( false );
 }

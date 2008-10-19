@@ -70,31 +70,31 @@ void QYCursor::paintEvent( QPaintEvent* pe )
     Q_UNUSED(pe);
 
 	YCursor my_pos = mEdit->translateRealToPosition(pos());
-	YDrawBufferIterator it = mEdit->mView->mDrawBuffer.iterator(YInterval(my_pos, my_pos));
+	YDrawBufferConstIterator it = mEdit->mView->mDrawBuffer.const_iterator(YInterval(my_pos, my_pos), yzis::ScreenInterval);
 	const YDrawCell cell = it.drawCellInfo().cell;
 
     QColor cbg, cfg;
 
-    deepdbg().SPrintf( "paintEvent(): cell string='%s'", qp(cell.c) );
+    deepdbg().SPrintf( "paintEvent(): cell string='%s'", qp(cell.content()) );
 
-    if (cell.bg.isValid()) {
-        deepdbg() << "paintEvent(): valid cell bg" << endl;
-        cbg = QColor(cell.bg.rgb());
+    if (cell.backgroundColor().isValid()) {
+        deepdbg() << "paintEvent(): valid cell.backgroundColor()" << endl;
+        cbg = QColor(cell.backgroundColor().rgb());
         //cbg = QColor( Qt::red );
     } else {
-        deepdbg() << "paintEvent(): invalid cell bg" << endl;
+        deepdbg() << "paintEvent(): invalid cell.backgroundColor()" << endl;
         cbg = parentWidget()->palette().color(QPalette::Window);
         //cbg = QColor(Qt::magenta);
     }
 
     deepdbg() << "paintEvent(): cell background=" << cbg.name() << endl;
 
-    if ( cell.fg.isValid() ) {
-        deepdbg() << "paintEvent(): valid cell fg" << endl;
-        cfg = QColor(cell.fg.rgb());
+    if ( cell.foregroundColor().isValid() ) {
+        deepdbg() << "paintEvent(): valid cell.foregroundColor()" << endl;
+        cfg = QColor(cell.foregroundColor().rgb());
         //cfg = QColor(Qt::blue);
     } else {
-        deepdbg() << "paintEvent(): invalid cell fg" << endl;
+        deepdbg() << "paintEvent(): invalid cell.foregroundColor()" << endl;
         cfg = parentWidget()->palette().color(QPalette::WindowText);
         //cfg = QColor(Qt::cyan);
     }
@@ -112,7 +112,7 @@ void QYCursor::paintEvent( QPaintEvent* pe )
         // erase with cell foreground
         p.eraseRect( rect() );
         // paint character with cell background
-        p.drawText( rect(), cell.c );
+        p.drawText( rect(), cell.content() );
         break;
 
     case CursorFrameRect :
@@ -121,7 +121,7 @@ void QYCursor::paintEvent( QPaintEvent* pe )
         // erase with cell background
         p.eraseRect( r );
         // paint character with cell foreground
-        p.drawText( r, cell.c );
+        p.drawText( r, cell.content() );
 
         // paint rect with cell foreground
         r.adjust(0, 0, -1, -1);
@@ -137,7 +137,7 @@ void QYCursor::paintEvent( QPaintEvent* pe )
         // erase with cell background
         p.eraseRect( r );
         // paint character with cell foreground
-        p.drawText( r, cell.c );
+        p.drawText( r, cell.content() );
         r.setTop( r.bottom() - 2 );
         p.fillRect( r, QBrush(cfg) );
         break;
@@ -146,7 +146,7 @@ void QYCursor::paintEvent( QPaintEvent* pe )
         // erase with cell background
         p.eraseRect( r );
         // paint character with cell foreground
-        p.drawText( r, cell.c );
+        p.drawText( r, cell.content() );
         return ;
     }
 }

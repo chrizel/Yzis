@@ -107,6 +107,18 @@ enum MapMode {
     MapInsert = 16,  //!< insert mode
 };
 
+/** Different selection types */
+enum SelectionType {
+	SelectionAny = 0x100, //!< any
+	SelectionSearch = 0x108, //!< hlsearch
+	SelectionVisual = 0x110, //!< visual mode
+};
+
+/** YInterval types */
+enum IntervalType {
+	BufferInterval,
+	ScreenInterval
+};
 };
 
 namespace Clipboard

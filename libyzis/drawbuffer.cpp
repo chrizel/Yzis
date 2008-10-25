@@ -359,19 +359,28 @@ int YDrawBuffer::targetBufferColumn( int bcol, int sid, int* lid, int* cid, int*
 		my_column = my_lid * mScreenWidth;
 	}
 	int my_cid = 0;
-	for( ; my_cid < mContent[sid][my_lid].count(); ++my_cid ) {
+	while( my_cid < mContent[sid][my_lid].count() ) { //; ++my_cid ) {
 		int cw = mContent[sid][my_lid][my_cid].length();
 		if ( w + cw > bcol ) {
 			*bshift = bcol - w;
 			if ( column != NULL ) {
-				my_column += mContent[sid][my_lid][my_cid].widthForLength(bcol - w);
+				my_column += mContent[sid][my_lid][my_cid].widthForLength(*bshift);
 			}
 			break;
 		} else {
-			*bshift = 0;
-			w += cw;
-			if ( column != NULL ) {
-				my_column += mContent[sid][my_lid][my_cid].width();
+			if ( my_cid < mContent[sid][my_lid].count() - 1 ) {
+				*bshift = 0;
+				w += cw;
+				if ( column != NULL ) {
+					my_column += mContent[sid][my_lid][my_cid].width();
+				}
+				++my_cid;
+			} else { // last cell
+				*bshift = cw - 1;
+				if ( column != NULL ) {
+					my_column += mContent[sid][my_lid][my_cid].widthForLength(*bshift);
+				}
+				break;
 			}
 		}
 	}
@@ -423,19 +432,28 @@ int YDrawBuffer::targetScreenColumn( int scol, int sid, int lid, int* cid, int* 
 			my_position += mContent[sid][i].length();
 		}
 	}
-	for( ; my_cid < mContent[sid][lid].count(); ++my_cid ) {
+	while( my_cid < mContent[sid][lid].count() ) {
 		int cw = mContent[sid][lid][my_cid].width();
 		if ( w + cw > scol ) {
 			*sshift = scol - w;
 			if ( position != NULL ) {
-				my_position += mContent[sid][lid][my_cid].lengthForWidth(scol - w);
+				my_position += mContent[sid][lid][my_cid].lengthForWidth(*sshift);
 			}
 			break;
 		} else {
-			*sshift = 0;
-			w += cw;
-			if ( position != NULL ) {
-				my_position += mContent[sid][lid][my_cid].length();
+			if ( my_cid < mContent[sid][lid].count() - 1 ) {
+				*sshift = 0;
+				w += cw;
+				if ( position != NULL ) {
+					my_position += mContent[sid][lid][my_cid].length();
+				}
+				++my_cid;
+			} else {
+				*sshift = cw - 1;
+				if ( position != NULL ) {
+					my_position += mContent[sid][lid][my_cid].lengthForWidth(*sshift);
+				}
+				break;
 			}
 		}
 	}

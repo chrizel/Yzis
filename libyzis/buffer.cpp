@@ -844,7 +844,7 @@ void YBuffer::setPath( const QString& _path )
 
 bool YBuffer::substitute( const QString& _what, const QString& with, bool wholeline, int line )
 {
-    QString l = textline( line );
+    QString l = textline(line);
     bool cs = true;
     QString what = _what;
     if ( what.endsWith("\\c") ) {
@@ -856,18 +856,18 @@ bool YBuffer::substitute( const QString& _what, const QString& with, bool wholel
     bool changed = false;
     int pos = 0;
     int offset = 0;
-    while ( ( pos = rx.indexIn( l, offset ) ) != -1 ) {
-                QPoint unique_pos(pos, line);
-                //in order to apply captures , extract the match first, apply the regexp+captures, then replace full strings in the real
-                //text line ;) see #167
-                QString rep = l.mid( pos, rx.matchedLength());
-                int savedlen = rx.matchedLength();
-                QString result = rep.replace ( rx, with ); //this should apply captures correctly
-                //replace it in the real string
-                l = l.replace ( pos, result.length(), result);
-        //l = l.replace( pos, rx.matchedLength(), with );
-        changed = true;
-        offset = pos + savedlen;
+    while ( (pos = rx.indexIn(l, offset) ) != -1 ) {
+		int matched_length = rx.matchedLength();
+		// extract matching part
+		QString matching = l.mid(pos, matched_length);
+		// apply substitution
+		matching = matching.replace(rx, with);
+
+		// replace part
+		l = l.replace(pos, matched_length, matching);
+		offset = pos + matching.length();
+		changed = true;
+
         if ( !wholeline ) break;
     }
     if ( changed ) {

@@ -803,11 +803,11 @@ CmdState YModeEx::substitute( const YExCommandArgs& args )
     if ( options.contains( "i" ) && !search.endsWith( "\\c" ) ) {
         search.append("\\c");
     }
-    unsigned int lastLine = 0;
+    int lastLine = 0;
     YCursor start( 0, args.fromLine );
     YSession::self()->search()->forward( args.view->buffer(), search, &found, start );
     if ( found ) {
-        for ( unsigned int i = args.fromLine; i <= args.toLine; i++ ) {
+        for ( int i = args.fromLine; i <= args.toLine; i++ ) {
             if ( args.view->buffer()->substitute( search, replace, options.contains( "g" ), i ) ) {
                 needsUpdate = true;
                 lastLine = i;
@@ -815,8 +815,7 @@ CmdState YModeEx::substitute( const YExCommandArgs& args )
         }
         if ( needsUpdate ) {
             args.view->commitNextUndo();
-            args.view->buffer()->updateAllViews();
-			args.view->gotoViewCursor(args.view->viewCursorFromLinePosition(args.view->buffer()->firstNonBlankChar(lastLine), lastLine));
+			args.view->gotoLinePosition(lastLine, args.view->buffer()->firstNonBlankChar(lastLine));
         }
     }
 

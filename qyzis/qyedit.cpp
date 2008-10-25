@@ -209,11 +209,12 @@ void QYEdit::keyPressEvent ( QKeyEvent * e )
 //    if ( !keys.contains(e->key()) ) {
 
     // some checks
+	/*
 	if ( e->text().isEmpty() ) {
 			dbg() << "keyPressEvent: empty key text (key=" << e->key() << ")" << endl;
 			e->ignore();
             return;
-    }
+    }*/
     // TODO: comprehensive solution
     if ( ALPHABET(e->key()) && !(e->modifiers() & Qt::ShiftModifier)) {
         key.setKey( QChar(e->key()).toLower() );

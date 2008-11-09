@@ -243,8 +243,10 @@ class YZIS_EXPORT YView : public YViewIface
 	void gotoViewCursor( const YViewCursor& cursor );
 
 	/* Shortcuts */
-	void gotoLinePosition( int position, int line );
-	void gotoLinePositionAndStick( int position, int line );
+	void gotoLineColumn( int line, int position );
+	void gotoLineColumnAndStick( int line, int position );
+	void gotoLinePosition( int line, int position );
+	void gotoLinePositionAndStick( int line, int position );
 	void gotoLinePosition( const YCursor& buffer );
 	void gotoLinePositionAndStick( const YCursor& buffer );
 	void gotoRowColumn( int row, int column );

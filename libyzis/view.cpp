@@ -429,6 +429,15 @@ void YView::gotoViewCursor( const YViewCursor& cursor )
 	updateCursor();
 }
 
+void YView::gotoLineColumn( int line, int column )
+{
+	gotoViewCursor(viewCursorFromLineColumn(line, column));
+}
+void YView::gotoLineColumnAndStick( int line, int column ) 
+{
+	gotoLineColumn(line, column);
+	stickToColumn();
+}
 void YView::gotoLinePosition( int line, int position )
 {
 	gotoViewCursor(viewCursorFromLinePosition(line, position));

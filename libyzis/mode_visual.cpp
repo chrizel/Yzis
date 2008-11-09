@@ -1,6 +1,6 @@
 /*  This file is part of the Yzis libraries
 *  Copyright (C) 2004-2005 Mickael Marchand <marchand@kde.org>,
-*  Copyright (C) 2005 Loic Pauleve <panard@inzenet.org>,
+*  Copyright (C) 2005-2008 Loic Pauleve <panard@inzenet.org>,
 *  Copyright (C) 2005 Erlend Hamberg <hamberg@stud.ntnu.no>
 *
 *  This library is free software; you can redistribute it and/or
@@ -85,7 +85,7 @@ YInterval YModeVisual::buildBufferInterval( YView* mView )
 	if ( beginPos > endPos ) {
 		YViewCursor tmp = endPos;
 		endPos = beginPos;
-		beginPos = endPos;
+		beginPos = tmp;
 	}
 	return YInterval(beginPos.buffer(), endPos.buffer());
 }

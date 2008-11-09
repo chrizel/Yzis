@@ -56,7 +56,7 @@ static void commitViewsChanges(YBuffer *buffer)
 
 void YZAction::insertChar( YView* pView, const YCursor pos, const QString& text )
 {
-    dbg() << "insertChar(" << pView->toString() << ", pos, " << text << ")" << endl;
+    dbg() << "insertChar(" << pView->toString() << "," << pos << ", " << text << ")" << endl;
     configureViews(mBuffer);
     if ( pos.y() == mBuffer->lineCount() )
         mBuffer->insertNewLine( pos );

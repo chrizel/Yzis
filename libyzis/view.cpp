@@ -161,7 +161,7 @@ void YView::recalcScreen( )
 	updateBufferInterval(YInterval(YCursor(0,0), YBound(YCursor(0, mBuffer->lineCount()), true)));
 	sendRefreshEvent();
 
-	gotoViewCursor(viewCursorFromLinePosition(old_pos));
+	gotoLinePosition(old_pos.y(), old_pos.x());
 
 	guiSetup();
 
@@ -349,7 +349,7 @@ YViewCursor YView::viewCursorFromLinePosition( int line, int position )
 			column += 1;
 		}
 	}
-	return YViewCursor(line, position, column);
+	return YViewCursor(line, qMax(0,position), qMax(0,column));
 }
 
 YViewCursor YView::viewCursorFromRowColumn( int row, int scol ) const
@@ -370,7 +370,7 @@ YViewCursor YView::viewCursorFromRowColumn( int row, int scol ) const
 			column += 1;
 		}
 	}
-	return YViewCursor(line, position, column);
+	return YViewCursor(line, qMax(0,position), qMax(0,column));
 }
 
 YViewCursor YView::viewCursorFromLineColumn( int line, int column )
@@ -391,7 +391,7 @@ YViewCursor YView::viewCursorFromLineColumn( int line, int column )
 			column += 1;
 		}
 	}
-	return YViewCursor(line, position, column);
+	return YViewCursor(line, qMax(0,position), qMax(0,column));
 }
 
 /*

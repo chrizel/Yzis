@@ -32,6 +32,14 @@
 #include "drawbuffer.h"
 #include "buffer.h"
 
+/** Terms **
+ * Line: the buffer line (line number)
+ * Row: the screen line (the nth line shown on the screen)
+ * Position: the buffer column (char number)
+ * Column: the column number, as in '|' vi command.
+ */
+
+
 class YViewCursor;
 class YColor;
 class YCursor;

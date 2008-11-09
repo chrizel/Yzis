@@ -539,6 +539,14 @@ class YZIS_EXPORT YView : public YViewIface
 	// TODO: docstring
 	YDrawSection drawSectionOfBufferLine( int bl ) const;
 
+	/* TODO: docstring */
+	inline void acquireLine( int line ) {
+		mDrawBuffer.acquireLine(line);
+	}
+	inline void releaseLine( int line ) {
+		mDrawBuffer.releaseLine(line);
+	}
+
 protected:
 
     void setupKeys();

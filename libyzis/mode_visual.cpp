@@ -59,6 +59,7 @@ void YModeVisual::enter( YView* mView )
 {
 	if ( !mStartViewCursor.contains(mView) ) {
 		mStartViewCursor[mView] = mView->viewCursor();
+		mView->acquireLine(mStartViewCursor[mView].line());
     }
 	cursorMoved(mView);
 }
@@ -66,6 +67,7 @@ void YModeVisual::leave( YView* mView )
 {
 	YASSERT(mStartViewCursor.contains(mView));
 	mView->setSelection(mSelectionType, YInterval());
+	mView->releaseLine(mStartViewCursor[mView].line());
 	mStartViewCursor.remove(mView);
 }
 void YModeVisual::cursorMoved( YView* mView )

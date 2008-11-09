@@ -37,6 +37,15 @@ class YCursor;
 class YView;
 class YViewCursor;
 
+struct YDrawLineLock {
+	int line;
+	int count;
+	YDrawLineLock( int l, int c ) {
+		line = l;
+		count = c;
+	}
+};
+
 
 class YZIS_EXPORT YDrawBuffer
 {
@@ -122,8 +131,18 @@ public:
 	bool scrollLineToBottom( int line, int* scrolling_horizontal, int* scroll_vertical );
 
 
+	/* TODO: doctstirng */
+	void acquireLine( int line );
+	/* TODO: docstring */
+	void releaseLine( int line );
+	/* TODO: docstring */
+	void squeeze();
+
+
 private :
 	QList<YDrawSection> mContent;
+
+	QList<YDrawLineLock> mLocks;
 
 	YCursor mScreenOffset;
 	YDrawCell mEOLCell;

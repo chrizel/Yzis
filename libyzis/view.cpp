@@ -303,6 +303,7 @@ void YView::scrollLineToBottom( int line )
 {
 	int scroll_horizontal, scroll_vertical;
 	if ( mDrawBuffer.scrollLineToBottom(line, &scroll_horizontal, &scroll_vertical) ) {
+		mDrawBuffer.squeeze();
 		guiScroll(scroll_horizontal, scroll_vertical);
 	}
 }
@@ -310,6 +311,7 @@ void YView::scrollLineToTop( int line )
 {
 	int scroll_horizontal, scroll_vertical;
 	if ( mDrawBuffer.scrollLineToTop(line, &scroll_horizontal, &scroll_vertical) ) {
+		mDrawBuffer.squeeze();
 		guiScroll(scroll_horizontal, scroll_vertical);
 	}
 }
@@ -317,6 +319,7 @@ void YView::scrollLineToCenter( int line )
 {
 	int scroll_horizontal, scroll_vertical;
 	if ( mDrawBuffer.scrollLineToCenter(line, &scroll_horizontal, &scroll_vertical) ) {
+		mDrawBuffer.squeeze();
 		guiScroll(scroll_horizontal, scroll_vertical);
 	}
 }
@@ -418,6 +421,7 @@ void YView::gotoViewCursor( const YViewCursor& cursor )
 	mMainCursor = cursor;
 	int scroll_horizontal, scroll_vertical;
 	if ( mDrawBuffer.scrollForViewCursor(mMainCursor, &scroll_horizontal, &scroll_vertical) ) {
+		mDrawBuffer.squeeze();
 		guiScroll(scroll_horizontal, scroll_vertical);
 	}
 
@@ -823,6 +827,7 @@ void YView::updateBufferInterval( const YInterval& bi )
 void YView::updateBufferInterval( int bl, int bl_last )
 {
 	YASSERT(bl <= bl_last);
+	mDrawBuffer.squeeze();
 	if ( mDrawBuffer.firstBufferLine() > bl_last || mDrawBuffer.lastBufferLine()+(mDrawBuffer.full()?0:1) < bl ) {
 		dbg() << "ignoring updateBufferInterval from line "<<bl<<" to " << bl_last << " ["<<mDrawBuffer.firstBufferLine()<<" to "<<mDrawBuffer.lastBufferLine()<<" full=" << mDrawBuffer.full()<<"]" << endl;
 		return;
@@ -842,7 +847,10 @@ void YView::updateBufferInterval( int bl, int bl_last )
 
 	/* update requested lines */
 	for( ; bl <= bl_last; ++bl ) {
-		setBufferLineContent(bl);
+		if (!setBufferLineContent(bl)) {
+			dbg() << "updateBufferInterval stops at line " << bl << endl;
+			break;
+		}
 	}
 
 	commitPaintEvent();
@@ -958,11 +966,12 @@ YDrawSection YView::drawSectionOfBufferLine( int bl ) const {
 	return ds;
 }
 
-void YView::setBufferLineContent( int bl )
+bool YView::setBufferLineContent( int bl )
 {
 	YDrawSection ds = drawSectionOfBufferLine(bl);
 	YInterval affected = mDrawBuffer.setBufferDrawSection(bl, ds);
 	sendPaintEvent(affected);
+	return bl < mDrawBuffer.screenTopBufferLine() || affected.valid();
 }
 void YView::deleteFromBufferLine( int bl )
 {

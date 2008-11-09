@@ -554,7 +554,7 @@ private:
 
 
 	// TODO: docstring
-	void setBufferLineContent( int bl );
+	bool setBufferLineContent( int bl );
 	/* TODO: docstring */
 	void deleteFromBufferLine( int bl );
 

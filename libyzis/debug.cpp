@@ -172,6 +172,9 @@ void YDebugBackend::setDebugOutput( const QString& fileName )
         return ;
     }
 
+	if ( QFile::exists(fileName) )
+		QFile::remove(fileName);
+
     FILE * f = fopen( fileName.toLocal8Bit(), "w" );
     if (f == NULL) {
         err().SPrintf( "Could not open file %s for writing\n", qp(fileName) );

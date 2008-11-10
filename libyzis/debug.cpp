@@ -43,6 +43,8 @@
 #include <QRegExp>
 #include <QStringList>
 #include <QFile>
+#include <QDir>
+#include <QTemporaryFile>
 
 #ifdef YZIS_WIN32_GCC 
 // to use OutputDebugString
@@ -67,11 +69,7 @@ YDebugBackend * YDebugBackend::me = NULL;
 
 YDebugBackend::YDebugBackend()
 {
-#ifndef YZIS_WIN32_GCC
-    qDebug("YDebugBackend::YDebugBackend() constructor");
-#endif
-    _output = NULL;
-    _outputFname = "";
+	_output = NULL;
 }
 
 YDebugBackend::YDebugBackend( YDebugBackend & )
@@ -89,9 +87,7 @@ YDebugBackend & YDebugBackend::operator=( YDebugBackend & )
 YDebugBackend::~YDebugBackend()
 {
     dbg() << "~YDebugBackend()" << endl;
-    if ( _output != NULL ) {
-        fclose( _output );
-    }
+	closeOutput();
 }
 
 void YDebugBackend::init()
@@ -111,12 +107,9 @@ void YDebugBackend::init()
 
 #ifdef DEBUG
     _level = YZ_DEBUG_LEVEL;
+	setDebugOutputTemp();
 #else
     _level = YZ_WARNING_LEVEL;
-#endif
-
-#ifndef YZIS_WIN32_GCC
-    setDebugOutput( "/tmp/yzisdebug-" + QString(getpwuid(geteuid())->pw_name) + ".log" );
 #endif
 
     // our message handler does not manage to display all messages. So,
@@ -138,64 +131,51 @@ YDebugBackend * YDebugBackend::self()
     return me;
 }
 
-void YDebugBackend::setDebugOutput( FILE * file )
-{
-    if (file == NULL) {
-        flush( YZ_WARNING_LEVEL, 0, "YDebugBackend: setting output to a NULL file descriptor\n" );
-    } else {
-        setvbuf( file, NULL, _IONBF, 0 ); // disable buffering
-    }
-    _output = file;
+void YDebugBackend::closeOutput() {
+	if ( _output != NULL ) {
+		if ( _output->isOpen() ) {
+			_output->close();
+		}
+		delete _output;
+	}
 }
 
-void YDebugBackend::setDebugOutput( const QString& fileName )
+void YDebugBackend::setDebugOutputFilename( const QString& fileName )
 {
-    if ( _output != NULL) {
-        dbg().SPrintf( "setDebugOutput( %s )", qp( fileName ) );
+	closeOutput();
 
-        if (_output != stdout && _output != stderr ) {
-            fclose( _output );
-        }
-        _output = NULL;
-        _outputFname = "";
-    }
-
-    _outputFname = fileName;
-
+	_output = new QFile(fileName);
     if (fileName == "stdout") {
-        setDebugOutput( stdout );
         dbg() << "Debug output set to stdout" << endl;
-        return ;
+		_output->open(stdout, QIODevice::WriteOnly);
     } else if (fileName == "stderr") {
-        setDebugOutput( stderr );
         dbg() << "Debug output set to stderr" << endl;
-        return ;
-    }
+		_output->open(stderr, QIODevice::WriteOnly);
+    } else {
+		if ( !_output->exists() || _output->remove() ) {
+			_output->open(QIODevice::WriteOnly);
+			_output->setPermissions(QFile::ReadOwner|QFile::WriteOwner);
+		}
+	}
+}
 
-	if ( QFile::exists(fileName) )
-		QFile::remove(fileName);
-
-    FILE * f = fopen( fileName.toLocal8Bit(), "w" );
-    if (f == NULL) {
-        err().SPrintf( "Could not open file %s for writing\n", qp(fileName) );
-        _outputFname = "<NULL>";
-        setDebugOutput( f );
-        return;
-    }
-    setDebugOutput( f );
-    dbg().SPrintf( "_output set to file %s: FILE * = %p\n", qp(fileName), f );
+void YDebugBackend::setDebugOutputTemp()
+{
+	closeOutput();
 
 #ifndef YZIS_WIN32_GCC
-    struct stat buf;
-    int i = lstat( fileName.toLocal8Bit(), &buf );
-    if ( i != -1 && S_ISREG( buf.st_mode ) && !S_ISLNK( buf.st_mode ) && buf.st_uid == geteuid() )
-        chmod( fileName.toLocal8Bit(), S_IRUSR | S_IWUSR );
-    else {
-        fclose( _output );
-        _output = NULL;
-        _outputFname = "";
-    }
+	QString tmpname = "yzis-"+QString(getpwuid(geteuid())->pw_name)+"-XXXXXX.log";
+#else
+	QString tmpname = "yzis-XXXXXX.log";
 #endif
+	QTemporaryFile* tmp = new QTemporaryFile(QDir::tempPath()+"/"+tmpname);
+	tmp->setAutoRemove(false);
+	if ( tmp->open() ) {
+		_output = tmp;
+		dbg() << "temp debug:" << tmp->fileName() << endl;
+	} else {
+		delete tmp;
+	}
 }
 
 void YDebugBackend::flush( int level, const QString& area, const char * data )
@@ -210,10 +190,12 @@ void YDebugBackend::flush( int level, const QString& area, const char * data )
     _flushall();
     OutputDebugString( data );
 #else
-    if (_output == NULL) return ;
-    fprintf( _output, "%s\n", data ); // data never ends with \n
-    fflush( _output );
-    DBG_FLUSH( printf("flush(): done\n"); )
+	if ( _output != NULL && _output->isOpen() ) {
+		_output->write(QByteArray(data));
+		_output->write("\n");
+		_output->flush();
+	}
+	DBG_FLUSH( printf("flush(): done\n"); )
 #endif
 }
 
@@ -242,7 +224,7 @@ void YDebugBackend::parseRcfile(const char * filename)
         QString keyword = lineRe.cap(1).trimmed();
         QString action = lineRe.cap(2).trimmed();
         if (keyword == "output") {
-            setDebugOutput( action );
+            setDebugOutputFilename( action );
         } else if (keyword == "level") {
             if (! _levelByName.contains(action)) {
                 err() << "Unknown debug level in " << filename << ": " << action << endl;
@@ -305,7 +287,7 @@ void YDebugBackend::parseArgv( QStringList & argv )
             QString sFilename = reDebugOutput.cap(1);
             dbg() << "sFilename='" << sFilename << "'" << endl;
             argv.removeAt( i );
-            setDebugOutput( sFilename );
+			setDebugOutputFilename( sFilename );
         }
     }
     dbg() << toString();
@@ -342,7 +324,7 @@ QString YDebugBackend::toString()
 
     s += QString("YDebugBackend content:\n");
     s += QString("level: %1\n").arg(_nameByLevel[ debugLevel() ]);
-    s += QString("output: %1\n").arg(_outputFname);
+    s += QString("output: %1\n").arg(_output != NULL ? _output->fileName(): "NULL");
     foreach( QString area, _areaLevel.keys() ) {
         s += QString("%1:%2\n").arg(area).arg(_nameByLevel[_areaLevel.value(area)]);
     }

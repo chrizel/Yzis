@@ -36,6 +36,7 @@
 
 #include <QString>
 #include <QMap>
+#include <QFile>
 #include "yzismacros.h"
 #include "noncopyable.h"
 
@@ -173,16 +174,15 @@ public:
         return _level;
     }
 
-    /** All debug will be logged to the open file descriptor \p file.
-         *
-      * stdout and stderr are perfectly valid file descriptors for this.
-         */
-    void setDebugOutput( FILE * file );
+    /** All debug will be logged to the file \p fileName
+	 *  \p fileName may be stdout or stderr.
+     */
+    void setDebugOutputFilename( const QString& fileName);
 
-    /** Same as above, but just specifies a file name that
-         * will be opened instead of a file descriptor. 
-         */
-    void setDebugOutput( const QString& fileName);
+	/** Temporary debug output
+	 */
+    void setDebugOutputTemp();
+
 
     /** Set the debug \p level of an \p area
          *
@@ -306,6 +306,8 @@ private:
       */
     void init();
 
+	void closeOutput();
+
     /** Private constructors for a singleton */
     YDebugBackend();
 
@@ -335,10 +337,7 @@ private:
 
     /** File output of the debugging (may be stderr, stdout or any open file
       * descriptor */
-    FILE * _output;
-
-    /** File name of the output */
-    QString _outputFname;
+    QFile* _output;
 };
 
 /** Special function to allocate memory.

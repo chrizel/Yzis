@@ -174,7 +174,7 @@ QString YKey::toString() const
         mod += "M-";
     if ( mModifiers & Qt::AltModifier)
         mod += "A-";
-	if ( mModifiers & Qt::ShiftModifier && ! (c.isUpper() || c.isLower() ) )
+	if ( mModifiers & Qt::ShiftModifier )
 		mod += "S-";
 
     if ( mod.length() || repr.length() > 1 )

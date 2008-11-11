@@ -402,17 +402,22 @@ bool YDrawBuffer::targetScreenLine( int sline, int* sid, int* lid, int* bline ) 
 	int my_sid = mScreenTopBufferLine - mFirstBufferLine;
 	int my_lid = 0;
 	int h = 0;
-	for ( ; !found && my_sid < mContent.count(); ++my_sid ) {
+	while( my_sid < mContent.count() ) {
 		int sh = mContent[my_sid].count();
 		if ( h + sh > sline ) {
 			my_lid = sline - h;
 			found = true;
 			break;
 		} else {
-			h += sh;
+			if ( my_sid < mContent.count() - 1 ) {
+				h += sh;
+				++my_sid;
+			} else {
+				my_lid = mContent[my_sid].count() - 1;
+				break;
+			}
 		}
 	}
-	YASSERT(found);
 	YASSERT(0 <= my_lid);
 	YASSERT(my_lid < mContent[my_sid].count());
 	*sid = my_sid;

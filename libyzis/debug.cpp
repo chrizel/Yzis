@@ -258,7 +258,7 @@ void YDebugBackend::parseArgv( QStringList & argv )
 {
     QRegExp reLevelOpt("--level=(\\w+)");
     QRegExp reAreaOpt("--area-level=(\\w+),(\\w+)");
-    QRegExp reDebugOutput("--debug-output=(\\w+)");
+    QRegExp reDebugOutput("--debug-output=([\\w-/\\.]+)");
     dbg() << "argv='" << argv << "'" << endl;
     for (int i = argv.count() - 1; i >= 1; i--) {
         dbg() << "argv[i]='" << argv[i] << "'" << endl;

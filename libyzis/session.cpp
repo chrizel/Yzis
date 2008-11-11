@@ -182,7 +182,7 @@ void YSession::parseCommandLine( int argc, char * argv[] )
             s = args.at(i);
 
             // --level and --area-level are parsed in YDebugBackend, Ignore them here
-            if (s.startsWith("--level") || s.startsWith("--area-level") ) ;
+            if (s.startsWith("--level") || s.startsWith("--area-level") || s.startsWith("--debug-output") ) ;
 
             // Asking for Help
             else if (s == "-h" || s == "--help") {

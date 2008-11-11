@@ -142,14 +142,13 @@ bool YKey::parseModifiers(const QString &mods)
 {
     bool success = true;
     int pos = -1;
-    //QRegExp modPattern("[CSMA]-");
-    QRegExp modPattern("[CMA]-");
+    QRegExp modPattern("[CSMA]-");
     
     while ( (pos = modPattern.indexIn(mods, pos+1)) != -1 ) {
         if ( mods.at(pos) == 'C' )
             mModifiers |= Qt::ControlModifier;
-//      else if ( mods.at(pos) == 'S' )
-//          mModifiers |= Qt::ShiftModifier;
+		else if ( mods.at(pos) == 'S' )
+			mModifiers |= Qt::ShiftModifier;
         else if ( mods.at(pos) == 'M' )
             mModifiers |= Qt::MetaModifier;
         else if ( mods.at(pos) == 'A' )
@@ -175,8 +174,8 @@ QString YKey::toString() const
         mod += "M-";
     if ( mModifiers & Qt::AltModifier)
         mod += "A-";
-//    if ( mModifiers & Qt::ShiftModifier && ! (c.isUpper() || c.isLower() ) )
-//            mod += "S-";
+	if ( mModifiers & Qt::ShiftModifier && ! (c.isUpper() || c.isLower() ) )
+		mod += "S-";
 
     if ( mod.length() || repr.length() > 1 )
         repr = "<" + mod + repr + ">";

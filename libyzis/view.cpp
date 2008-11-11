@@ -473,9 +473,11 @@ YViewCursor YView::viewCursorMoveVertical( int ticks )
 
 YViewCursor YView::viewCursorMoveHorizontal( int ticks, bool wrap, bool* stopped )
 {
-	//TODO: check behindEOL
 	int line = mMainCursor.line();
 	int position = mMainCursor.position() + ticks;
+
+	int shift = mModePool->current()->isEditMode() ? 1 : 0;
+
 	bool my_stopped = false;
 	if ( position < 0 ) {
 		if ( wrap ) {
@@ -491,21 +493,21 @@ YViewCursor YView::viewCursorMoveHorizontal( int ticks, bool wrap, bool* stopped
 		} else {
 			position = 0;
 		}
-	} else if ( position >= mBuffer->getLineLength(line) ) {
+	} else if ( position >= mBuffer->getLineLength(line) + shift ) {
 		int max_line = mBuffer->lineCount() - 1;
 		if ( wrap && line < max_line) {
-			int line_length = mBuffer->getLineLength(line);
+			int line_length = mBuffer->getLineLength(line) + shift;
 			do {
 				position -= line_length;
 				line += 1;
-				line_length = mBuffer->getLineLength(line);
+				line_length = mBuffer->getLineLength(line) + shift;
 			} while ( position >= line_length && line < max_line );
 			if ( position >= line_length ) {
 				my_stopped = true;
 				position = line_length - 1;
 			}
 		} else {
-			position = mBuffer->getLineLength(line) - 1;
+			position = mBuffer->getLineLength(line);
 		}
 	}
 

@@ -107,7 +107,13 @@ QString YKey::toBasicRep() const
     if (!s.isNull())
         return s;
 
-    return QString("NO_REP");
+	/* see #280
+	 * related to multi-key character composition
+	 * (AltGr, Multi_key, Codeinput, etc...
+	 */
+    //return QString("NO_REP"); see issue #280
+	dbg() << "no match for key " << mKey << endl;
+	return QString::null;
 }
 
 bool YKey::parseBasicRep(QString rep)

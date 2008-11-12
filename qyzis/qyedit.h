@@ -142,7 +142,7 @@ private :
     QRect mUseArea;
 
     QYView *mView;
-    QYCursor* mCursor;
+    QYCursor mCursor;
 
     bool isFontFixed;
 

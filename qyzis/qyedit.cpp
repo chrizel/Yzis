@@ -49,6 +49,7 @@ using namespace std;
 QYEdit::QYEdit(QYView * view )
         : QWidget( view )
         , signalMapper(this)
+		, mCursor(view, this, QYCursor::CursorFilledRect)
 {
     mView = view;
 
@@ -64,7 +65,6 @@ QYEdit::QYEdit(QYView * view )
     /* show an edit cursor */
     QWidget::setCursor( Qt::IBeamCursor );
 
-    mCursor = new QYCursor( mView, this, QYCursor::CursorFilledRect );
 
     connect( &signalMapper, SIGNAL( mapped( const QString& ) ), this, SLOT( sendMappedKey( const QString& ) ) );
 }
@@ -113,7 +113,7 @@ QYCursor::CursorShape QYEdit::cursorShape()
     QYCursor::CursorShape shape;
     YMode::ModeType m = mView->modePool()->currentType();
     deepdbg() << "cursorShape(): mode=" << m << endl;
-    shape = mCursor->shape();
+    shape = mCursor.shape();
     if ( ! hasFocus() ) {
         if (mView->mCommandLine->hasFocus()) {
             // command line has focus
@@ -154,8 +154,8 @@ QYCursor::CursorShape QYEdit::cursorShape()
 
 void QYEdit::updateCursor()
 {
-    mCursor->setCursorShape( cursorShape() );
-    mCursor->update();
+    mCursor.setCursorShape( cursorShape() );
+    mCursor.update();
 }
 
 void QYEdit::modeChanged()
@@ -319,23 +319,23 @@ void QYEdit::setCursor( int c, int l )
     // dbg() << "setCursor" << endl;
     unsigned int x = c * fontMetrics().maxWidth();
     if ( mView->getLocalBooleanOption( "rightleft" ) ) {
-        x = width() - x - mCursor->width();
+        x = width() - x - mCursor.width();
     }
-    mCursor->move( x, l * fontMetrics().lineSpacing() );
-    if ( !mCursor->isVisible() )
-        mCursor->show();
+    mCursor.move( x, l * fontMetrics().lineSpacing() );
+    if ( !mCursor.isVisible() )
+        mCursor.show();
 
     // need for InputMethod (OverTheSpot)
-    // setMicroFocusHint( mCursor->x(), mCursor->y(), mCursor->width(), mCursor->height() );
+    // setMicroFocusHint( mCursor.x(), mCursor.y(), mCursor.width(), mCursor.height() );
 }
 
 void QYEdit::scroll( int dx, int dy )
 {
     int rx = dx * fontMetrics().maxWidth();
     int ry = dy * fontMetrics().lineSpacing();
-    mCursor->hide();
-    QRect cursorRect = mCursor->rect();
-    cursorRect.moveTo( mCursor->pos() );
+    mCursor.hide();
+    QRect cursorRect = mCursor.rect();
+    cursorRect.moveTo( mCursor.pos() );
     update(cursorRect);
     QWidget::scroll( rx, ry, mUseArea );
 }

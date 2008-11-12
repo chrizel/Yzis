@@ -250,11 +250,12 @@ void QYView::applyConfig( const QSettings& settings, bool refresh )
 
     QFont default_font;
     default_font.setStyleHint(QFont::TypeWriter);
-    default_font.setFamily("Courier");
+    default_font.setFamily("fixed");
     QFont user_font = settings.value("appearance/font", default_font).value<QFont>();
     if ( !user_font.fixedPitch() ) {
         user_font = default_font;
     }
+	YASSERT(user_font.fixedPitch());
     mEdit->setFont( user_font );
     mLineNumbers->setFont( user_font );
 

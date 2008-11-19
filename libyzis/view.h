@@ -425,6 +425,7 @@ class YZIS_EXPORT YView : public YViewIface
     {
         return mMainCursor;
     }
+	int currentRow() const;
 	inline int currentLine() const { return mMainCursor.line(); }
 	inline int currentPosition() const { return mMainCursor.position(); }
 	inline int currentColumn() const { return mMainCursor.column(); }

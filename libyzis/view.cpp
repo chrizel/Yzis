@@ -697,11 +697,15 @@ void YView::commitNextUndo()
     mBuffer->undoBuffer()->commitUndoItem( mMainCursor.position(), mMainCursor.line() );
 }
 
+int YView::currentRow() const
+{
+	return mDrawBuffer.bufferDrawSectionScreenLine(currentLine());
+}
 
 const YCursor YView::getRowColumnCursor() const
 {
 	int col = currentColumn() % getColumnsVisible();
-	int row = currentLine() - mDrawBuffer.screenTopBufferLine() + currentColumn() / getColumnsVisible();
+	int row = currentRow() + currentColumn()/getColumnsVisible();
 	return YCursor(col, row);
 }
 const YCursor YView::getLinePositionCursor() const

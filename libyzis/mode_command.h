@@ -239,6 +239,7 @@ public:
     YCursor firstNonBlankNextLine(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
     YCursor firstNonBlankPreviousLine(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
     YCursor gotoLine(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
+    YCursor gotoColumn(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
     YCursor searchWord(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
     YCursor searchNext(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
     YCursor searchPrev(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);

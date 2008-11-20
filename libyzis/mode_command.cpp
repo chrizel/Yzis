@@ -139,6 +139,7 @@ void YModeCommand::initMotionPool()
     motions.append( new YMotion(YKeySequence("-"), &YModeCommand::firstNonBlankPreviousLine, ArgNone) );
     motions.append( new YMotion(YKeySequence("gg"), &YModeCommand::gotoLine, ArgNone) );
     motions.append( new YMotion(YKeySequence("G"), &YModeCommand::gotoLine, ArgNone) );
+    motions.append( new YMotion(YKeySequence("|"), &YModeCommand::gotoColumn, ArgNone) );
     motions.append( new YMotion(YKeySequence("}"), &YModeCommand::nextEmptyLine, ArgNone) );
     motions.append( new YMotion(YKeySequence("{"), &YModeCommand::previousEmptyLine, ArgNone) );
     motions.append( new YMotion(YKeySequence("<C-b>"), &YModeCommand::scrollPageUp) );
@@ -1129,6 +1130,22 @@ YCursor YModeCommand::gotoLine(const YMotionArgs &args, CmdState *state, MotionS
 	} else {
 		return args.view->viewCursorFromStickedLine(dest_line).buffer();
 	}
+}
+
+YCursor YModeCommand::gotoColumn(const YMotionArgs &args, CmdState *state, MotionStick* stick)
+{
+    int columnToGo=0;
+    int lineToGo;
+
+    dbg() << "gotoColumn," << args.count << endl;
+    *state = CmdOk;
+
+    if (args.count >0) columnToGo = args.count -1;
+    lineToGo = args.view->currentLine();    
+
+    args.view->gotoLineColumnAndStick( lineToGo, columnToGo);
+    
+    return args.view->viewCursor().buffer();
 }
 
 YCursor YModeCommand::searchWord(const YMotionArgs &args, CmdState *state, MotionStick* )

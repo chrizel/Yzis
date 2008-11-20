@@ -382,6 +382,11 @@ YViewCursor YView::viewCursorFromLineColumn( int line, int column )
 	mDrawBuffer.targetBufferLine(line, &sid);
 	int lid = column / mDrawBuffer.screenWidth();
 	int scol = column % mDrawBuffer.screenWidth();
+	int max_lid = mDrawBuffer.sections()[sid].count() - 1;
+	if ( lid > max_lid ) {
+		lid = max_lid;
+		scol = mDrawBuffer.screenWidth() - 1;
+	}
 	int cid, sshift, position;
 	int my_scol = mDrawBuffer.targetScreenColumn(scol, sid, lid, &cid, &sshift, &position);
 	if ( my_scol < scol ) {

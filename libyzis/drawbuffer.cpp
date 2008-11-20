@@ -429,6 +429,7 @@ int YDrawBuffer::targetScreenColumn( int scol, int sid, int lid, int* cid, int* 
 {
 	YASSERT(0 <= scol);
 	YASSERT(scol < screenWidth());
+	YASSERT(lid < mContent[sid].count());
 	int my_cid = 0;
 	int w = 0;
 	*sshift = -1;

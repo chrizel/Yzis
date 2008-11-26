@@ -94,7 +94,7 @@ class YZIS_EXPORT YView : public YViewIface
 		 * A global UID for this view
 		 *   only used for local options (<filename>-view-<id>)
 		 **/
-		inline const int getId() const { return id; }
+		inline int getId() const { return id; }
 
 		/** Return a string description of the view.
 		 *

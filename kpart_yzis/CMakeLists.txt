@@ -16,11 +16,8 @@ set( part_SOURCES
 	kteview.cpp
 	kysession.cpp
 	kyview.cpp
-	kycommand.cpp
-	kycursor.cpp
 	kyeditor.cpp
-	kyinfobar.cpp
-	   	)
+)
 
 kde4_add_plugin(yzispart ${part_SOURCES})
 target_link_libraries(yzispart ${KDE4_KDECORE_LIBS} ${KDE4_KPARTS_LIBS} ktexteditor yzis )

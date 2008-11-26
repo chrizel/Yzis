@@ -42,7 +42,7 @@ public:
     virtual void guiSetClipboardText(const QString&, Clipboard::Mode);
     virtual YView* guiCreateView(YBuffer*);
     virtual void guiDeleteView(YView*);
-    virtual YBuffer* guiCreateBuffer();
+    virtual void guiCreateBuffer(YBuffer*);
     virtual void guiChangeCurrentView(YView*);
 
 private:

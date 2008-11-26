@@ -54,9 +54,9 @@ YView* KYSession::guiCreateView(YBuffer* buffer)
     return view;
 }
 
-YBuffer* KYSession::guiCreateBuffer()
+void KYSession::guiCreateBuffer( YBuffer* b )
 {
-    return new YBuffer();
+	Q_UNUSED(b);
 }
 
 void KYSession::guiDeleteBuffer( YBuffer* b )

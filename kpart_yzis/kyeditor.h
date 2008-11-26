@@ -21,8 +21,6 @@
 #ifndef _KY_EDITOR_H_
 #define _KY_EDITOR_H_
 
-#include "kycursor.h"
-
 #include <QWidget>
 
 #include "qyzis/qyedit.h"

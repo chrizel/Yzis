@@ -21,86 +21,15 @@
 #ifndef _KYZIS_VIEW_H_
 #define _KYZIS_VIEW_H_
 
-#include "kycursor.h"
+#include <libyzis/buffer.h>
+#include <qyzis/qyview.h>
 
-#include <libyzis/view.h>
-
-#include <QWidget>
-
-
-class KYEditor;
-class KYCommand;
-class KYInfoBar;
-class YKey;
-class QSignalMapper;
-class QPainter;
-class KActionCollection;
-class QScrollBar;
-class YStatusBarIface;
-
-class KYView : public QWidget, public YView
+class KYView : public QYView
 {
     Q_OBJECT
 public:
-    KYView(YBuffer*, QWidget*);
+    KYView( YBuffer* doc, QWidget* parent );
     virtual ~KYView();
-
-    virtual void guiScroll(int, int);
-    virtual QString guiGetCommandLineText() const;
-    virtual void guiSetCommandLineText(const QString&);
-	virtual void guiSetFocusCommandLine();
-	virtual void guiSetFocusMainWindow();
-    virtual bool guiPopupFileSaveAs();
-    virtual YStatusBarIface* guiStatusBar();
-    virtual void guiUpdateFileName();
-    virtual void guiUpdateCursorPosition();
-    virtual void guiUpdateMode();
-    virtual void guiHighlightingChanged();
-    virtual void guiNotifyContentChanged(const YSelection&);
-    virtual void guiPreparePaintEvent(int, int);
-    virtual void guiEndPaintEvent();
-    virtual void guiDrawCell(QPoint, const YDrawCell&, void*);
-    virtual void guiDrawClearToEOL(QPoint, const QChar&);
-    virtual void guiDrawSetLineNumber(int, int, int);
-    virtual void guiDrawSetMaxLineNumber(int);
-
-    const YKey& convertKey( int key );
-    bool containsKey( int key )
-    {
-        return keys.contains( key );
-    }
-    YKey getKey( int key )
-    {
-        return keys[ key ];
-    }
-    YDrawCell getCursorDrawCell( );
-    void registerModifierKeys( const QString& keys );
-    void unregisterModifierKeys( const QString& keys );
-    void guiPaintEvent( const YSelection& drawMap );
-
-public slots:
-    void sendMultipleKeys( const QString& );
-    void scrollView( int );
-
-protected:
-    void scrollLineUp( );
-    void scrollLineDown( );
-
-private:
-    QString keysToShortcut( const QString& keys );
-
-    KYEditor* m_editor;
-    KYCommand* m_command;
-
-    void initKeys();
-
-    // last line number
-    QMap<int, YKey> keys;
-    KActionCollection* actionCollection;
-    QSignalMapper* signalMapper;
-    QPainter* m_painter;
-    QScrollBar* mVScroll;
-    KYInfoBar* m_infoBar;
 };
 
 #endif

@@ -25,96 +25,17 @@
 
 #include <QWidget>
 
-class KYView;
-class YDrawCell;
-class YSelection;
-class YCursor;
+#include "qyzis/qyedit.h"
 
-class KYEditor : public QWidget
+class KYView;
+
+class KYEditor : public QYEdit
 {
     Q_OBJECT
 public:
     KYEditor(KYView* parent = 0);
-    ~KYEditor();
+    virtual ~KYEditor();
 
-    //erase all text, and set new text
-    void setText (const QString& );
-
-    //append text
-    void append ( const QString& );
-
-    void setCursor(int c, int l);
-    void scroll(int x, int y);
-
-
-    KYCursor::shape cursorShape();
-    void updateCursor();
-    // update text area
-    void updateArea( );
-
-    void setPalette( const QColor& fg, const QColor& bg, double opacity );
-
-    unsigned int spaceWidth;
-
-    QPoint cursorCoordinates( );
-
-    QVariant inputMethodQuery ( Qt::InputMethodQuery query );
-    void guiDrawCell( QPoint pos, const YDrawCell& cell, QPainter* p );
-    void guiDrawClearToEOL( QPoint pos, const QChar& clearChar, QPainter* p );
-    void drawMarginLeft( int min_y, int max_y, QPainter* p );
-
-    void guiPaintEvent( const YSelection& drawMap );
-
-    QPoint translatePositionToReal( const YCursor& c ) const;
-    YCursor translateRealToPosition( const QPoint& p, bool ceil = false ) const;
-    YCursor translateRealToAbsolutePosition( const QPoint& p, bool ceil = false ) const;
-
-public slots :
-    void sendMultipleKey( const QString& /*keys*/ )
-    {}
-
-
-protected:
-    //intercept tabs
-    virtual bool event(QEvent*);
-
-    void resizeEvent(QResizeEvent*);
-    void paintEvent(QPaintEvent*);
-
-    //normal keypressEvents processing
-    void keyPressEvent (QKeyEvent *);
-
-    //mouse events
-    void mousePressEvent (QMouseEvent *);
-
-    //mouse move event
-    void mouseMoveEvent( QMouseEvent *);
-
-    // mousebutton released
-    //              void mouseReleaseEvent( QMouseEvent *);
-    //insert text at line
-    void insetTextAt(const QString&, int line);
-
-    //insert a char at idx on line ....
-    void insertCharAt(QChar, int);
-
-    //replace a char at idx on line ....
-    void replaceCharAt( QChar, int );
-
-    //number of lines
-    long lines();
-
-    virtual void focusInEvent( QFocusEvent * );
-    virtual void focusOutEvent( QFocusEvent * );
-
-    // for InputMethod
-    void inputMethodEvent ( QInputMethodEvent * );
-
-private :
-
-    KYCursor* mCursor;
-    KYView* mParent;
-    QRect mUseArea;
 };
 
 #endif

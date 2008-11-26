@@ -58,7 +58,7 @@ signals :
     void newStatus();
 
 public:
-    QYView(YBuffer *doc, QYSession * qysession );
+    QYView(YBuffer *doc, YSession * ysession );
     virtual ~QYView();
     void guiSetCommandLineText( const QString& text );
     QString guiGetCommandLineText() const;
@@ -121,7 +121,6 @@ public slots:
     //  void scrollLineDown();
 
 private:
-    QYSession * mSession;
     QYEdit *mEdit;
     QYStatusBar *mStatusBar;
     QYCommandLine *mCommandLine;

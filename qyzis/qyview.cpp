@@ -45,10 +45,9 @@
 #define dbg() yzDebug("QYView")
 #define err() yzError("QYView")
 
-QYView::QYView ( YBuffer* b, QYSession * qysession)
+QYView::QYView ( YBuffer* b, YSession * ysession)
         : QWidget( ),
-          YView(b, qysession, 0, 0),
-          mSession( qysession )
+          YView(b, ysession, 10, 10)
 {
     mEdit = new QYEdit( this );
     mStatusBar = new QYStatusBar(this);
@@ -283,7 +282,7 @@ void QYView::fileSaveAs()
 
 void QYView::guiUpdateFileName()
 {
-    mSession->viewFilenameChanged( this, buffer()->fileNameShort() );
+    static_cast<QYSession*>(QYSession::self())->viewFilenameChanged( this, buffer()->fileNameShort() );
 }
 
 void QYView::guiUpdateCursorPosition()

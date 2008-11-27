@@ -47,7 +47,7 @@ public :
 
 	YDrawSection arrange( int columns ) const;
 
-	inline const int width() const { return mWidth; }
+	inline int width() const { return mWidth; }
 	inline int length() const { return mLength; }
 
 private:

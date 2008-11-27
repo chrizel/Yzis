@@ -22,6 +22,10 @@
 #include "kyview.h"
 #include "kysession.h"
 
+#include <libyzis/debug.h>
+
+#define dbg() yzDebug("KYView")
+
 KYView::KYView( YBuffer* buffer, QWidget* parent )
         : QYView(buffer, KYSession::self())
 {
@@ -29,6 +33,11 @@ KYView::KYView( YBuffer* buffer, QWidget* parent )
 
 KYView::~KYView()
 {
+}
+
+void KYView::guiUpdateFileName()
+{
+	dbg() << "KYView::guiUpdateFileName() (do nothing)" << endl;
 }
 
 #include "kyview.moc"

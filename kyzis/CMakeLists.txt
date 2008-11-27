@@ -15,3 +15,6 @@ set( kyzis_SOURCES
 
 kde4_add_executable(kyzis ${kyzis_SOURCES})
 target_link_libraries(kyzis ${KDE4_KDECORE_LIBS} ${KDE4_KPARTS_LIBS} yzis ktexteditor)
+
+install(TARGETS kyzis DESTINATION bin)
+

@@ -1126,7 +1126,7 @@ YCursor YModeCommand::gotoLine(const YMotionArgs &args, CmdState *state, MotionS
 		dest_line = args.view->buffer()->lineCount()-1;
     }
 	if ( args.view->getLocalBooleanOption("startofline") ) {
-		return YCursor(0, dest_line);
+		return YCursor(args.view->buffer()->firstNonBlankChar(dest_line), dest_line);
 	} else {
 		return args.view->viewCursorFromStickedLine(dest_line).buffer();
 	}

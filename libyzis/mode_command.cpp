@@ -1386,7 +1386,7 @@ CmdState YModeCommand::deleteLine(const YCommandArgs &args)
 CmdState YModeCommand::deleteToEndOfLastLine(const YCommandArgs &args)
 {
     dbg() << "YModeCommand::deleteToEndOfLastLine " << args.cmd;
-    int toy = args.view->buffer()->lineCount();
+    int toy = args.view->buffer()->lineCount() - 1;
     int tox = args.view->buffer()->getLineLength(toy);
 
     int fromy = args.view->getLinePositionCursor().y() > 0 ? args.view->getLinePositionCursor().y() - 1 : 0;

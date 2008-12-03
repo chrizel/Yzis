@@ -155,6 +155,7 @@ int YLuaFuncs::setline(lua_State *L)
         return 0;
     }
     YView* cView = YSession::self()->currentView();
+	cView->buffer()->action()->ensureLineExists(sLine);
     cView->buffer()->action()->replaceLine(cView, sLine, text );
 
     YASSERT_EQUALS( lua_gettop(L), 0 );
@@ -176,7 +177,7 @@ int YLuaFuncs::insert(lua_State *L)
     QStringList list = text.split( "\n" );
     QStringList::Iterator it = list.begin(), end = list.end();
     for ( ; it != end; ++it ) {
-        if ( sLine >= cView->buffer()->lineCount() ) cView->buffer()->action()->insertNewLine( cView, 0, sLine );
+		cView->buffer()->action()->ensureLineExists(sLine);
         cView->buffer()->action()->insertChar( cView, sCol, sLine, *it );
         sCol = 0;
         sLine++;
@@ -221,9 +222,7 @@ int YLuaFuncs::insertline(lua_State *L)
     QStringList list = text.split( "\n" );
     QStringList::Iterator it = list.begin(), end = list.end();
     for ( ; it != end; ++it ) {
-        if (!(cBuffer->isEmpty() && sLine == 0)) {
-            cAction->insertNewLine(cView, cBuffer->getLineLength(sLine-1), sLine-1);
-        }
+		cAction->ensureLineExists(sLine);
         cAction->insertChar( cView, 0, sLine, *it );
         sLine++;
     }
@@ -274,10 +273,11 @@ int YLuaFuncs::replace(lua_State *L)
     }
 
     YView* cView = YSession::self()->currentView();
-    if ( sLine >= cView->buffer()->lineCount() ) {
-        cView->buffer()->action()->insertNewLine( cView, 0, sLine );
-        sCol = 0;
-    }
+	YBuffer* cBuffer = cView->buffer();
+	if ( sLine > 0 && sLine >= cBuffer->lineCount() ) {
+		cBuffer->action()->ensureLineExists(sLine);
+		sCol = 0;
+	}
     cView->buffer()->action()->replaceChar( cView, sCol, sLine, text );
 
     YASSERT_EQUALS( lua_gettop(L), 0 );

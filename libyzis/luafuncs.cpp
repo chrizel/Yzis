@@ -351,7 +351,8 @@ int YLuaFuncs::_goto(lua_State *L)
     lua_pop(L, 2);
 
     YView* cView = YSession::self()->currentView();
-    cView->gotoLinePosition(sLine ? sLine - 1 : 0, sCol ? sCol - 1 : 0);
+	sLine = qMin(qMax(sLine-1,0), cView->buffer()->lineCount()-1);
+    cView->gotoLinePosition(sLine, sCol ? sCol - 1 : 0);
 
     YASSERT_EQUALS( lua_gettop(L), 0 );
     return 0 ;

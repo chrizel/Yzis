@@ -54,8 +54,10 @@ void YModeInsert::enter( YView* mView )
 
 void YModeInsert::leave( YView* mView )
 {
-    if ( mView->getLinePositionCursor().x() > 0 )
+    if ( mView->getLinePositionCursor().x() > 0 ) {
 		mView->gotoViewCursor(mView->viewCursorMoveHorizontal(-1));
+		mView->stickToColumn();
+	}
 }
 
 void YModeInsert::initMotionPool()

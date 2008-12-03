@@ -655,7 +655,7 @@ YCursor YModeCommand::gotoStartOfDocument(const YMotionArgs &args, CmdState *sta
 YCursor YModeCommand::gotoEndOfDocument(const YMotionArgs &args, CmdState *state, MotionStick* )
 {
     *state = CmdOk;
-	int line = args.view->buffer()->lineCount();
+	int line = args.view->buffer()->lineCount() - 1;
 	return YCursor(args.view->buffer()->getLineLength(line), line);
 }
 

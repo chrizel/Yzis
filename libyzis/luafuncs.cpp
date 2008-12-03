@@ -300,7 +300,7 @@ int YLuaFuncs::wincol(lua_State *L)
 {
     if (!YLuaEngine::checkFunctionArguments(L, 0, 0, "wincol", "")) return 0;
     YView* cView = YSession::self()->currentView();
-    uint result = cView->getLineColumnCursor().x() + 1;
+    uint result = cView->currentPosition() + 1;
 
     lua_pushnumber( L, result ); // first result
     YASSERT_EQUALS( lua_gettop(L), 1 );

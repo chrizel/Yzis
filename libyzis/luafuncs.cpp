@@ -216,13 +216,13 @@ int YLuaFuncs::insertline(lua_State *L)
     sLine = sLine ? sLine - 1 : 0;
 
     YView* cView = YSession::self()->currentView();
+	YBuffer* cBuffer = cView->buffer();
+	YZAction* cAction = cBuffer->action();
     QStringList list = text.split( "\n" );
     QStringList::Iterator it = list.begin(), end = list.end();
     for ( ; it != end; ++it ) {
-        YBuffer * cBuffer = cView->buffer();
-        YZAction * cAction = cBuffer->action();
         if (!(cBuffer->isEmpty() && sLine == 0)) {
-            cAction->insertNewLine( cView, 0, sLine );
+            cAction->insertNewLine(cView, cBuffer->getLineLength(sLine-1), sLine-1);
         }
         cAction->insertChar( cView, 0, sLine, *it );
         sLine++;

@@ -155,7 +155,10 @@ int YLuaFuncs::setline(lua_State *L)
         return 0;
     }
     YView* cView = YSession::self()->currentView();
-	cView->buffer()->action()->ensureLineExists(sLine);
+	if ( sLine >= cView->buffer()->lineCount() ) {
+		// replace only existing lines
+		return 0;
+	}
     cView->buffer()->action()->replaceLine(cView, sLine, text );
 
     YASSERT_EQUALS( lua_gettop(L), 0 );
@@ -174,6 +177,12 @@ int YLuaFuncs::insert(lua_State *L)
     sLine = sLine ? sLine - 1 : 0;
 
     YView* cView = YSession::self()->currentView();
+
+	if ( sLine > cView->buffer()->lineCount() ) {
+		// do not accept creating lines beyond the last
+		return 0;
+	}
+
     QStringList list = text.split( "\n" );
     QStringList::Iterator it = list.begin(), end = list.end();
     for ( ; it != end; ++it ) {
@@ -215,14 +224,23 @@ int YLuaFuncs::insertline(lua_State *L)
     lua_pop(L, 2);
 
     sLine = sLine ? sLine - 1 : 0;
+	
 
     YView* cView = YSession::self()->currentView();
 	YBuffer* cBuffer = cView->buffer();
+	if ( sLine > cBuffer->lineCount() ) {
+		// do not accept creating lines beyond the last
+		return 0;
+	}
 	YZAction* cAction = cBuffer->action();
     QStringList list = text.split( "\n" );
     QStringList::Iterator it = list.begin(), end = list.end();
     for ( ; it != end; ++it ) {
-		cAction->ensureLineExists(sLine);
+		if ( sLine >= cBuffer->lineCount() ) {
+			cAction->ensureLineExists(sLine);
+		} else if ( !cBuffer->isEmpty() ) {
+			cAction->insertNewLine(cView, YCursor(0,sLine));
+		}
         cAction->insertChar( cView, 0, sLine, *it );
         sLine++;
     }
@@ -274,6 +292,10 @@ int YLuaFuncs::replace(lua_State *L)
 
     YView* cView = YSession::self()->currentView();
 	YBuffer* cBuffer = cView->buffer();
+	if ( sLine > cBuffer->lineCount() ) {
+		// do not accept creating lines beyond the last
+		return 0;
+	}
 	if ( sLine > 0 && sLine >= cBuffer->lineCount() ) {
 		cBuffer->action()->ensureLineExists(sLine);
 		sCol = 0;

@@ -1110,8 +1110,6 @@ YCursor YModeCommand::firstNonBlankPreviousLine( const YMotionArgs &args, CmdSta
 
 YCursor YModeCommand::gotoLine(const YMotionArgs &args, CmdState *state, MotionStick* stick)
 {
-	if ( stick != NULL ) *stick = MotionNoStick;
-
     YViewCursor viewCursor = args.view->viewCursor();
     int line = 0;
     dbg() << "gotoLine," << args.count << endl;

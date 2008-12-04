@@ -233,6 +233,11 @@ YCursor YBuffer::insertRegion( const YCursor& begin, const YRawData& data )
 
 	l = yzline(ln);
 	QString curdata = l->data();
+	if ( begin.column() > curdata.length() ) {
+		dbg() << HERE() << "column > curdata.length(), abort." << endl;
+		return YCursor(curdata.length(), begin.line());
+	}
+
 	ldata = curdata.left(begin.column());
 	rdata = curdata.mid(begin.column());
 

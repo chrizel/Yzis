@@ -32,11 +32,12 @@ Most of the documentation is stored on the wiki: http://www.yzis.org  . Build
 instructions, project status, ...  . And if you are missing something, the
 magic of wiki allows you to add it yourself.
 
-There is also a developer handbook http://doc.yzis.org for architecture design
-and full API documentation.
+The documentation for developers, including design drafts and API
+documentation, is available from
+http://www.yzis.org/Developer_Documentation
 
 You can report bug on our bugzilla:
-http://bugs.yzis.org
+http://labs.freehackers.org/projects/yzis/issues
 
 You can help:
 =============
@@ -47,7 +48,7 @@ Licenses:
 =========
 libyzis is published under LGPL. See COPYING.LGPL for more
 details.  
-kyzis and nyzis are published under GPL. See COPYING for more
+qyzis, kyzis and nyzis are published under GPL. See COPYING for more
 details.
 
 
@@ -55,10 +56,11 @@ Talk with us:
 =============
 We are hanging on the freenode network, channel #yzis .
 You can also use our mailing lists. More info on:
-http://www.yzis.org/maillistsfolder
+http://www.yzis.org/Mailing_lists
 
 
 History:
 ========
 Yzis came out of the frustration of working on kvim. For more details, see:
-http://www.yzis.org/historyfolder
+http://www.yzis.org/History
+

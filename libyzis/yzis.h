@@ -39,10 +39,10 @@
 
 #define VERSION_MAJOR 0
 #define VERSION_MINOR 0
-#define VERSION_PATCH 0
+#define VERSION_PATCH 2
 
 //let's use the patch number since it exists ...
-#define VERSION_CHAR "1.0-alpha1"
+#define VERSION_CHAR "1.0-alpha2"
 #define VERSION_CHAR_LONG "Yzis "VERSION_CHAR
 
 // either 
@@ -52,7 +52,7 @@
 #define VERSION_CHAR_ST "(preview release - Use for testing only)" 
 
 // if defined, will be displayed in the "Intro" Mode
-#define VERSION_CHAR_DATE "mercurial>2008-06-25"
+#define VERSION_CHAR_DATE "mercurial>2008-12-08"
 
 #define _(a) QString::fromUtf8(gettext(a))
 

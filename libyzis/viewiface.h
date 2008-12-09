@@ -86,21 +86,19 @@ public:
      * Basic feedback is already handled by YView,
      * so implementation is optional in the GUI.
      */
-    virtual void guiDisplayInfo(const QString&)
-    {}
+    virtual void guiDisplayInfo(const QString&)    {}
 
     /**
      * Notify GUIs that HL changed
      */
-    virtual void guiHighlightingChanged() = 0;
+    virtual void guiHighlightingChanged(void	) {} ;
 
     /** Notify GUIs that the selected text has changed (clipboard).
       *
       * The GUI may want to re-implement this method to catch selection
       * change events.
       */
-    virtual void guiSelectionChanged()
-    {}
+    virtual void guiSelectionChanged()    {}
 
     /**
      * scroll dx to the right and dy downward

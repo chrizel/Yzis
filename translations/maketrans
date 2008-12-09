@@ -1,12 +1,11 @@
 #!/bin/bash
 
-setopt shwordsplit
 # List all the languages
 langs=`ls *.po`
 
 # Make the yzis.pot file.
-cpp_files=$(ls ../kyzis/*.cpp ../kyzis/src/*.cpp ../kyzis/src/*.h ../libyzis/*.cpp ../libyzis/*.h ../nyzis/*.cpp ../nyzis/*.h | grep -v .moc.cpp)
-xgettext -C -ki18n -kI18N_NOOP -ktr2i18n -ktranslate -kaliasLocale -k_ -x $KDEDIR/include/kde.pot $cpp_files
+cpp_files=$(ls ../kyzis/*.cpp  ../kyzis/*.h ../libyzis/*.cpp ../libyzis/*.h ../nyzis/*.cpp ../nyzis/*.h | grep -v .moc.cpp)
+xgettext -C -ki18n -kI18N_NOOP -ktr2i18n -ktranslate -kaliasLocale -k_ $cpp_files
 
 rm -rf yzis.pot
 mv -f messages.po yzis.pot 
@@ -14,7 +13,7 @@ mv -f messages.po yzis.pot
 # Merge messages for each language
 for lang in $langs
 do
-	echo $lang
+	echo -n "Considering $lang"
 	mv $lang $lang.bak
 	msgmerge $lang.bak yzis.pot > $lang
 	rm $lang.bak

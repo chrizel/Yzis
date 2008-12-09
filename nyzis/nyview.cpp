@@ -446,6 +446,3 @@ void NYView::guiDisplayInfo(const QString&)
     restoreFocus();
 }
 
-void NYView::guiHighlightingChanged()
-{}
-

@@ -54,8 +54,10 @@ void YModeInsert::enter( YView* mView )
 
 void YModeInsert::leave( YView* mView )
 {
-    if ( mView->getLinePositionCursor().x() > 0 )
+    if ( mView->getLinePositionCursor().x() > 0 ) {
 		mView->gotoViewCursor(mView->viewCursorMoveHorizontal(-1));
+		mView->stickToColumn();
+	}
 }
 
 void YModeInsert::initMotionPool()
@@ -250,9 +252,10 @@ CmdState YModeInsert::deleteChar( const YCommandArgs &args )
 
     YCursor cur = args.view->getLinePositionCursor();
     YBuffer* mBuffer = args.view->buffer();
-    if ( cur.x() == mBuffer->textline( cur.y() ).length()
-            && args.view->getLocalStringOption( "backspace" ).contains( "eol" ) ) {
-        mBuffer->action()->mergeNextLine( args.view, cur.y(), false );
+    if ( cur.x() == mBuffer->textline( cur.y() ).length() ) {
+		if ( args.view->getLocalStringOption("backspace").contains("eol") ) {
+			mBuffer->action()->mergeNextLine(args.view, cur.y(), false);
+		}
     } else {
         mBuffer->action()->deleteChar( args.view, cur, 1 );
     }

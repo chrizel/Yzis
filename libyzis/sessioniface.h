@@ -54,7 +54,7 @@ public:
      */
     virtual void guiPopupMessage( const QString& message ) = 0;
 
-    /** @brief Prompt a Yes/No question for the user
+    /** @brief Prompt a Yes/No question for the user and returns the answer.
      */
     virtual bool guiPromptYesNo(const QString& title, const QString& message) = 0;
 
@@ -80,21 +80,6 @@ public:
             * @return XXX dunno
       */
     virtual bool guiQuit(int errorCode = 0) = 0;
-
-    /** @brief Send multiple key sequence to yzis.
-     * 
-           * The key sequence is automatically sent to the right view,
-           * even if the view is switched in the middle.
-           *
-           * <i>This method is implemented in @ref YSession.</i>
-     */
-    virtual void scriptSendMultipleKeys ( const QString& text ) = 0;
-
-    /** @brief Copied from view
-      *
-     * <i>This method is implemented in @ref YSession.</i>
-     */
-    virtual CmdState sendMultipleKeys( YView * view, YKeySequence& keys, YKeySequence::const_iterator &parsePos ) = 0;
 
 
     //-------------------------------------------------------

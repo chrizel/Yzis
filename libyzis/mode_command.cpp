@@ -655,7 +655,7 @@ YCursor YModeCommand::gotoStartOfDocument(const YMotionArgs &args, CmdState *sta
 YCursor YModeCommand::gotoEndOfDocument(const YMotionArgs &args, CmdState *state, MotionStick* )
 {
     *state = CmdOk;
-	int line = args.view->buffer()->lineCount();
+	int line = args.view->buffer()->lineCount() - 1;
 	return YCursor(args.view->buffer()->getLineLength(line), line);
 }
 
@@ -1110,8 +1110,6 @@ YCursor YModeCommand::firstNonBlankPreviousLine( const YMotionArgs &args, CmdSta
 
 YCursor YModeCommand::gotoLine(const YMotionArgs &args, CmdState *state, MotionStick* stick)
 {
-	if ( stick != NULL ) *stick = MotionNoStick;
-
     YViewCursor viewCursor = args.view->viewCursor();
     int line = 0;
     dbg() << "gotoLine," << args.count << endl;
@@ -1126,7 +1124,7 @@ YCursor YModeCommand::gotoLine(const YMotionArgs &args, CmdState *state, MotionS
 		dest_line = args.view->buffer()->lineCount()-1;
     }
 	if ( args.view->getLocalBooleanOption("startofline") ) {
-		return YCursor(0, dest_line);
+		return YCursor(args.view->buffer()->firstNonBlankChar(dest_line), dest_line);
 	} else {
 		return args.view->viewCursorFromStickedLine(dest_line).buffer();
 	}
@@ -1386,7 +1384,7 @@ CmdState YModeCommand::deleteLine(const YCommandArgs &args)
 CmdState YModeCommand::deleteToEndOfLastLine(const YCommandArgs &args)
 {
     dbg() << "YModeCommand::deleteToEndOfLastLine " << args.cmd;
-    int toy = args.view->buffer()->lineCount();
+    int toy = args.view->buffer()->lineCount() - 1;
     int tox = args.view->buffer()->getLineLength(toy);
 
     int fromy = args.view->getLinePositionCursor().y() > 0 ? args.view->getLinePositionCursor().y() - 1 : 0;

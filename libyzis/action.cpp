@@ -81,8 +81,7 @@ void YZAction::replaceText( YView* pView, const YCursor pos, int replacedLength,
 
 bool YZAction::replaceChar( YView* pView, const YCursor pos, const QString& text )
 {
-    if ( pos.y() >= mBuffer->lineCount() )
-        return true; // don't try on non-existing lines
+	YASSERT(pos.y() < mBuffer->lineCount());
     configureViews(mBuffer);
     mBuffer->delChar( pos, text.length() );
     mBuffer->insertChar( pos, text );
@@ -93,8 +92,7 @@ bool YZAction::replaceChar( YView* pView, const YCursor pos, const QString& text
 
 bool YZAction::deleteChar( YView* pView, const YCursor pos, int len )
 {
-    if ( pos.y() >= mBuffer->lineCount() )
-        return true; // don't try on non-existing lines
+	YASSERT(pos.y() < mBuffer->lineCount());
     configureViews(mBuffer);
     mBuffer->delChar( pos, len );
     pView->gotoLinePositionAndStick( pos );
@@ -104,8 +102,7 @@ bool YZAction::deleteChar( YView* pView, const YCursor pos, int len )
 
 void YZAction::insertNewLine( YView* pView, const YCursor pos )
 {
-    if ( pos.y() > mBuffer->lineCount() )
-        return ; // don't try on non-existing lines
+	YASSERT(pos.y() < mBuffer->lineCount());
     configureViews(mBuffer);
     mBuffer->insertNewLine( pos );
     pView->gotoLinePositionAndStick(pos.y() + 1 , 0);
@@ -114,11 +111,21 @@ void YZAction::insertNewLine( YView* pView, const YCursor pos )
 
 void YZAction::replaceLine( YView* pView, const YCursor pos, const QString &text )
 {
-    if ( pos.y() >= mBuffer->lineCount() )
-        return ; // don't try on non-existing lines
+	YASSERT(pos.y() < mBuffer->lineCount());
     configureViews(mBuffer);
     mBuffer->replaceLine( text, pos.y() );
     pView->gotoLinePositionAndStick(pos.y() , text.length());
+    commitViewsChanges(mBuffer);
+}
+
+void YZAction::ensureLineExists( int line ) {
+    configureViews(mBuffer);
+	if ( line >= mBuffer->lineCount() ) {
+		int l = mBuffer->lineCount() - 1;
+		mBuffer->insertNewLine(YCursor(mBuffer->getLineLength(l),l));
+		for ( ++l; l < line; ++l )
+			mBuffer->insertNewLine(YCursor(0,l));
+	}
     commitViewsChanges(mBuffer);
 }
 

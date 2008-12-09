@@ -58,6 +58,11 @@ public:
     void replaceLine( YView* pView, const YCursor pos, const QString &text );
     void deleteLine( YView* pView, const YCursor pos, int len, const QList<QChar> &reg );
 
+	/*
+	 * if line >= lineCount(), create the necessary empty lines
+	 */
+	void ensureLineExists(int line);
+
     // X,Y versions
     void insertChar( YView* pView, const int X, const int Y, const QString& text )
     {

@@ -208,7 +208,11 @@ void YBuffer::insertNewLine( YCursor pos )
 }
 void YBuffer::deleteLine( int line )
 {
-	deleteRegion(YInterval(YCursor(0,line), YBound(YCursor(0,line+1), true)));
+	if ( line > 0 && line == lineCount() - 1 ) {
+		deleteRegion(YInterval(YCursor(getLineLength(line-1),line-1), YBound(YCursor(0,line+1), true)));
+	} else {
+		deleteRegion(YInterval(YCursor(0,line), YBound(YCursor(0,line+1), true)));
+	}
 }
 void YBuffer::replaceLine( const QString& l, int line )
 {
@@ -229,6 +233,11 @@ YCursor YBuffer::insertRegion( const YCursor& begin, const YRawData& data )
 
 	l = yzline(ln);
 	QString curdata = l->data();
+	if ( begin.column() > curdata.length() ) {
+		dbg() << HERE() << "column > curdata.length(), abort." << endl;
+		return YCursor(curdata.length(), begin.line());
+	}
+
 	ldata = curdata.left(begin.column());
 	rdata = curdata.mid(begin.column());
 

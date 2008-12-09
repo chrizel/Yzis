@@ -94,9 +94,6 @@ public:
     virtual void guiUpdateCursorPosition();
     virtual void guiDisplayInfo(const QString&);
 
-    virtual void guiHighlightingChanged();
-
-
     virtual void guiSetFocusCommandLine();
     virtual void guiSetFocusMainWindow();
     void restoreFocus();

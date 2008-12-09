@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-12-06 00:36+0100\n"
+"POT-Creation-Date: 2008-12-09 20:14+0100\n"
 "PO-Revision-Date: 2005-06-28 11:53+0400\n"
 "Last-Translator: Dmitry Suzdalev <dimsuz@mail.ru>\n"
 "Language-Team: Russian <i18n@yzis.org>\n"
@@ -16,132 +16,23 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: KBabel 1.10\n"
 
-#: ../kyzis/main.cpp:41
-msgid "KDE Frontend for the Yzis Editor"
-msgstr "KDE оболочка для редактора Yzis"
-
-#: ../kyzis/main.cpp:44
-msgid "Document to open."
-msgstr "Документ, который будет открыт."
-
-#: ../kyzis/main.cpp:45
-msgid "Execute command passed in argument"
-msgstr "Запустить команду, переданную в качестве аргумента"
-
-#: ../kyzis/main.cpp:51 ../kyzis/src/factory.cpp:143
-msgid "Kyzis"
-msgstr "Kyzis"
-
-#: ../kyzis/src/factory.cpp:143
-msgid "Embeddable vi-like editor component"
-msgstr "Встраиваемый компонент vi-подобного редактора"
-
-#: ../kyzis/src/factory.cpp:144
-msgid "(c)2002-2005 The Kyzis Authors"
-msgstr "(c)2002-2005 Авторы Kyzis"
-
-#: ../kyzis/src/factory.cpp:149 ../kyzis/src/factory.cpp:150
-#: ../kyzis/src/factory.cpp:151 ../kyzis/src/factory.cpp:152
-msgid "Initial Author"
-msgstr "Оригинальный автор"
-
-#: ../kyzis/src/factory.cpp:153
-msgid "Icons, KSettings"
-msgstr "Иконки, KSettings"
-
-#: ../kyzis/src/factory.cpp:154
-msgid "EX mode history"
-msgstr "История для EX-режима"
-
-#: ../kyzis/src/factory.cpp:155
-msgid "KTextEditor interfaces / Dutch translation"
-msgstr "Интерфейсы KTextEditor / Немецкий перевод"
-
-#: ../kyzis/src/factory.cpp:156
-msgid "Commands and motion engine rewrite and cleanup"
-msgstr "Новая реализация движка команд и перемещений, подчистка кода"
-
-#: ../kyzis/src/factory.cpp:157
-msgid "KTextEditor ConfigInterface"
-msgstr "Интерфейс конфигурации KTextEditor"
-
-#: ../kyzis/src/factory.cpp:158
-msgid "View scrolling fixes"
-msgstr "Исправления отображения при прокрутке"
-
-#: ../kyzis/src/factory.cpp:159
-msgid "Kyzis Tab caption improvement"
-msgstr "Улучшение заголовков закладок"
-
-#: ../kyzis/src/factory.cpp:160
-msgid "Commands and bug fixes"
-msgstr "Команды и исправления ошибок"
-
-#: ../kyzis/src/factory.cpp:161
-msgid "Yzisinfo file and tag commands"
-msgstr "Файл Yzisinfo и команды для работы с тэгами"
-
-#: ../kyzis/src/factory.cpp:162
-msgid "Misc fixes and improvements"
-msgstr "Различные улучшения и исправления ошибок"
-
-#: ../kyzis/src/factory.cpp:163
-msgid "Fixed 'xp' command"
-msgstr "Исправление ошибки в работе команды 'xp'"
-
-#: ../kyzis/src/factory.cpp:164
-msgid ":cd and :pwd commands"
-msgstr "Команды :cd и :pwd"
-
-#: ../kyzis/src/factory.cpp:165
-msgid "utf8 fixes for Lua strings"
-msgstr "Исправления ошибок для utf8-строк в Lua"
-
-#: ../kyzis/src/factory.cpp:166
-msgid "help to port to KDE4"
-msgstr "Помощь в портировании на KDE4"
-
-#: ../kyzis/src/factory.cpp:167
-msgid "D language syntax highlight fixes"
-msgstr "Файлы подсветки синтаксиса для языка D"
-
-#: ../kyzis/src/factory.cpp:168
-msgid ""
-"_: NAME OF TRANSLATORS\n"
-"Your names"
-msgstr "Суздалев Дмитрий"
-
-#: ../kyzis/src/factory.cpp:168
-msgid ""
-"_: EMAIL OF TRANSLATORS\n"
-"Your emails"
-msgstr "dimsuz@mail.ru"
-
-#: ../kyzis/src/kyzis.cpp:104
-msgid "Opens recently opened file."
-msgstr "Открывает недавно редактировавшийся файл."
-
-#: ../kyzis/src/kyzis.cpp:340
-msgid "&Window"
-msgstr "&Окно"
-
-#: ../kyzis/src/viewwidget.cpp:60
-msgid "Yzis Ready"
-msgstr "Yzis готов"
-
-#: ../kyzis/src/viewwidget.h:139 ../libyzis/syntaxhighlight.cpp:3230
-msgid "Normal"
-msgstr "Обычный"
-
-#: ../libyzis/buffer.cpp:566
+#: ../libyzis/buffer.cpp:588
 msgid "Failed opening file %1 for reading : %2"
 msgstr "Не удалось открыть файл %1 для чтения: %2"
 
-#: ../libyzis/buffer.cpp:577
+#: ../libyzis/buffer.cpp:657
+msgid "Failed opening file %1 for writing : %2"
+msgstr "Не удалось открыть файл %1 для записи: %2"
+
+#: ../libyzis/buffer.cpp:663
+msgid "Written %1 bytes to file %2"
+msgstr "Записано %1 байт в файл %2"
+
+#: ../libyzis/buffer.cpp:1266
 msgid "Recover"
 msgstr "Восстановление"
 
-#: ../libyzis/buffer.cpp:577
+#: ../libyzis/buffer.cpp:1266
 msgid ""
 "A swap file was found for this file, it was presumably created because your "
 "computer or yzis crashed, do you want to start the recovery of this file ?"
@@ -149,138 +40,152 @@ msgstr ""
 "Был найден swap-файл для этого документа. Скорее всего, он был создан из-за "
 "сбоя в yzis или в вашем компьютере. Запустить процедуру восстановления файла?"
 
-#: ../libyzis/buffer.cpp:648
-msgid "Failed opening file %1 for writing : %2"
-msgstr "Не удалось открыть файл %1 для записи: %2"
-
-#: ../libyzis/buffer.cpp:654
-msgid "Written %1 bytes to file %2"
-msgstr "Записано %1 байт в файл %2"
-
-#: ../libyzis/ex_lua.cpp:275
-msgid "The file %1 could not be found in standard directories"
-msgstr "Не удается найти файл %1 по стандартным путям"
-
-#: ../libyzis/ex_lua.cpp:282
-msgid "Lua error when running file %1:\n"
-msgstr "Ошибка Lua при выполнении файла %1:\n"
-
-#: ../libyzis/internal_options.cpp:117
+#: ../libyzis/internal_options.cpp:133
 msgid "File modified"
 msgstr "Файл изменен"
 
-#: ../libyzis/internal_options.cpp:117
+#: ../libyzis/internal_options.cpp:133
 msgid "This file has been modified, do you want to save it ?"
 msgstr "Данный файл был изменен, хотите сохранить его?"
 
-#: ../libyzis/mode.cpp:94
-msgid "[ Introduction ]"
-msgstr "[ Вступление ]"
+#: ../libyzis/luaengine.cpp:236
+#, fuzzy
+msgid "Executing function %1"
+msgstr "Запуск"
 
-#: ../libyzis/mode_command.cpp:55
+#: ../libyzis/luaengine.cpp:272
+msgid "YLuaEngine::execute function %1"
+msgstr ""
+
+#: ../libyzis/luaengine.cpp:284
+msgid "Lua error when running file %1:\n"
+msgstr "Ошибка Lua при выполнении файла %1:\n"
+
+#: ../libyzis/luaengine.cpp:297
+msgid "Executing code in lua\n"
+msgstr ""
+
+#: ../libyzis/luaengine.cpp:349
+msgid "error handling function called from within yzpcall"
+msgstr ""
+
+#: ../libyzis/mode_command.cpp:53
 msgid "[ Awaiting Command ]"
 msgstr "[ Ожидание команды ]"
 
-#: ../libyzis/mode_complete.cpp:43
+#: ../libyzis/mode_complete.cpp:45
 msgid "{ Completion }"
 msgstr "{ Дополнение }"
 
-#: ../libyzis/mode_complete.cpp:130
-msgid "Match %1"
+#: ../libyzis/mode_complete.cpp:138
+msgid "Match %1 of %2"
 msgstr ""
 
-#: ../libyzis/mode_complete.cpp:133
+#: ../libyzis/mode_complete.cpp:141
 msgid "Back at original"
 msgstr ""
 
-#: ../libyzis/mode_ex.cpp:74
+#: ../libyzis/mode.cpp:158
+msgid "[ Introduction ]"
+msgstr "[ Вступление ]"
+
+#: ../libyzis/mode_ex.cpp:103
 msgid "[ Ex ]"
 msgstr "[ Ex ]"
 
-#: ../libyzis/mode_ex.cpp:278
+#: ../libyzis/mode_ex.cpp:469
 msgid "Not an editor command: "
 msgstr "Не является командой редактора:"
 
-#: ../libyzis/mode_ex.cpp:392 ../libyzis/mode_ex.cpp:406
-#: ../libyzis/mode_ex.cpp:412
+#: ../libyzis/mode_ex.cpp:597 ../libyzis/mode_ex.cpp:611
+#: ../libyzis/mode_ex.cpp:616
 msgid "One file is modified! Save it first..."
 msgstr "Один из файлов изменен! Сначала сохраните его..."
 
-#: ../libyzis/mode_ex.cpp:495 ../libyzis/mode_ex.cpp:594
-msgid "Please specify a filename"
-msgstr "Пожалуйста, укажите имя файла"
+#: ../libyzis/mode_ex.cpp:706
+msgid "No write since last change (add ! to override)"
+msgstr ""
 
-#: ../libyzis/mode_ex.cpp:535
+#: ../libyzis/mode_ex.cpp:765
 msgid "Invalid option name : %1"
 msgstr "Неверное имя параметра: %1"
 
-#: ../libyzis/mode_ex.cpp:538
+#: ../libyzis/mode_ex.cpp:768
 msgid "Bad value for option given"
 msgstr "Неверная величина параметра"
 
-#: ../libyzis/mode_ex.cpp:815
+#: ../libyzis/mode_ex.cpp:828
+msgid "Please specify a filename"
+msgstr "Пожалуйста, укажите имя файла"
+
+#: ../libyzis/mode_ex.cpp:856
+#, fuzzy
+msgid "The file %1 could not be found"
+msgstr "Не удается найти файл %1 по стандартным путям"
+
+#: ../libyzis/mode_ex.cpp:1078
 msgid "Registers:\n"
 msgstr "Регистры:\n"
 
-#: ../libyzis/mode_ex.cpp:942
+#: ../libyzis/mode_ex.cpp:1207
 msgid "Cannot change to specified directory"
 msgstr "Невозможно перейти в указанную директорию"
 
-#: ../libyzis/mode_insert.cpp:39
+#: ../libyzis/mode_insert.cpp:42
 msgid "[ Insert ]"
 msgstr "[ Вставка ]"
 
-#: ../libyzis/mode_insert.cpp:257
+#: ../libyzis/mode_insert.cpp:348
 msgid "[ Replace ]"
 msgstr "[ Замена ]"
 
-#: ../libyzis/mode_search.cpp:40
+#: ../libyzis/mode_search.cpp:42
 msgid "[ Search ]"
 msgstr "[ Поиск ]"
 
-#: ../libyzis/mode_search.cpp:102
-msgid "No match"
-msgstr "Нет совпадений"
+#: ../libyzis/mode_search.cpp:108
+msgid "Pattern not found: "
+msgstr ""
 
-#: ../libyzis/mode_search.cpp:162
+#: ../libyzis/mode_search.cpp:183
 msgid "[ Search backward ]"
 msgstr "[ Поиск назад ]"
 
-#: ../libyzis/mode_visual.cpp:42
+#: ../libyzis/mode_visual.cpp:43
 msgid "[ Visual ]"
 msgstr "[ Визуальный режим ]"
 
-#: ../libyzis/mode_visual.cpp:266
+#: ../libyzis/mode_visual.cpp:284
 msgid "[ Visual Line ]"
 msgstr "[ Визуальная строка ]"
 
-#: ../libyzis/mode_visual.cpp:299
+#: ../libyzis/mode_visual.cpp:309
 msgid "[ Visual Block ]"
 msgstr "[ Визуальный блок ]"
 
-#: ../libyzis/search.cpp:139
+#: ../libyzis/search.cpp:150
 msgid "search hit TOP, continuing at BOTTOM"
 msgstr "Поиск достиг НАЧАЛА, продолжаем С КОНЦА"
 
-#: ../libyzis/search.cpp:141
+#: ../libyzis/search.cpp:152
 msgid "search hit BOTTOM, continuing at TOP"
 msgstr "Поиск достиг КОНЦА, продолжаем С НАЧАЛА"
 
-#: ../libyzis/swapfile.cpp:81
+#: ../libyzis/swapfile.cpp:94
 msgid ""
 "Warning, the swapfile could not be opened maybe due to restrictive "
 "permissions."
 msgstr ""
 "Внимание, swap-файл не может быть открыт из-за ограниченных прав доступа."
 
-#: ../libyzis/swapfile.cpp:132
+#: ../libyzis/swapfile.cpp:142
 msgid ""
 "Warning, the swapfile could not be created maybe due to restrictive "
 "permissions."
 msgstr ""
 "Внимание, swap-файл не может быть создан из-за ограниченных прав доступа."
 
-#: ../libyzis/swapfile.cpp:160
+#: ../libyzis/swapfile.cpp:185
 msgid ""
 "The swap file could not be opened, there will be no recovering for this "
 "file, you might want to check permissions of files."
@@ -288,100 +193,43 @@ msgstr ""
 "Не удается открыть swap-файл, восстановление данного файла будет невозможно. "
 "Советуем проверить права доступа к файлам."
 
-#: ../libyzis/syntaxdocument.cpp:647
-msgid "Language Section"
-msgstr ""
-
-#: ../libyzis/syntaxdocument.cpp:659
-msgid "Errors!"
-msgstr ""
-
-#: ../libyzis/syntaxhighlight.cpp:1188
-msgid "None"
-msgstr ""
-
-#: ../libyzis/syntaxhighlight.cpp:1829
-#, fuzzy
-msgid "Normal Text"
-msgstr "Обычный текст:"
-
-#: ../libyzis/syntaxhighlight.cpp:3231
-msgid "Keyword"
-msgstr ""
-
-#: ../libyzis/syntaxhighlight.cpp:3232
-msgid "Data Type"
-msgstr ""
-
-#: ../libyzis/syntaxhighlight.cpp:3233
-msgid "Decimal/Value"
-msgstr ""
-
-#: ../libyzis/syntaxhighlight.cpp:3234
-msgid "Base-N Integer"
-msgstr ""
-
-#: ../libyzis/syntaxhighlight.cpp:3235
-msgid "Floating Point"
-msgstr ""
-
-#: ../libyzis/syntaxhighlight.cpp:3236
-msgid "Character"
-msgstr ""
-
-#: ../libyzis/syntaxhighlight.cpp:3237
-msgid "String"
-msgstr ""
-
-#: ../libyzis/syntaxhighlight.cpp:3238
-msgid "Comment"
-msgstr ""
-
-#: ../libyzis/syntaxhighlight.cpp:3239
-msgid "Others"
-msgstr ""
-
-#: ../libyzis/syntaxhighlight.cpp:3240
-msgid "Alert"
-msgstr ""
-
-#: ../libyzis/syntaxhighlight.cpp:3241
-msgid "Function"
-msgstr ""
-
-#: ../libyzis/syntaxhighlight.cpp:3243
-msgid "Region Marker"
-msgstr ""
-
-#: ../libyzis/tags_interface.cpp:170
+#: ../libyzis/tags_interface.cpp:174
 msgid "File has been modified"
 msgstr "Файл был изменен"
 
-#: ../libyzis/tags_interface.cpp:229
+#: ../libyzis/tags_interface.cpp:235
 msgid "Unable to find tag file"
 msgstr "Не удается найти файл с тэгами"
 
-#: ../libyzis/tags_interface.cpp:269
+#: ../libyzis/tags_interface.cpp:276
 msgid "Could not find next tag"
 msgstr "Не удается найти следующий тэг"
 
-#: ../libyzis/tags_interface.cpp:282
+#: ../libyzis/tags_interface.cpp:290
 msgid "Could not find previous tag"
 msgstr "Не удается найти предыдущий тэг"
 
-#: ../libyzis/tags_interface.cpp:290
+#: ../libyzis/tags_interface.cpp:299
 msgid "At bottom of tag stack"
 msgstr "Достигнут конец списка тэгов"
 
-#: ../libyzis/view.cpp:376 ../libyzis/view.cpp:384
+#: ../libyzis/view.cpp:244 ../libyzis/view.cpp:258
 msgid "All"
 msgstr "Весь"
 
-#: ../libyzis/view.cpp:383
+#: ../libyzis/view.cpp:246
+msgid "Top"
+msgstr ""
+
+#: ../libyzis/view.cpp:249
 msgid "Bot"
 msgstr "Кон"
 
-#: ../libyzis/view.cpp:1471
+#: ../libyzis/view.cpp:273
+msgid " { Recording }"
+msgstr "{ Запись }"
+
+#: ../libyzis/view.cpp:614
 msgid ""
 "To use the Qt printer, you need to have an X11 DISPLAY set and running, you "
 "should try pslib in console mode"
@@ -389,17 +237,107 @@ msgstr ""
 "Чтобы использовать принтер Qt, вам необходимо установить переменную X11 "
 "DISPLAY. Также попробуйте запустить pslib в консольном режиме."
 
-#: ../libyzis/view.cpp:1722
-msgid " { Recording }"
-msgstr "{ Запись }"
-
-#: ../nyzis/factory.cpp:203
+#: ../nyzis/nysession.cpp:228
 msgid "(Press any key)"
 msgstr "(Нажмите любую клавишу)"
 
-#: ../nyzis/viewwidget.cpp:381
-msgid "[No File]"
-msgstr "[Нет файла]"
+#~ msgid "KDE Frontend for the Yzis Editor"
+#~ msgstr "KDE оболочка для редактора Yzis"
+
+#~ msgid "Document to open."
+#~ msgstr "Документ, который будет открыт."
+
+#~ msgid "Execute command passed in argument"
+#~ msgstr "Запустить команду, переданную в качестве аргумента"
+
+#~ msgid "Kyzis"
+#~ msgstr "Kyzis"
+
+#~ msgid "Embeddable vi-like editor component"
+#~ msgstr "Встраиваемый компонент vi-подобного редактора"
+
+#~ msgid "(c)2002-2005 The Kyzis Authors"
+#~ msgstr "(c)2002-2005 Авторы Kyzis"
+
+#~ msgid "Initial Author"
+#~ msgstr "Оригинальный автор"
+
+#~ msgid "Icons, KSettings"
+#~ msgstr "Иконки, KSettings"
+
+#~ msgid "EX mode history"
+#~ msgstr "История для EX-режима"
+
+#~ msgid "KTextEditor interfaces / Dutch translation"
+#~ msgstr "Интерфейсы KTextEditor / Немецкий перевод"
+
+#~ msgid "Commands and motion engine rewrite and cleanup"
+#~ msgstr "Новая реализация движка команд и перемещений, подчистка кода"
+
+#~ msgid "KTextEditor ConfigInterface"
+#~ msgstr "Интерфейс конфигурации KTextEditor"
+
+#~ msgid "View scrolling fixes"
+#~ msgstr "Исправления отображения при прокрутке"
+
+#~ msgid "Kyzis Tab caption improvement"
+#~ msgstr "Улучшение заголовков закладок"
+
+#~ msgid "Commands and bug fixes"
+#~ msgstr "Команды и исправления ошибок"
+
+#~ msgid "Yzisinfo file and tag commands"
+#~ msgstr "Файл Yzisinfo и команды для работы с тэгами"
+
+#~ msgid "Misc fixes and improvements"
+#~ msgstr "Различные улучшения и исправления ошибок"
+
+#~ msgid "Fixed 'xp' command"
+#~ msgstr "Исправление ошибки в работе команды 'xp'"
+
+#~ msgid ":cd and :pwd commands"
+#~ msgstr "Команды :cd и :pwd"
+
+#~ msgid "utf8 fixes for Lua strings"
+#~ msgstr "Исправления ошибок для utf8-строк в Lua"
+
+#~ msgid "help to port to KDE4"
+#~ msgstr "Помощь в портировании на KDE4"
+
+#~ msgid "D language syntax highlight fixes"
+#~ msgstr "Файлы подсветки синтаксиса для языка D"
+
+#~ msgid ""
+#~ "_: NAME OF TRANSLATORS\n"
+#~ "Your names"
+#~ msgstr "Суздалев Дмитрий"
+
+#~ msgid ""
+#~ "_: EMAIL OF TRANSLATORS\n"
+#~ "Your emails"
+#~ msgstr "dimsuz@mail.ru"
+
+#~ msgid "Opens recently opened file."
+#~ msgstr "Открывает недавно редактировавшийся файл."
+
+#~ msgid "&Window"
+#~ msgstr "&Окно"
+
+#~ msgid "Yzis Ready"
+#~ msgstr "Yzis готов"
+
+#~ msgid "Normal"
+#~ msgstr "Обычный"
+
+#~ msgid "No match"
+#~ msgstr "Нет совпадений"
+
+#, fuzzy
+#~ msgid "Normal Text"
+#~ msgstr "Обычный текст:"
+
+#~ msgid "[No File]"
+#~ msgstr "[Нет файла]"
 
 #~ msgid "Text font"
 #~ msgstr "Шрифт текста"
@@ -445,9 +383,6 @@ msgstr "[Нет файла]"
 
 #~ msgid "Disabled Breakpoint"
 #~ msgstr "Выключенная точка останова"
-
-#~ msgid "Execution"
-#~ msgstr "Запуск"
 
 #~ msgid "Additional Elements"
 #~ msgstr "Дополнительные элементы"

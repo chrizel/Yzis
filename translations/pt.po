@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kyzis M3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-12-06 00:36+0100\n"
+"POT-Creation-Date: 2008-12-09 20:14+0100\n"
 "PO-Revision-Date: 2005-02-08 23:54+0000\n"
 "Last-Translator: Helder Correia <helder.correia@netcabo.pt>\n"
 "Language-Team: Portuguese <helder.correia@netcabo.pt>\n"
@@ -15,136 +15,23 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../kyzis/main.cpp:41
-msgid "KDE Frontend for the Yzis Editor"
-msgstr "Interface KDE para o editor Yzis"
-
-#: ../kyzis/main.cpp:44
-msgid "Document to open."
-msgstr "Documento para abrir"
-
-#: ../kyzis/main.cpp:45
-msgid "Execute command passed in argument"
-msgstr "Executar o comando passado como argumento"
-
-#: ../kyzis/main.cpp:51 ../kyzis/src/factory.cpp:143
-msgid "Kyzis"
-msgstr "Kyzis"
-
-#: ../kyzis/src/factory.cpp:143
-msgid "Embeddable vi-like editor component"
-msgstr "Componente de editor embebido"
-
-#: ../kyzis/src/factory.cpp:144
-msgid "(c)2002-2005 The Kyzis Authors"
-msgstr "(c) 2002-2005 Os autores do Kyzis"
-
-#: ../kyzis/src/factory.cpp:149 ../kyzis/src/factory.cpp:150
-#: ../kyzis/src/factory.cpp:151 ../kyzis/src/factory.cpp:152
-msgid "Initial Author"
-msgstr "Autor inicial"
-
-#: ../kyzis/src/factory.cpp:153
-msgid "Icons, KSettings"
-msgstr ""
-
-#: ../kyzis/src/factory.cpp:154
-msgid "EX mode history"
-msgstr ""
-
-#: ../kyzis/src/factory.cpp:155
-msgid "KTextEditor interfaces / Dutch translation"
-msgstr ""
-
-#: ../kyzis/src/factory.cpp:156
-msgid "Commands and motion engine rewrite and cleanup"
-msgstr ""
-
-#: ../kyzis/src/factory.cpp:157
-msgid "KTextEditor ConfigInterface"
-msgstr ""
-
-#: ../kyzis/src/factory.cpp:158
-msgid "View scrolling fixes"
-msgstr ""
-
-#: ../kyzis/src/factory.cpp:159
-msgid "Kyzis Tab caption improvement"
-msgstr ""
-
-#: ../kyzis/src/factory.cpp:160
-msgid "Commands and bug fixes"
-msgstr ""
-
-#: ../kyzis/src/factory.cpp:161
-msgid "Yzisinfo file and tag commands"
-msgstr ""
-
-#: ../kyzis/src/factory.cpp:162
-msgid "Misc fixes and improvements"
-msgstr ""
-
-#: ../kyzis/src/factory.cpp:163
-msgid "Fixed 'xp' command"
-msgstr ""
-
-#: ../kyzis/src/factory.cpp:164
-msgid ":cd and :pwd commands"
-msgstr ""
-
-#: ../kyzis/src/factory.cpp:165
-msgid "utf8 fixes for Lua strings"
-msgstr ""
-
-#: ../kyzis/src/factory.cpp:166
-msgid "help to port to KDE4"
-msgstr ""
-
-#: ../kyzis/src/factory.cpp:167
-msgid "D language syntax highlight fixes"
-msgstr ""
-
-#: ../kyzis/src/factory.cpp:168
-msgid ""
-"_: NAME OF TRANSLATORS\n"
-"Your names"
-msgstr ""
-"_: \n"
-"Your names"
-
-#: ../kyzis/src/factory.cpp:168
-msgid ""
-"_: EMAIL OF TRANSLATORS\n"
-"Your emails"
-msgstr ""
-"_: EMAIL OF TRANSLATORS\n"
-"Your emails"
-
-#: ../kyzis/src/kyzis.cpp:104
-msgid "Opens recently opened file."
-msgstr "Abre"
-
-#: ../kyzis/src/kyzis.cpp:340
-msgid "&Window"
-msgstr "&Janela"
-
-#: ../kyzis/src/viewwidget.cpp:60
-msgid "Yzis Ready"
-msgstr ""
-
-#: ../kyzis/src/viewwidget.h:139 ../libyzis/syntaxhighlight.cpp:3230
-msgid "Normal"
-msgstr "Normal"
-
-#: ../libyzis/buffer.cpp:566
+#: ../libyzis/buffer.cpp:588
 msgid "Failed opening file %1 for reading : %2"
 msgstr "Erro ao abrir o ficheiro %1 para leitura : %2"
 
-#: ../libyzis/buffer.cpp:577
+#: ../libyzis/buffer.cpp:657
+msgid "Failed opening file %1 for writing : %2"
+msgstr "Erro ao abrir o ficheiro %1 para leitura : %2"
+
+#: ../libyzis/buffer.cpp:663
+msgid "Written %1 bytes to file %2"
+msgstr "Gravados %1 B para o ficheiro %2"
+
+#: ../libyzis/buffer.cpp:1266
 msgid "Recover"
 msgstr "Recuperar"
 
-#: ../libyzis/buffer.cpp:577
+#: ../libyzis/buffer.cpp:1266
 msgid ""
 "A swap file was found for this file, it was presumably created because your "
 "computer or yzis crashed, do you want to start the recovery of this file ?"
@@ -153,127 +40,141 @@ msgstr ""
 "Provavelmente, foi criado devido a uma interrupção abrupta e anormal do seu "
 "sistema ou do Yzis. Quer iniciar a recuperação deste ficheiro?"
 
-#: ../libyzis/buffer.cpp:648
-msgid "Failed opening file %1 for writing : %2"
-msgstr "Erro ao abrir o ficheiro %1 para leitura : %2"
-
-#: ../libyzis/buffer.cpp:654
-msgid "Written %1 bytes to file %2"
-msgstr "Gravados %1 B para o ficheiro %2"
-
-#: ../libyzis/ex_lua.cpp:275
-msgid "The file %1 could not be found in standard directories"
-msgstr "O ficheiro %1 não foi encontrado nas pastas padrão"
-
-#: ../libyzis/ex_lua.cpp:282
-msgid "Lua error when running file %1:\n"
-msgstr "Lua: erro ao executar o ficheiro %1:\n"
-
-#: ../libyzis/internal_options.cpp:117
+#: ../libyzis/internal_options.cpp:133
 msgid "File modified"
 msgstr "Ficheiro modificado"
 
-#: ../libyzis/internal_options.cpp:117
+#: ../libyzis/internal_options.cpp:133
 msgid "This file has been modified, do you want to save it ?"
 msgstr "Este ficheiro foi modificado, deseja gravá-lo?"
 
-#: ../libyzis/mode.cpp:94
-msgid "[ Introduction ]"
-msgstr "[ Introdução ]"
+#: ../libyzis/luaengine.cpp:236
+#, fuzzy
+msgid "Executing function %1"
+msgstr "Execução"
 
-#: ../libyzis/mode_command.cpp:55
+#: ../libyzis/luaengine.cpp:272
+msgid "YLuaEngine::execute function %1"
+msgstr ""
+
+#: ../libyzis/luaengine.cpp:284
+msgid "Lua error when running file %1:\n"
+msgstr "Lua: erro ao executar o ficheiro %1:\n"
+
+#: ../libyzis/luaengine.cpp:297
+msgid "Executing code in lua\n"
+msgstr ""
+
+#: ../libyzis/luaengine.cpp:349
+msgid "error handling function called from within yzpcall"
+msgstr ""
+
+#: ../libyzis/mode_command.cpp:53
 msgid "[ Awaiting Command ]"
 msgstr "[ A aguardar comando ]"
 
-#: ../libyzis/mode_complete.cpp:43
+#: ../libyzis/mode_complete.cpp:45
 msgid "{ Completion }"
 msgstr "{ Completação }"
 
-#: ../libyzis/mode_complete.cpp:130
-msgid "Match %1"
+#: ../libyzis/mode_complete.cpp:138
+msgid "Match %1 of %2"
 msgstr ""
 
-#: ../libyzis/mode_complete.cpp:133
+#: ../libyzis/mode_complete.cpp:141
 msgid "Back at original"
 msgstr ""
 
-#: ../libyzis/mode_ex.cpp:74
+#: ../libyzis/mode.cpp:158
+msgid "[ Introduction ]"
+msgstr "[ Introdução ]"
+
+#: ../libyzis/mode_ex.cpp:103
 msgid "[ Ex ]"
 msgstr "[ Ex ]"
 
-#: ../libyzis/mode_ex.cpp:278
+#: ../libyzis/mode_ex.cpp:469
 msgid "Not an editor command: "
 msgstr "Não é um comando do editor: "
 
-#: ../libyzis/mode_ex.cpp:392 ../libyzis/mode_ex.cpp:406
-#: ../libyzis/mode_ex.cpp:412
+#: ../libyzis/mode_ex.cpp:597 ../libyzis/mode_ex.cpp:611
+#: ../libyzis/mode_ex.cpp:616
 msgid "One file is modified! Save it first..."
 msgstr "Um ficheiro foi modificado! Grave-o primeiro..."
 
-#: ../libyzis/mode_ex.cpp:495 ../libyzis/mode_ex.cpp:594
-msgid "Please specify a filename"
-msgstr "Por favor, especifique um nome de ficheiro"
+#: ../libyzis/mode_ex.cpp:706
+msgid "No write since last change (add ! to override)"
+msgstr ""
 
-#: ../libyzis/mode_ex.cpp:535
+#: ../libyzis/mode_ex.cpp:765
 #, fuzzy
 msgid "Invalid option name : %1"
 msgstr "Opção inválida dada: "
 
-#: ../libyzis/mode_ex.cpp:538
+#: ../libyzis/mode_ex.cpp:768
 #, fuzzy
 msgid "Bad value for option given"
 msgstr "Opção inválida dada"
 
-#: ../libyzis/mode_ex.cpp:815
+#: ../libyzis/mode_ex.cpp:828
+msgid "Please specify a filename"
+msgstr "Por favor, especifique um nome de ficheiro"
+
+#: ../libyzis/mode_ex.cpp:856
+#, fuzzy
+msgid "The file %1 could not be found"
+msgstr "O ficheiro %1 não foi encontrado nas pastas padrão"
+
+#: ../libyzis/mode_ex.cpp:1078
 msgid "Registers:\n"
 msgstr ""
 
-#: ../libyzis/mode_ex.cpp:942
+#: ../libyzis/mode_ex.cpp:1207
 msgid "Cannot change to specified directory"
 msgstr ""
 
-#: ../libyzis/mode_insert.cpp:39
+#: ../libyzis/mode_insert.cpp:42
 msgid "[ Insert ]"
 msgstr "[ Inserção ]"
 
-#: ../libyzis/mode_insert.cpp:257
+#: ../libyzis/mode_insert.cpp:348
 msgid "[ Replace ]"
 msgstr "[ Substituição ]"
 
-#: ../libyzis/mode_search.cpp:40
+#: ../libyzis/mode_search.cpp:42
 msgid "[ Search ]"
 msgstr "[ Pesquisa ]"
 
-#: ../libyzis/mode_search.cpp:102
-msgid "No match"
-msgstr "Sem correspondência"
+#: ../libyzis/mode_search.cpp:108
+msgid "Pattern not found: "
+msgstr ""
 
-#: ../libyzis/mode_search.cpp:162
+#: ../libyzis/mode_search.cpp:183
 msgid "[ Search backward ]"
 msgstr "[ Pesquisa invertida ]"
 
-#: ../libyzis/mode_visual.cpp:42
+#: ../libyzis/mode_visual.cpp:43
 msgid "[ Visual ]"
 msgstr "[ Visual ]"
 
-#: ../libyzis/mode_visual.cpp:266
+#: ../libyzis/mode_visual.cpp:284
 msgid "[ Visual Line ]"
 msgstr "[ Linha visual ]"
 
-#: ../libyzis/mode_visual.cpp:299
+#: ../libyzis/mode_visual.cpp:309
 #, fuzzy
 msgid "[ Visual Block ]"
 msgstr "[ Visual ]"
 
-#: ../libyzis/search.cpp:139
+#: ../libyzis/search.cpp:150
 msgid "search hit TOP, continuing at BOTTOM"
 msgstr "a pesquisa atingiu o topo, a continuar no fundo"
 
-#: ../libyzis/search.cpp:141
+#: ../libyzis/search.cpp:152
 msgid "search hit BOTTOM, continuing at TOP"
 msgstr "a pesquisa atingiu o fundo, a continuar no topo"
 
-#: ../libyzis/swapfile.cpp:81
+#: ../libyzis/swapfile.cpp:94
 msgid ""
 "Warning, the swapfile could not be opened maybe due to restrictive "
 "permissions."
@@ -281,7 +182,7 @@ msgstr ""
 "Aviso: não foi possível abrir o ficheiro de recuperação, talvez devido a "
 "permissões restritivas."
 
-#: ../libyzis/swapfile.cpp:132
+#: ../libyzis/swapfile.cpp:142
 msgid ""
 "Warning, the swapfile could not be created maybe due to restrictive "
 "permissions."
@@ -289,7 +190,7 @@ msgstr ""
 "Aviso: não foi possível criar o ficheiro de recuperação, talvez devido a "
 "permissões restritivas."
 
-#: ../libyzis/swapfile.cpp:160
+#: ../libyzis/swapfile.cpp:185
 msgid ""
 "The swap file could not be opened, there will be no recovering for this "
 "file, you might want to check permissions of files."
@@ -298,101 +199,44 @@ msgstr ""
 "possível para este ficheiro. Deverá querer verificar as permissões dos "
 "ficheiros."
 
-#: ../libyzis/syntaxdocument.cpp:647
-msgid "Language Section"
-msgstr ""
-
-#: ../libyzis/syntaxdocument.cpp:659
-msgid "Errors!"
-msgstr ""
-
-#: ../libyzis/syntaxhighlight.cpp:1188
-msgid "None"
-msgstr ""
-
-#: ../libyzis/syntaxhighlight.cpp:1829
-#, fuzzy
-msgid "Normal Text"
-msgstr "Texto normal:"
-
-#: ../libyzis/syntaxhighlight.cpp:3231
-msgid "Keyword"
-msgstr ""
-
-#: ../libyzis/syntaxhighlight.cpp:3232
-msgid "Data Type"
-msgstr ""
-
-#: ../libyzis/syntaxhighlight.cpp:3233
-msgid "Decimal/Value"
-msgstr ""
-
-#: ../libyzis/syntaxhighlight.cpp:3234
-msgid "Base-N Integer"
-msgstr ""
-
-#: ../libyzis/syntaxhighlight.cpp:3235
-msgid "Floating Point"
-msgstr ""
-
-#: ../libyzis/syntaxhighlight.cpp:3236
-msgid "Character"
-msgstr ""
-
-#: ../libyzis/syntaxhighlight.cpp:3237
-msgid "String"
-msgstr ""
-
-#: ../libyzis/syntaxhighlight.cpp:3238
-msgid "Comment"
-msgstr ""
-
-#: ../libyzis/syntaxhighlight.cpp:3239
-msgid "Others"
-msgstr ""
-
-#: ../libyzis/syntaxhighlight.cpp:3240
-msgid "Alert"
-msgstr ""
-
-#: ../libyzis/syntaxhighlight.cpp:3241
-msgid "Function"
-msgstr ""
-
-#: ../libyzis/syntaxhighlight.cpp:3243
-msgid "Region Marker"
-msgstr ""
-
-#: ../libyzis/tags_interface.cpp:170
+#: ../libyzis/tags_interface.cpp:174
 #, fuzzy
 msgid "File has been modified"
 msgstr "Ficheiro modificado"
 
-#: ../libyzis/tags_interface.cpp:229
+#: ../libyzis/tags_interface.cpp:235
 msgid "Unable to find tag file"
 msgstr ""
 
-#: ../libyzis/tags_interface.cpp:269
+#: ../libyzis/tags_interface.cpp:276
 msgid "Could not find next tag"
 msgstr ""
 
-#: ../libyzis/tags_interface.cpp:282
+#: ../libyzis/tags_interface.cpp:290
 msgid "Could not find previous tag"
 msgstr ""
 
-#: ../libyzis/tags_interface.cpp:290
+#: ../libyzis/tags_interface.cpp:299
 msgid "At bottom of tag stack"
 msgstr ""
 
-#: ../libyzis/view.cpp:376 ../libyzis/view.cpp:384
+#: ../libyzis/view.cpp:244 ../libyzis/view.cpp:258
 msgid "All"
 msgstr "Todo"
 
-#: ../libyzis/view.cpp:383
+#: ../libyzis/view.cpp:246
+msgid "Top"
+msgstr ""
+
+#: ../libyzis/view.cpp:249
 msgid "Bot"
 msgstr "Fundo"
 
-#: ../libyzis/view.cpp:1471
+#: ../libyzis/view.cpp:273
+msgid " { Recording }"
+msgstr " { A gravar }"
+
+#: ../libyzis/view.cpp:614
 msgid ""
 "To use the Qt printer, you need to have an X11 DISPLAY set and running, you "
 "should try pslib in console mode"
@@ -400,17 +244,63 @@ msgstr ""
 "Para usar a impressão Qt, necessita ter um ecrã X11 configurado e a "
 "executar. Deveria tentar pslib na consola"
 
-#: ../libyzis/view.cpp:1722
-msgid " { Recording }"
-msgstr " { A gravar }"
-
-#: ../nyzis/factory.cpp:203
+#: ../nyzis/nysession.cpp:228
 msgid "(Press any key)"
 msgstr "(Pressione qualquer tecla)"
 
-#: ../nyzis/viewwidget.cpp:381
-msgid "[No File]"
-msgstr "[Nenhum ficheiro]"
+#~ msgid "KDE Frontend for the Yzis Editor"
+#~ msgstr "Interface KDE para o editor Yzis"
+
+#~ msgid "Document to open."
+#~ msgstr "Documento para abrir"
+
+#~ msgid "Execute command passed in argument"
+#~ msgstr "Executar o comando passado como argumento"
+
+#~ msgid "Kyzis"
+#~ msgstr "Kyzis"
+
+#~ msgid "Embeddable vi-like editor component"
+#~ msgstr "Componente de editor embebido"
+
+#~ msgid "(c)2002-2005 The Kyzis Authors"
+#~ msgstr "(c) 2002-2005 Os autores do Kyzis"
+
+#~ msgid "Initial Author"
+#~ msgstr "Autor inicial"
+
+#~ msgid ""
+#~ "_: NAME OF TRANSLATORS\n"
+#~ "Your names"
+#~ msgstr ""
+#~ "_: \n"
+#~ "Your names"
+
+#~ msgid ""
+#~ "_: EMAIL OF TRANSLATORS\n"
+#~ "Your emails"
+#~ msgstr ""
+#~ "_: EMAIL OF TRANSLATORS\n"
+#~ "Your emails"
+
+#~ msgid "Opens recently opened file."
+#~ msgstr "Abre"
+
+#~ msgid "&Window"
+#~ msgstr "&Janela"
+
+#~ msgid "Normal"
+#~ msgstr "Normal"
+
+#~ msgid "No match"
+#~ msgstr "Sem correspondência"
+
+#, fuzzy
+#~ msgid "Normal Text"
+#~ msgstr "Texto normal:"
+
+#~ msgid "[No File]"
+#~ msgstr "[Nenhum ficheiro]"
 
 #~ msgid "Text font"
 #~ msgstr "Tipo de letra"
@@ -456,9 +346,6 @@ msgstr "[Nenhum ficheiro]"
 
 #~ msgid "Disabled Breakpoint"
 #~ msgstr "Ponto de pausa desactivado"
-
-#~ msgid "Execution"
-#~ msgstr "Execução"
 
 #~ msgid "Additional Elements"
 #~ msgstr "Elementos adicionais"

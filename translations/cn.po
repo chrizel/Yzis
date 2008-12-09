@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-02-12 17:12+0100\n"
+"POT-Creation-Date: 2008-12-09 20:14+0100\n"
 "PO-Revision-Date: 2006-01-01 03:34+0800\n"
 "Last-Translator: xiaohu <xiaohu417@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,502 +15,530 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../kyzis/main.cpp:38
-msgid "KDE Frontend for the Yzis Editor"
-msgstr "Ysiz编辑器的KDE界面"
-
-#: ../kyzis/main.cpp:41
-msgid "Document to open."
-msgstr "要打开的文档."
-
-#: ../kyzis/main.cpp:42
-msgid "Execute command passed in argument"
-msgstr "执行在参数中传递的命令"
-
-#: ../kyzis/main.cpp:49
-#: ../kyzis/src/factory.cpp:137
-msgid "Kyzis"
-msgstr "Kyzis"
-
-#: ../kyzis/src/configdialog.cpp:65
-msgid "Text font"
-msgstr "文本字体"
-
-#: ../kyzis/src/configdialog.cpp:73
-msgid "Use a transparent background"
-msgstr "用透明背景"
-
-#: ../kyzis/src/configdialog.cpp:81
-msgid "Background color opacity"
-msgstr "背景色不透明"
-
-#: ../kyzis/src/configdialog.cpp:83
-msgid "Min"
-msgstr "最小"
-
-#: ../kyzis/src/configdialog.cpp:85
-msgid "Max"
-msgstr "最大"
-
-#: ../kyzis/src/configdialog.cpp:93
-msgid "Background Color"
-msgstr "背景色"
-
-#: ../kyzis/src/configdialog.cpp:101
-msgid "Foreground Color"
-msgstr "前景色"
-
-#: ../kyzis/src/configdialog.cpp:114
-#: ../kyzis/src/document.cpp:364
-#: ../kyzis/src/document.cpp:368
-msgid "Syntax Highlighting"
-msgstr "语法高亮"
-
-#: ../kyzis/src/factory.cpp:66
-msgid "Kyzis Part"
-msgstr "Kyzis部分"
-
-#: ../kyzis/src/factory.cpp:66
-msgid "Embeddable vi-like editor component"
-msgstr "可嵌入的类vi编辑器组件"
-
-#: ../kyzis/src/factory.cpp:66
-msgid "(c)2002-2005 The Kyzis Authors"
-msgstr "(c) 2002-2005 Kyzis 作者"
-
-#: ../kyzis/src/factory.cpp:138
-msgid "Kyzis - KDE Frontend for Yzis"
-msgstr "Kyzis - Yzis的KDE界面"
-
-#: ../kyzis/src/factory.cpp:140
-msgid "(c) 2003-2005"
-msgstr "(c) 2003-2005"
-
-#: ../kyzis/src/factory.cpp:141
-#: ../kyzis/src/factory.cpp:142
-#: ../kyzis/src/factory.cpp:143
-#: ../kyzis/src/factory.cpp:144
-msgid "Initial Author"
-msgstr "最初作者"
-
-#: ../kyzis/src/factory.cpp:152
-msgid ""
-"_: NAME OF TRANSLATORS\n"
-"Your names"
-msgstr "吴小虎"
-
-#: ../kyzis/src/factory.cpp:152
-msgid ""
-"_: EMAIL OF TRANSLATORS\n"
-"Your emails"
-msgstr "xiaohu417@gmail.com"
-
-#: ../kyzis/src/hlconfig.cpp:186
-msgid "Text Area Background"
-msgstr "文本区域背景"
-
-#: ../kyzis/src/hlconfig.cpp:190
-msgid "Normal text:"
-msgstr "一般文字:"
-
-#: ../kyzis/src/hlconfig.cpp:196
-msgid "Selected text:"
-msgstr "选择的文字:"
-
-#: ../kyzis/src/hlconfig.cpp:202
-msgid "Current line:"
-msgstr "当前行:"
-
-#: ../kyzis/src/hlconfig.cpp:211
-msgid "Bookmark"
-msgstr "书签"
-
-#: ../kyzis/src/hlconfig.cpp:212
-msgid "Active Breakpoint"
-msgstr "活动断点"
-
-#: ../kyzis/src/hlconfig.cpp:213
-msgid "Reached Breakpoint"
-msgstr "延伸的断点"
-
-#: ../kyzis/src/hlconfig.cpp:214
-msgid "Disabled Breakpoint"
-msgstr "禁止的断点"
-
-#: ../kyzis/src/hlconfig.cpp:215
-msgid "Execution"
-msgstr "执行"
-
-#: ../kyzis/src/hlconfig.cpp:224
-msgid "Additional Elements"
-msgstr "附加元素"
-
-#: ../kyzis/src/hlconfig.cpp:228
-msgid "Left border background:"
-msgstr "左边界背景:"
-
-#: ../kyzis/src/hlconfig.cpp:234
-msgid "Line numbers:"
-msgstr "行号:"
-
-#: ../kyzis/src/hlconfig.cpp:240
-msgid "Bracket highlight:"
-msgstr "括号高亮:"
-
-#: ../kyzis/src/hlconfig.cpp:246
-msgid "Word wrap markers:"
-msgstr "单词换行标记:"
-
-#: ../kyzis/src/hlconfig.cpp:252
-msgid "Tab markers:"
-msgstr "制表符标记:"
-
-#: ../kyzis/src/hlconfig.cpp:264
-msgid "<p>Sets the background color of the editing area.</p>"
-msgstr "<p>设置编辑区域的背景色.</p>"
-
-#: ../kyzis/src/hlconfig.cpp:265
-msgid "<p>Sets the background color of the selection.</p><p>To set the text color for selected text, use the \"<b>Configure Highlighting</b>\" dialog.</p>"
-msgstr "<p>设置选择区域的背景色.</p><p>要设置选择文本的颜色,用\"<b>配置高亮</b>\"对话框.<p>"
-
-#: ../kyzis/src/hlconfig.cpp:268
-msgid "<p>Sets the background color of the selected marker type.</p><p><b>Note</b>: The marker color is displayed lightly because of transparency.</p>"
-msgstr "<p>设置选择标记类型的背景色.</p><p><b>注意</b>:因为透明,标记的颜色显示的很淡.</p>"
-
-#: ../kyzis/src/hlconfig.cpp:271
-msgid "<p>Select the marker type you want to change.</p>"
-msgstr "</p>选择你想改变的标记类型.</p>"
-
-#: ../kyzis/src/hlconfig.cpp:272
-msgid "<p>Sets the background color of the currently active line, which means the line where your cursor is positioned.</p>"
-msgstr "<p>设置当前活动行的背景色,就是你的光标所在的那行.<p>"
-
-#: ../kyzis/src/hlconfig.cpp:275
-msgid "<p>This color will be used to draw the line numbers (if enabled) and the lines in the code-folding pane.</p>"
-msgstr "<p>这个颜色将用来显示行号(如果允许)和代码折叠面板中的行.</p>"
-
-#: ../kyzis/src/hlconfig.cpp:277
-msgid "<p>Sets the bracket matching color. This means, if you place the cursor e.g. at a <b>(</b>, the matching <b>)</b> will be highlighted with this color.</p>"
-msgstr "<p>设置括号匹配颜色.这就是说,如果你将光标移到一个<b>(</b>, 相匹配的<b>)</b>将用这个颜色高亮显示.</p>"
-
-#: ../kyzis/src/hlconfig.cpp:281
-msgid "<p>Sets the color of Word Wrap-related markers:</p><dl><dt>Static Word Wrap</dt><dd>A vertical line which shows the column where text is going to be wrapped</dd><dt>Dynamic Word Wrap</dt><dd>An arrow shown to the left of visually-wrapped lines</dd></dl>"
-msgstr "</p>设置单词换行相关的标记颜色:</p><dl><dt>静态单词换行</dt><dd>一个垂直线显示在文字被换行的栏</dd><dt>动态单词换行</dt><dd>一个箭头显示在可见换行的行左边</dd></dl>"
-
-#: ../kyzis/src/hlconfig.cpp:287
-msgid "<p>Sets the color of the tabulator marks:</p>"
-msgstr "<p>设置制表符标记颜色:</p>"
-
-#: ../kyzis/src/hlconfig.cpp:505
-msgid "This list displays the default styles for the current schema and offers the means to edit them. The style name reflects the current style settings.<p>To edit using the keyboard, press <strong>&lt;SPACE&gt;</strong> and choose a property from the popup menu.<p>To edit the colors, click the colored squares, or select the color to edit from the popup menu.<p>You can unset the Background and Selected Background colors from the popup menu when appropriate."
-msgstr "这个列表显示和编辑当前计划的默认风格.风格名称反应了当前的风格设置.<p>要用键盘编辑,按<strong>&lt;SPACE&gt;</strong>,然后从弹出菜单中选择属性.<p>要编辑颜色,点击颜色方块,或者从弹出菜单中选择颜色.<p>你能够在适当的时候从弹出菜单中取消背景和选择的背景色."
-
-#: ../kyzis/src/hlconfig.cpp:548
-msgid "H&ighlight:"
-msgstr "高亮(&H):"
-
-#: ../kyzis/src/hlconfig.cpp:569
-msgid "This list displays the contexts of the current syntax highlight mode and offers the means to edit them. The context name reflects the current style settings.<p>To edit using the keyboard, press <strong>&lt;SPACE&gt;</strong> and choose a property from the popup menu.<p>To edit the colors, click the colored squares, or select the color to edit from the popup menu.<p>You can unset the Background and Selected Background colors from the context menu when appropriate."
-msgstr "这个列表显示和编辑当前语法高亮模式上下文.上下文名称反应了当前的风格设置.<p>要用键盘编辑,按<strong>&lt;SPACE&gt;</strong>,然后从弹出菜单中选择属性.<p>要编辑颜色,点击颜色方块,或者从弹出菜单中选择颜色来编辑.<p>你能够在适当的时候从上下文菜单中取消背景和选择的背景色."
-
-#: ../kyzis/src/hlconfig.cpp:688
-msgid "&Schema:"
-msgstr "计划(&S):"
-
-#: ../kyzis/src/hlconfig.cpp:694
-msgid "&New..."
-msgstr "新建(&N)..."
-
-#: ../kyzis/src/hlconfig.cpp:707
-msgid "Colors"
-msgstr "颜色"
-
-#: ../kyzis/src/hlconfig.cpp:713
-msgid "Normal Text Styles"
-msgstr "一般文本风格"
-
-#: ../kyzis/src/hlconfig.cpp:717
-msgid "Highlighting Text Styles"
-msgstr "高亮文本风格"
-
-#: ../kyzis/src/hlconfig.cpp:722
-msgid "&Default schema for %1:"
-msgstr "%1的默认计划(&D)"
-
-#: ../kyzis/src/hlconfig.cpp:817
-msgid "Name for New Schema"
-msgstr "新计划名称"
-
-#: ../kyzis/src/hlconfig.cpp:817
-msgid "Name:"
-msgstr "名称:"
-
-#: ../kyzis/src/hlconfig.cpp:817
-msgid "New Schema"
-msgstr "新计划"
-
-#: ../kyzis/src/hlconfig.cpp:917
-msgid "Context"
-msgstr "上下文"
-
-#: ../kyzis/src/hlconfig.cpp:922
-msgid "Normal"
-msgstr "一般"
-
-#: ../kyzis/src/hlconfig.cpp:923
-msgid "Selected"
-msgstr "选择"
-
-#: ../kyzis/src/hlconfig.cpp:924
-msgid "Background"
-msgstr "背景"
-
-#: ../kyzis/src/hlconfig.cpp:925
-msgid "Background Selected"
-msgstr "选择了背景"
-
-#: ../kyzis/src/hlconfig.cpp:927
-msgid "Use Default Style"
-msgstr "用默认风格"
-
-#: ../kyzis/src/hlconfig.cpp:962
-msgid "&Bold"
-msgstr "粗体(&B)"
-
-#: ../kyzis/src/hlconfig.cpp:964
-msgid "&Italic"
-msgstr "斜体(&I)"
-
-#: ../kyzis/src/hlconfig.cpp:966
-msgid "&Underline"
-msgstr "下划线(&U)"
-
-#: ../kyzis/src/hlconfig.cpp:968
-msgid "S&trikeout"
-msgstr "出局(&t)"
-
-#: ../kyzis/src/hlconfig.cpp:973
-msgid "Normal &Color..."
-msgstr "一般颜色(&C)..."
-
-#: ../kyzis/src/hlconfig.cpp:974
-msgid "&Selected Color..."
-msgstr "选择的颜色(&S)..."
-
-#: ../kyzis/src/hlconfig.cpp:975
-msgid "&Background Color..."
-msgstr "背景色(&B)..."
-
-#: ../kyzis/src/hlconfig.cpp:976
-msgid "S&elected Background Color..."
-msgstr "选择背景色(&E)"
-
-#: ../kyzis/src/hlconfig.cpp:987
-msgid "Unset Background Color"
-msgstr "取消背景色"
-
-#: ../kyzis/src/hlconfig.cpp:989
-msgid "Unset Selected Background Color"
-msgstr "取消选择的背景色"
-
-#: ../kyzis/src/hlconfig.cpp:994
-msgid "Use &Default Style"
-msgstr "用默认的风格(&D)"
-
-#: ../kyzis/src/hlconfig.cpp:1210
-msgid "\"Use Default Style\" will be automatically unset when you change any style properties."
-msgstr "当你改变任何风格属性时,将自动的取消\"用默认风格\"."
-
-#: ../kyzis/src/hlconfig.cpp:1211
-msgid "Yzis Styles"
-msgstr "Yzis风格"
-
-#: ../kyzis/src/kyzis.cpp:116
-msgid "Opens recently opened file."
-msgstr "打开最近打开的文件."
-
-#: ../kyzis/src/kyzis.cpp:125
-msgid "Show &Konsole"
-msgstr "显示&Konsole"
-
-#: ../kyzis/src/kyzis.cpp:135
-msgid "&Window"
-msgstr "窗口(&W)"
-
-#: ../kyzis/src/kyzis.cpp:324
-msgid "Terminal"
-msgstr "终端"
-
-#: ../libyzis/buffer.cpp:565
+#: ../libyzis/buffer.cpp:588
 msgid "Failed opening file %1 for reading : %2"
 msgstr "不能打开文件%1进行读取: %2"
 
-#: ../libyzis/buffer.cpp:573
-msgid "Recover"
-msgstr "修复"
-
-#: ../libyzis/buffer.cpp:573
-msgid "A swap file was found for this file, it was presumably created because your computer or yzis crashed, do you want to start the recovery of this file ?"
-msgstr "找到了这个文件的交换文件, 这大概是因为你的计算机或者yzis崩溃而建立的,你想修复这个文件吗?"
-
-#: ../libyzis/buffer.cpp:643
+#: ../libyzis/buffer.cpp:657
 msgid "Failed opening file %1 for writing : %2"
 msgstr "不能打开文件 %1进行写入: %2"
 
-#: ../libyzis/buffer.cpp:651
-#: ../libyzis/buffer.cpp:654
+#: ../libyzis/buffer.cpp:663
 msgid "Written %1 bytes to file %2"
 msgstr "写 %1 字节到文件 %2"
 
-#: ../libyzis/ex_lua.cpp:263
-msgid "The file %1 could not be found in standard directories"
-msgstr "在标准目录不能找到文件%1"
+#: ../libyzis/buffer.cpp:1266
+msgid "Recover"
+msgstr "修复"
 
-#: ../libyzis/ex_lua.cpp:274
+#: ../libyzis/buffer.cpp:1266
+msgid ""
+"A swap file was found for this file, it was presumably created because your "
+"computer or yzis crashed, do you want to start the recovery of this file ?"
+msgstr ""
+"找到了这个文件的交换文件, 这大概是因为你的计算机或者yzis崩溃而建立的,你想修复"
+"这个文件吗?"
+
+#: ../libyzis/internal_options.cpp:133
+msgid "File modified"
+msgstr "文件修改了"
+
+#: ../libyzis/internal_options.cpp:133
+msgid "This file has been modified, do you want to save it ?"
+msgstr "这个文件被修改了,你想保存它吗?"
+
+#: ../libyzis/luaengine.cpp:236
+#, fuzzy
+msgid "Executing function %1"
+msgstr "执行"
+
+#: ../libyzis/luaengine.cpp:272
+msgid "YLuaEngine::execute function %1"
+msgstr ""
+
+#: ../libyzis/luaengine.cpp:284
 msgid "Lua error when running file %1:\n"
 msgstr "在运行 %1 时Lua错误:\n"
+
+#: ../libyzis/luaengine.cpp:297
+msgid "Executing code in lua\n"
+msgstr ""
+
+#: ../libyzis/luaengine.cpp:349
+msgid "error handling function called from within yzpcall"
+msgstr ""
 
 #: ../libyzis/mode_command.cpp:53
 msgid "[ Awaiting Command ]"
 msgstr "[ 等待命令 ]"
 
-#: ../libyzis/mode.cpp:79
-msgid "[ Introduction ]"
-msgstr "[ 介绍 ]"
-
-#: ../libyzis/mode_ex.cpp:66
-msgid "[ Ex ]"
-msgstr "[ Ex ]"
-
-#: ../libyzis/mode_ex.cpp:293
-msgid "Not an editor command: "
-msgstr "不是编辑器命令:"
-
-#: ../libyzis/mode_ex.cpp:409
-#: ../libyzis/mode_ex.cpp:422
-#: ../libyzis/mode_ex.cpp:429
-msgid "One file is modified! Save it first..."
-msgstr "一个文件已经修改了!先保存它..."
-
-#: ../libyzis/mode_ex.cpp:442
-msgid "No next buffer"
-msgstr "没有后面的buffer"
-
-#: ../libyzis/mode_ex.cpp:453
-msgid "No previous buffer"
-msgstr "没有前面的buffer"
-
-#: ../libyzis/mode_ex.cpp:491
-#: ../libyzis/mode_ex.cpp:791
-msgid "Please specify a filename"
-msgstr "请指定文件名"
-
-#: ../libyzis/mode_ex.cpp:542
-#: ../libyzis/mode_ex.cpp:680
-msgid "Invalid option given : "
-msgstr "给定的选项无效 :"
-
-#: ../libyzis/mode_ex.cpp:567
-#: ../libyzis/mode_ex.cpp:695
-msgid "This option cannot be switched this way, this is a boolean option."
-msgstr "这个选项不能被交换,它是一个boolean选项."
-
-#: ../libyzis/mode_ex.cpp:577
-#: ../libyzis/mode_ex.cpp:598
-#: ../libyzis/mode_ex.cpp:629
-msgid "This option is a global option which cannot be changed with setlocal"
-msgstr "选项是全局选项,不能用setlocal改变"
-
-#: ../libyzis/mode_ex.cpp:593
-#: ../libyzis/mode_ex.cpp:624
-#: ../libyzis/mode_ex.cpp:649
-#: ../libyzis/mode_ex.cpp:719
-msgid "Invalid option given"
-msgstr "给定的选项无效"
-
-#: ../libyzis/mode_insert.cpp:35
-msgid "[ Insert ]"
-msgstr "[ 插入 ]"
-
-#: ../libyzis/mode_insert.cpp:182
-msgid "[ Replace ]"
-msgstr "[ 替换 ]"
-
-#: ../libyzis/mode_insert.cpp:205
+#: ../libyzis/mode_complete.cpp:45
 msgid "{ Completion }"
 msgstr "{ 完成 }"
 
-#: ../libyzis/mode_search.cpp:37
+#: ../libyzis/mode_complete.cpp:138
+msgid "Match %1 of %2"
+msgstr ""
+
+#: ../libyzis/mode_complete.cpp:141
+msgid "Back at original"
+msgstr ""
+
+#: ../libyzis/mode.cpp:158
+msgid "[ Introduction ]"
+msgstr "[ 介绍 ]"
+
+#: ../libyzis/mode_ex.cpp:103
+msgid "[ Ex ]"
+msgstr "[ Ex ]"
+
+#: ../libyzis/mode_ex.cpp:469
+msgid "Not an editor command: "
+msgstr "不是编辑器命令:"
+
+#: ../libyzis/mode_ex.cpp:597 ../libyzis/mode_ex.cpp:611
+#: ../libyzis/mode_ex.cpp:616
+msgid "One file is modified! Save it first..."
+msgstr "一个文件已经修改了!先保存它..."
+
+#: ../libyzis/mode_ex.cpp:706
+msgid "No write since last change (add ! to override)"
+msgstr ""
+
+#: ../libyzis/mode_ex.cpp:765
+#, fuzzy
+msgid "Invalid option name : %1"
+msgstr "给定的选项无效 :"
+
+#: ../libyzis/mode_ex.cpp:768
+#, fuzzy
+msgid "Bad value for option given"
+msgstr "给定的选项无效"
+
+#: ../libyzis/mode_ex.cpp:828
+msgid "Please specify a filename"
+msgstr "请指定文件名"
+
+#: ../libyzis/mode_ex.cpp:856
+#, fuzzy
+msgid "The file %1 could not be found"
+msgstr "在标准目录不能找到文件%1"
+
+#: ../libyzis/mode_ex.cpp:1078
+msgid "Registers:\n"
+msgstr ""
+
+#: ../libyzis/mode_ex.cpp:1207
+msgid "Cannot change to specified directory"
+msgstr ""
+
+#: ../libyzis/mode_insert.cpp:42
+msgid "[ Insert ]"
+msgstr "[ 插入 ]"
+
+#: ../libyzis/mode_insert.cpp:348
+msgid "[ Replace ]"
+msgstr "[ 替换 ]"
+
+#: ../libyzis/mode_search.cpp:42
 msgid "[ Search ]"
 msgstr "[ 查询 ]"
 
-#: ../libyzis/mode_search.cpp:92
-msgid "No match"
-msgstr "不匹配"
+#: ../libyzis/mode_search.cpp:108
+msgid "Pattern not found: "
+msgstr ""
 
-#: ../libyzis/mode_search.cpp:156
+#: ../libyzis/mode_search.cpp:183
 msgid "[ Search backward ]"
 msgstr "[ 向后查找 ]"
 
-#: ../libyzis/mode_visual.cpp:45
+#: ../libyzis/mode_visual.cpp:43
 msgid "[ Visual ]"
 msgstr "[ 可见 ]"
 
-#: ../libyzis/mode_visual.cpp:182
+#: ../libyzis/mode_visual.cpp:284
 msgid "[ Visual Line ]"
 msgstr "[ 可见行 ]"
 
-#: ../libyzis/search.cpp:102
+#: ../libyzis/mode_visual.cpp:309
+#, fuzzy
+msgid "[ Visual Block ]"
+msgstr "[ 可见 ]"
+
+#: ../libyzis/search.cpp:150
 msgid "search hit TOP, continuing at BOTTOM"
 msgstr "查询到了文件顶部,从尾部继续"
 
-#: ../libyzis/search.cpp:104
+#: ../libyzis/search.cpp:152
 msgid "search hit BOTTOM, continuing at TOP"
 msgstr "查询到了文件结尾,从开始处继续"
 
-#: ../libyzis/swapfile.cpp:81
-msgid "Warning, the swapfile could not be opened maybe due to restrictive permissions."
+#: ../libyzis/swapfile.cpp:94
+msgid ""
+"Warning, the swapfile could not be opened maybe due to restrictive "
+"permissions."
 msgstr "警告,可能由于限制了权限,交换文件不能被打开."
 
-#: ../libyzis/swapfile.cpp:130
-msgid "Warning, the swapfile could not be created maybe due to restrictive permissions."
+#: ../libyzis/swapfile.cpp:142
+msgid ""
+"Warning, the swapfile could not be created maybe due to restrictive "
+"permissions."
 msgstr "警告,可能由于限制了权限,交换文件不能被建立."
 
-#: ../libyzis/swapfile.cpp:158
-msgid "The swap file could not be opened, there will be no recovering for this file, you might want to check permissions of files."
+#: ../libyzis/swapfile.cpp:185
+msgid ""
+"The swap file could not be opened, there will be no recovering for this "
+"file, you might want to check permissions of files."
 msgstr "因为不能打开交换文件,所以这个文件不能被修复,你可能需要检查文件的权限."
 
-#: ../libyzis/view.cpp:179
-msgid "File modified"
+#: ../libyzis/tags_interface.cpp:174
+#, fuzzy
+msgid "File has been modified"
 msgstr "文件修改了"
 
-#: ../libyzis/view.cpp:179
-msgid "This file has been modified, do you want to save it ?"
-msgstr "这个文件被修改了,你想保存它吗?"
+#: ../libyzis/tags_interface.cpp:235
+msgid "Unable to find tag file"
+msgstr ""
 
-#: ../libyzis/view.cpp:404
-#: ../libyzis/view.cpp:412
+#: ../libyzis/tags_interface.cpp:276
+msgid "Could not find next tag"
+msgstr ""
+
+#: ../libyzis/tags_interface.cpp:290
+msgid "Could not find previous tag"
+msgstr ""
+
+#: ../libyzis/tags_interface.cpp:299
+msgid "At bottom of tag stack"
+msgstr ""
+
+#: ../libyzis/view.cpp:244 ../libyzis/view.cpp:258
 msgid "All"
 msgstr "全部"
 
-#: ../libyzis/view.cpp:411
+#: ../libyzis/view.cpp:246
+msgid "Top"
+msgstr ""
+
+#: ../libyzis/view.cpp:249
 msgid "Bot"
 msgstr "底部"
 
-#: ../libyzis/view.cpp:1473
-msgid "To use the Qt printer, you need to have an X11 DISPLAY set and running, you should try pslib in console mode"
-msgstr "你需要拥有X11才能使用Qt的painter"
-
-#: ../libyzis/view.cpp:1744
+#: ../libyzis/view.cpp:273
 msgid " { Recording }"
 msgstr "{ 记录中 }"
 
-#: ../nyzis/factory.cpp:197
+#: ../libyzis/view.cpp:614
+msgid ""
+"To use the Qt printer, you need to have an X11 DISPLAY set and running, you "
+"should try pslib in console mode"
+msgstr "你需要拥有X11才能使用Qt的painter"
+
+#: ../nyzis/nysession.cpp:228
 msgid "(Press any key)"
 msgstr "(按任意键)"
 
-#: ../nyzis/viewwidget.cpp:330
-#: ../nyzis/viewwidget.cpp:332
-msgid "[No File]"
-msgstr "[没有文件]"
+#~ msgid "KDE Frontend for the Yzis Editor"
+#~ msgstr "Ysiz编辑器的KDE界面"
 
+#~ msgid "Document to open."
+#~ msgstr "要打开的文档."
+
+#~ msgid "Execute command passed in argument"
+#~ msgstr "执行在参数中传递的命令"
+
+#~ msgid "Kyzis"
+#~ msgstr "Kyzis"
+
+#~ msgid "Text font"
+#~ msgstr "文本字体"
+
+#~ msgid "Use a transparent background"
+#~ msgstr "用透明背景"
+
+#~ msgid "Background color opacity"
+#~ msgstr "背景色不透明"
+
+#~ msgid "Min"
+#~ msgstr "最小"
+
+#~ msgid "Max"
+#~ msgstr "最大"
+
+#~ msgid "Background Color"
+#~ msgstr "背景色"
+
+#~ msgid "Foreground Color"
+#~ msgstr "前景色"
+
+#~ msgid "Syntax Highlighting"
+#~ msgstr "语法高亮"
+
+#~ msgid "Kyzis Part"
+#~ msgstr "Kyzis部分"
+
+#~ msgid "Embeddable vi-like editor component"
+#~ msgstr "可嵌入的类vi编辑器组件"
+
+#~ msgid "(c)2002-2005 The Kyzis Authors"
+#~ msgstr "(c) 2002-2005 Kyzis 作者"
+
+#~ msgid "Kyzis - KDE Frontend for Yzis"
+#~ msgstr "Kyzis - Yzis的KDE界面"
+
+#~ msgid "(c) 2003-2005"
+#~ msgstr "(c) 2003-2005"
+
+#~ msgid "Initial Author"
+#~ msgstr "最初作者"
+
+#~ msgid ""
+#~ "_: NAME OF TRANSLATORS\n"
+#~ "Your names"
+#~ msgstr "吴小虎"
+
+#~ msgid ""
+#~ "_: EMAIL OF TRANSLATORS\n"
+#~ "Your emails"
+#~ msgstr "xiaohu417@gmail.com"
+
+#~ msgid "Text Area Background"
+#~ msgstr "文本区域背景"
+
+#~ msgid "Normal text:"
+#~ msgstr "一般文字:"
+
+#~ msgid "Selected text:"
+#~ msgstr "选择的文字:"
+
+#~ msgid "Current line:"
+#~ msgstr "当前行:"
+
+#~ msgid "Bookmark"
+#~ msgstr "书签"
+
+#~ msgid "Active Breakpoint"
+#~ msgstr "活动断点"
+
+#~ msgid "Reached Breakpoint"
+#~ msgstr "延伸的断点"
+
+#~ msgid "Disabled Breakpoint"
+#~ msgstr "禁止的断点"
+
+#~ msgid "Additional Elements"
+#~ msgstr "附加元素"
+
+#~ msgid "Left border background:"
+#~ msgstr "左边界背景:"
+
+#~ msgid "Line numbers:"
+#~ msgstr "行号:"
+
+#~ msgid "Bracket highlight:"
+#~ msgstr "括号高亮:"
+
+#~ msgid "Word wrap markers:"
+#~ msgstr "单词换行标记:"
+
+#~ msgid "Tab markers:"
+#~ msgstr "制表符标记:"
+
+#~ msgid "<p>Sets the background color of the editing area.</p>"
+#~ msgstr "<p>设置编辑区域的背景色.</p>"
+
+#~ msgid ""
+#~ "<p>Sets the background color of the selection.</p><p>To set the text "
+#~ "color for selected text, use the \"<b>Configure Highlighting</b>\" dialog."
+#~ "</p>"
+#~ msgstr ""
+#~ "<p>设置选择区域的背景色.</p><p>要设置选择文本的颜色,用\"<b>配置高亮</b>"
+#~ "\"对话框.<p>"
+
+#~ msgid ""
+#~ "<p>Sets the background color of the selected marker type.</p><p><b>Note</"
+#~ "b>: The marker color is displayed lightly because of transparency.</p>"
+#~ msgstr ""
+#~ "<p>设置选择标记类型的背景色.</p><p><b>注意</b>:因为透明,标记的颜色显示的很"
+#~ "淡.</p>"
+
+#~ msgid "<p>Select the marker type you want to change.</p>"
+#~ msgstr "</p>选择你想改变的标记类型.</p>"
+
+#~ msgid ""
+#~ "<p>Sets the background color of the currently active line, which means "
+#~ "the line where your cursor is positioned.</p>"
+#~ msgstr "<p>设置当前活动行的背景色,就是你的光标所在的那行.<p>"
+
+#~ msgid ""
+#~ "<p>This color will be used to draw the line numbers (if enabled) and the "
+#~ "lines in the code-folding pane.</p>"
+#~ msgstr "<p>这个颜色将用来显示行号(如果允许)和代码折叠面板中的行.</p>"
+
+#~ msgid ""
+#~ "<p>Sets the bracket matching color. This means, if you place the cursor e."
+#~ "g. at a <b>(</b>, the matching <b>)</b> will be highlighted with this "
+#~ "color.</p>"
+#~ msgstr ""
+#~ "<p>设置括号匹配颜色.这就是说,如果你将光标移到一个<b>(</b>, 相匹配的<b>)</"
+#~ "b>将用这个颜色高亮显示.</p>"
+
+#~ msgid ""
+#~ "<p>Sets the color of Word Wrap-related markers:</p><dl><dt>Static Word "
+#~ "Wrap</dt><dd>A vertical line which shows the column where text is going "
+#~ "to be wrapped</dd><dt>Dynamic Word Wrap</dt><dd>An arrow shown to the "
+#~ "left of visually-wrapped lines</dd></dl>"
+#~ msgstr ""
+#~ "</p>设置单词换行相关的标记颜色:</p><dl><dt>静态单词换行</dt><dd>一个垂直线"
+#~ "显示在文字被换行的栏</dd><dt>动态单词换行</dt><dd>一个箭头显示在可见换行的"
+#~ "行左边</dd></dl>"
+
+#~ msgid "<p>Sets the color of the tabulator marks:</p>"
+#~ msgstr "<p>设置制表符标记颜色:</p>"
+
+#~ msgid ""
+#~ "This list displays the default styles for the current schema and offers "
+#~ "the means to edit them. The style name reflects the current style "
+#~ "settings.<p>To edit using the keyboard, press <strong>&lt;SPACE&gt;</"
+#~ "strong> and choose a property from the popup menu.<p>To edit the colors, "
+#~ "click the colored squares, or select the color to edit from the popup "
+#~ "menu.<p>You can unset the Background and Selected Background colors from "
+#~ "the popup menu when appropriate."
+#~ msgstr ""
+#~ "这个列表显示和编辑当前计划的默认风格.风格名称反应了当前的风格设置.<p>要用"
+#~ "键盘编辑,按<strong>&lt;SPACE&gt;</strong>,然后从弹出菜单中选择属性.<p>要编"
+#~ "辑颜色,点击颜色方块,或者从弹出菜单中选择颜色.<p>你能够在适当的时候从弹出菜"
+#~ "单中取消背景和选择的背景色."
+
+#~ msgid "H&ighlight:"
+#~ msgstr "高亮(&H):"
+
+#~ msgid ""
+#~ "This list displays the contexts of the current syntax highlight mode and "
+#~ "offers the means to edit them. The context name reflects the current "
+#~ "style settings.<p>To edit using the keyboard, press <strong>&lt;SPACE&gt;"
+#~ "</strong> and choose a property from the popup menu.<p>To edit the "
+#~ "colors, click the colored squares, or select the color to edit from the "
+#~ "popup menu.<p>You can unset the Background and Selected Background colors "
+#~ "from the context menu when appropriate."
+#~ msgstr ""
+#~ "这个列表显示和编辑当前语法高亮模式上下文.上下文名称反应了当前的风格设置."
+#~ "<p>要用键盘编辑,按<strong>&lt;SPACE&gt;</strong>,然后从弹出菜单中选择属性."
+#~ "<p>要编辑颜色,点击颜色方块,或者从弹出菜单中选择颜色来编辑.<p>你能够在适当"
+#~ "的时候从上下文菜单中取消背景和选择的背景色."
+
+#~ msgid "&Schema:"
+#~ msgstr "计划(&S):"
+
+#~ msgid "&New..."
+#~ msgstr "新建(&N)..."
+
+#~ msgid "Colors"
+#~ msgstr "颜色"
+
+#~ msgid "Normal Text Styles"
+#~ msgstr "一般文本风格"
+
+#~ msgid "Highlighting Text Styles"
+#~ msgstr "高亮文本风格"
+
+#~ msgid "&Default schema for %1:"
+#~ msgstr "%1的默认计划(&D)"
+
+#~ msgid "Name for New Schema"
+#~ msgstr "新计划名称"
+
+#~ msgid "Name:"
+#~ msgstr "名称:"
+
+#~ msgid "New Schema"
+#~ msgstr "新计划"
+
+#~ msgid "Context"
+#~ msgstr "上下文"
+
+#~ msgid "Normal"
+#~ msgstr "一般"
+
+#~ msgid "Selected"
+#~ msgstr "选择"
+
+#~ msgid "Background"
+#~ msgstr "背景"
+
+#~ msgid "Background Selected"
+#~ msgstr "选择了背景"
+
+#~ msgid "Use Default Style"
+#~ msgstr "用默认风格"
+
+#~ msgid "&Bold"
+#~ msgstr "粗体(&B)"
+
+#~ msgid "&Italic"
+#~ msgstr "斜体(&I)"
+
+#~ msgid "&Underline"
+#~ msgstr "下划线(&U)"
+
+#~ msgid "S&trikeout"
+#~ msgstr "出局(&t)"
+
+#~ msgid "Normal &Color..."
+#~ msgstr "一般颜色(&C)..."
+
+#~ msgid "&Selected Color..."
+#~ msgstr "选择的颜色(&S)..."
+
+#~ msgid "&Background Color..."
+#~ msgstr "背景色(&B)..."
+
+#~ msgid "S&elected Background Color..."
+#~ msgstr "选择背景色(&E)"
+
+#~ msgid "Unset Background Color"
+#~ msgstr "取消背景色"
+
+#~ msgid "Unset Selected Background Color"
+#~ msgstr "取消选择的背景色"
+
+#~ msgid "Use &Default Style"
+#~ msgstr "用默认的风格(&D)"
+
+#~ msgid ""
+#~ "\"Use Default Style\" will be automatically unset when you change any "
+#~ "style properties."
+#~ msgstr "当你改变任何风格属性时,将自动的取消\"用默认风格\"."
+
+#~ msgid "Yzis Styles"
+#~ msgstr "Yzis风格"
+
+#~ msgid "Opens recently opened file."
+#~ msgstr "打开最近打开的文件."
+
+#~ msgid "Show &Konsole"
+#~ msgstr "显示&Konsole"
+
+#~ msgid "&Window"
+#~ msgstr "窗口(&W)"
+
+#~ msgid "Terminal"
+#~ msgstr "终端"
+
+#~ msgid "No next buffer"
+#~ msgstr "没有后面的buffer"
+
+#~ msgid "No previous buffer"
+#~ msgstr "没有前面的buffer"
+
+#~ msgid "This option cannot be switched this way, this is a boolean option."
+#~ msgstr "这个选项不能被交换,它是一个boolean选项."
+
+#~ msgid "This option is a global option which cannot be changed with setlocal"
+#~ msgstr "选项是全局选项,不能用setlocal改变"
+
+#~ msgid "No match"
+#~ msgstr "不匹配"
+
+#~ msgid "[No File]"
+#~ msgstr "[没有文件]"

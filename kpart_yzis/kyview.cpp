@@ -130,10 +130,6 @@ void KYView::guiUpdateFileName()
 {
 }
 
-void KYView::guiHighlightingChanged()
-{
-}
-
 void KYView::guiNotifyContentChanged(const YSelection& s)
 {
     YSelectionMap m = s.map();

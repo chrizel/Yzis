@@ -493,16 +493,8 @@ public:
     // ----------------- Miscellaneous
     //-------------------------------------------------------
 
-    /**
-     * Send multiple key sequence to yzis.
-     * 
-           * The key sequence is automatically sent to the right view,
-           * even if the view is switched in the middle.
-     */
-    virtual void scriptSendMultipleKeys ( const QString& text );
-
     /** Copied from view */
-    virtual CmdState sendMultipleKeys( YView * view, YKeySequence &keys, YKeySequence::const_iterator &parsePos );
+    CmdState sendMultipleKeys( YView * view, YKeySequence &keys, YKeySequence::const_iterator &parsePos );
 
     //-------------------------------------------------------
     // ----------------- Send events to GUI
@@ -529,6 +521,14 @@ public:
 
 
 protected:
+    /**
+     * Send multiple key sequence to yzis.
+     * 
+           * The key sequence is automatically sent to the right view,
+           * even if the view is switched in the middle.
+     */
+    void scriptSendMultipleKeys ( const QString& text );
+
 
     void initModes();
     void endModes();

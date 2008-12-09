@@ -7,15 +7,14 @@ class QString;
 
 /** Abstract class for a status bar.
  * This class represents a status bar, the way to export information
- * about the buffer and the view to the user. It should be implemented
- * by the GUI frontends.
+ * about the buffer and the view to the user. Each GUI frontend must
+ * provide one one implementation.
  */
 
 class YZIS_EXPORT YStatusBarIface
 {
 public:
-    virtual ~YStatusBarIface()
-    {};
+    virtual ~YStatusBarIface(){};
 
     /** Used to display the mode we are currently in.
      */

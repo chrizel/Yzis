@@ -55,7 +55,6 @@ public:
     virtual void guiUpdateFileName();
     virtual void guiUpdateCursorPosition();
     virtual void guiUpdateMode();
-    virtual void guiHighlightingChanged();
     virtual void guiNotifyContentChanged(const YSelection&);
     virtual void guiPreparePaintEvent(int, int);
     virtual void guiEndPaintEvent();

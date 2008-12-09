@@ -77,6 +77,7 @@ public:
       * The string description contains:
       * - the filename
       * - whether the buffer is currently modified.
+      * Example : "Buffer(this=0x1234 filename='myfilename.cpp' views=0x1234,0x1234,0x1234 modif=0 new=1"
       */
     QString toString() const;
 

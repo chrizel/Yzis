@@ -17,9 +17,8 @@
 *  the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 *  Boston, MA 02110-1301, USA.
 **/
-
-#ifndef _KY_EDITOR_H_
-#define _KY_EDITOR_H_
+#ifndef YZIS_PART_EDITOR_H
+#define YZIS_PART_EDITOR_H
 
 #include <QWidget>
 
@@ -36,4 +35,5 @@ public:
 
 };
 
-#endif
+#endif // YZIS_PART_EDITOR_H
+

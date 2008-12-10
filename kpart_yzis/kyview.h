@@ -18,8 +18,8 @@
 *  Boston, MA 02110-1301, USA.
 **/
 
-#ifndef _KYZIS_VIEW_H_
-#define _KYZIS_VIEW_H_
+#ifndef YZIS_PART_VIEW_H
+#define YZIS_PART_VIEW_H
 
 #include <libyzis/buffer.h>
 #include <qyzis/qyview.h>
@@ -34,4 +34,5 @@ public:
 	virtual void guiUpdateFileName();
 };
 
-#endif
+#endif // YZIS_PART_VIEW_H
+

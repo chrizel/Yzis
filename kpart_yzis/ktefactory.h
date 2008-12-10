@@ -19,8 +19,8 @@
 **/
 
 
-#ifndef _KTE_FACTORY_H_
-#define _KTE_FACTORY_H_
+#ifndef YZIS_PART_KTE_FACTORY_H
+#define YZIS_PART_KTE_FACTORY_H
 
 #include <ktexteditor/factory.h>
 
@@ -38,4 +38,5 @@ public:
 };
 
 
-#endif
+#endif // YZIS_PART_KTE_FACTORY_H
+

@@ -19,8 +19,8 @@
 *  Boston, MA 02110-1301, USA.
 **/
 
-#ifndef _KTE_DOCUMENT_H_
-#define _KTE_DOCUMENT_H_
+#ifndef YZIS_PART_KTE_DOCUMENT_H
+#define YZIS_PART_KTE_DOCUMENT_H
 
 #include <ktexteditor/editor.h>
 #include <ktexteditor/document.h>
@@ -103,4 +103,5 @@ private:
     YBuffer* m_buffer;
 };
 
-#endif
+#endif // YZIS_PART_KTE_DOCUMENT_H
+

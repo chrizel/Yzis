@@ -18,8 +18,8 @@
 *  Boston, MA 02110-1301, USA.
 **/
 
-#ifndef _KTE_EDITOR_H_
-#define _KTE_EDITOR_H_
+#ifndef YZIS_PART_KTE_EDITOR_H
+#define YZIS_PART_KTE_EDITOR_H
 
 #include <QList>
 
@@ -56,4 +56,5 @@ private:
     QList<KTextEditor::Document*> m_documents;
 };
 
-#endif
+#endif // YZIS_PART_KTE_EDITOR_H
+

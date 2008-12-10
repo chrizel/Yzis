@@ -18,8 +18,8 @@
 *  Boston, MA 02110-1301, USA.
 **/
 
-#ifndef _KTE_VIEW_H_
-#define _KTE_VIEW_H_
+#ifndef YZIS_PART_KTE_VIEW_H
+#define YZIS_PART_KTE_VIEW_H
 
 #include <ktexteditor/view.h>
 
@@ -74,4 +74,5 @@ private:
     QMenu* m_popup;
 };
 
-#endif
+#endif // YZIS_PART_KTE_VIEW_H
+

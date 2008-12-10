@@ -46,7 +46,10 @@ public:
     virtual QPoint cursorPositionCoordinates() const;
     virtual bool mouseTrackingEnabled() const;
     virtual bool setMouseTrackingEnabled(bool enable);
-    virtual bool setSelection(const KTextEditor::Range &range);
+    virtual bool setSelection ( const KTextEditor::Range &range );
+    virtual bool setSelection ( const KTextEditor::Cursor &position,
+                                int length,
+                                bool wrap = true );
     virtual bool selection() const;
     virtual const KTextEditor::Range& selectionRange() const;
     virtual QString selectionText() const;

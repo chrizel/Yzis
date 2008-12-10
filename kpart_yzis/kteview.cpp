@@ -128,7 +128,13 @@ bool KTEView::setMouseTrackingEnabled(bool /*enable*/)
     return false;
 }
 
-bool KTEView::setSelection(const KTextEditor::Range& /*range*/)
+bool KTEView::setSelection ( const KTextEditor::Range &range )
+{
+    // TODO: implement
+    return false;
+}
+
+bool KTEView::setSelection ( const KTextEditor::Cursor &position, int length, bool wrap)
 {
     // TODO: implement
     return false;

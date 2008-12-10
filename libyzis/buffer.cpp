@@ -229,7 +229,14 @@ YCursor YBuffer::insertRegion( const YCursor& begin, const YRawData& data )
 	QString ldata;
 	QString rdata;
 	int ln = begin.line();
+	int i;
 	YCursor after;
+	after.setLine(begin.line());
+
+    if (data.count()==0) {
+        /* Nothing to do??? */
+        return after;
+    }
 
 	l = yzline(ln);
 	QString curdata = l->data();
@@ -242,9 +249,8 @@ YCursor YBuffer::insertRegion( const YCursor& begin, const YRawData& data )
 	rdata = curdata.mid(begin.column());
 
 	/* first line */
-	int i = 0;
+	i = 0;
 	ldata += data[i];
-	after.setLine(begin.line());
 	++i;
 	if ( i == data.size() ) {
 		after.setColumn(ldata.length());

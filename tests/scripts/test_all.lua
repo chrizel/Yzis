@@ -12,6 +12,7 @@ require('test_regexp')
 require('test_vim_pattern')
 require('test_insert_mode')
 require('test_mode_command_parser')
+require('test_undo')
 
 -- ret = LuaUnit:run('TestLuaBinding:test_setline') -- will execute only one test
 -- ret = LuaUnit:run('TestMovements') -- will execute only one class of test

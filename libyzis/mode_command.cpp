@@ -197,7 +197,8 @@ void YModeCommand::initCommandPool()
     commands.append( new YCommand(YKeySequence("m"), &YModeCommand::mark, ArgChar) );
     commands.append( new YCommand(YKeySequence("r"), &YModeCommand::replace, ArgChar) );
     commands.append( new YCommand(YKeySequence("u"), &YModeCommand::undo) );
-    commands.append( new YCommand(YKeySequence("U"), &YModeCommand::redo) );
+    // orzel 2008-12-11 : i'm commenting "U" out as "U" is supposed to be "undo all" and not redo (see vim help)
+    // commands.append( new YCommand(YKeySequence("U"), &YModeCommand::redo) );
     commands.append( new YCommand(YKeySequence("<C-r>"), &YModeCommand::redo) );
     commands.append( new YCommand(YKeySequence("q"), &YModeCommand::macro) );
     commands.append( new YCommand(YKeySequence("@"), &YModeCommand::replayMacro) );

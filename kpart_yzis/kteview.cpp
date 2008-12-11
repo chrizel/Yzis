@@ -134,12 +134,6 @@ bool KTEView::setSelection ( const KTextEditor::Range &range )
     return false;
 }
 
-bool KTEView::setSelection ( const KTextEditor::Cursor &position, int length, bool wrap)
-{
-    // TODO: implement
-    return false;
-}
-
 bool KTEView::selection() const
 {
     // TODO: implement

@@ -30,7 +30,6 @@ Copyright (c) 2004-2005 Mickael Marchand <marchand@kde.org>
 
 /* Qt */
 #include <qglobal.h>
-#include <QWidget>
 #include <QCoreApplication>
 #include <QTextCodec>
 #include <QDateTime>

@@ -99,7 +99,7 @@ void YKey::initKeyTable()
 
 QString YKey::toBasicRep() const
 {
-    if ( (mKey <= 0xffff) && (mKey != '<') ) // Just a unicode char
+    if ( (mKey <= 0xffff) ) // Just a unicode char
         return QString(QChar(mKey));
 
     // reverse lookup

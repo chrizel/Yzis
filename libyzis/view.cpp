@@ -924,6 +924,10 @@ YDrawLine YView::drawLineFromYLine( const YLine* yl, int start_column ) const
 					}
 				}
 			}
+		} else {
+			if ( text == tabChar ) {
+				text = " ";
+			}
 		}
 
 		if ( drawLength > 1 ) {

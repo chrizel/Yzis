@@ -33,10 +33,7 @@
  ************************/
 
 YDrawBuffer::YDrawBuffer( const YView* view, int columns, int lines ) :
-	mContent(),
-	mLocks(),
 	mScreenOffset(0,0),
-	mEOLCell(),
 	mView(view)
 {
 	mFirstBufferLine = 0;

@@ -25,8 +25,8 @@
  * YDrawBuffer is the data structure used to abstract the screen rendering.
  *
  * DrawBuffer is divided into sections. To each section corresponds one and only one buffer line.
- * A section is a divided into lines divided into cells, containing part
- * of text where all characters have the same properties (color, fonts, etc.)
+ * A section is divided into lines, themselves divided into cells. A cell
+ * displays several characters sharing the same properties (color, fonts, etc.)
  *
  * ##################################################  section 0.
  * |            |   |      |        |            |  |  line 0.
@@ -43,10 +43,10 @@
  *
  ***********/
 
-
-
+/* Qt */
 #include <QList>
 
+/* Yzis */
 #include "yzis.h"
 #include "selection.h"
 #include "drawbufferiterators.h"

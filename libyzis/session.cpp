@@ -386,21 +386,18 @@ YView *YSession::createBufferAndView( const QString& path )
 {
     dbg().SPrintf("createBufferAndView( path='%s' )", qp(path) );
     QString filename = YBuffer::parseFilename(path);
-    YBuffer *buffer = findBuffer( filename );
-    bool alreadyopen = true;
-    if (!buffer) {
-        alreadyopen = false;
-        buffer = createBuffer( filename );
-    }
-
     YView *view;
-    if (!alreadyopen) {
+    YBuffer *buffer = findBuffer( filename );
+
+    if (!buffer) {
+        buffer = createBuffer( filename );
         view = createView( buffer );
     } else {
         view = findViewByBuffer(buffer);
     }
+
     setCurrentView( view );
-        buffer->checkRecover();
+    buffer->checkRecover();
 
     view->applyStartPosition( YBuffer::getStartPosition(path) );
 

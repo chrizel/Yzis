@@ -87,13 +87,6 @@ void initKeyTable()
     aliasTable["DELETE"] = Qt::Key_Delete;
 }
 
-YKey::YKey(QChar rep, Qt::KeyboardModifiers modifiers)
-    : mModifiers(modifiers)
-{
-    initKeyTable();
-    parseBasicRep(rep);
-}
-
 YKey::YKey(int key, Qt::KeyboardModifiers modifiers)
     : mKey(key)
     , mModifiers(modifiers) 

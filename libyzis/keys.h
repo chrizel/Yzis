@@ -30,8 +30,6 @@ class YZIS_EXPORT YKey
 {
 public:
     YKey(int key = Qt::Key_unknown, Qt::KeyboardModifiers modifiers=Qt::NoModifier);
-    YKey(QChar rep, Qt::KeyboardModifiers modifiers=Qt::NoModifier);
-
 
     QString toString() const;
     int fromString(const QString &);

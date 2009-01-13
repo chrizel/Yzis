@@ -5,10 +5,12 @@ qrc_*cxx
 *.pyc
 *.diff
 *.save
+save
 *.old
 *.gmo
 .kdbgrc.*
 core
+apidoc
 core.*
 *~
 *.waf*

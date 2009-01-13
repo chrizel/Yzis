@@ -170,7 +170,7 @@ public:
     YView *view;
     int count;
     const YKeySequence *inputs;
-    YKeySequence::const_iterator *parsePos;
+    YKeySequence::const_iterator *parsePos; // TODO : fix that, ugly, parsePos is already a pointer
     bool standalone;
     bool usercount;
 };

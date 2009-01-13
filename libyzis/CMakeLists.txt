@@ -9,6 +9,8 @@ include_directories(${YZIS_INCLUDES})
 ########### next target ###############
 
 set(yzis_LIB_SRCS 
+   keys.cpp
+   mode_command.cpp 
    action.cpp 
    buffer.cpp 
    color.cpp 
@@ -23,7 +25,6 @@ set(yzis_LIB_SRCS
    font.cpp 
    history.cpp 
    internal_options.cpp 
-   keys.cpp
    line.cpp 
    linesearch.cpp 
    luaengine.cpp 
@@ -31,7 +32,6 @@ set(yzis_LIB_SRCS
    luaregexp.cpp 
    mapping.cpp 
    mark.cpp 
-   mode_command.cpp 
    mode_complete.cpp 
    mode.cpp 
    mode_ex.cpp 

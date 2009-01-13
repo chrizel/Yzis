@@ -370,8 +370,10 @@ YMotion *YModeCommand::parseMotion( const YKeySequence &inputs, YKeySequence::co
     motionType = MotionTypeExclusive;
     for(; initParsePos != inputs.end(); ++initParsePos) {
         if(*initParsePos == 'v')
+//        if(initParsePos->text() == "v")
             motionType = (motionType == MotionTypeExclusive) ? MotionTypeInclusive : MotionTypeExclusive;
         else if(*initParsePos == 'V')
+//        else if(initParsePos->text() == "V")
             motionType = MotionTypeLinewise;
         else
             break;
@@ -1081,13 +1083,14 @@ YCursor YModeCommand::gotoMark( const YMotionArgs &args, CmdState *state , Motio
 {
     YCursor ret;
     YViewCursor viewCursor = args.view->viewCursor();
+    QChar asChar = *(*(args.parsePos));
     YViewMarker *mark = args.view->buffer()->viewMarks();
-    if ( mark->contains(QChar(*(*args.parsePos))) ) {
-      *state = CmdOk;
-        ret =  mark->value( QChar(*(*args.parsePos)) ).buffer();
+    if ( mark->contains(asChar)){
+        *state = CmdOk;
+        ret =  mark->value(asChar).buffer();
     }
     else {
-        dbg() << "WARNING! mark " << QChar(*(*args.parsePos)) << " not found" << endl;
+        dbg() << "WARNING! mark " << asChar << " not found" << endl;
         *state = CmdStopped;
         ret =  viewCursor.buffer();
     }

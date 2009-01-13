@@ -29,7 +29,7 @@
 class YZIS_EXPORT YKey
 {
 public:
-    YKey(Qt::Key key = Qt::Key_unknown, Qt::KeyboardModifiers modifiers=Qt::NoModifier);
+    YKey(int key = Qt::Key_unknown, Qt::KeyboardModifiers modifiers=Qt::NoModifier);
     YKey(QChar rep, Qt::KeyboardModifiers modifiers=Qt::NoModifier);
 
 
@@ -72,7 +72,7 @@ private:
     bool parseModifiers(const QString &mods);
     
 private:
-    Qt::Key mKey;
+    int mKey;
     Qt::KeyboardModifiers mModifiers; 
 };
 

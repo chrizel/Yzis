@@ -32,8 +32,8 @@
 
 using namespace std;
 
-QMap<QString, Qt::Key> keyTable;
-QMap<QString, Qt::Key> aliasTable;
+QMap<QString, int> keyTable;
+QMap<QString, int> aliasTable;
 
 void initKeyTable()
 {
@@ -94,7 +94,7 @@ YKey::YKey(QChar rep, Qt::KeyboardModifiers modifiers)
     parseBasicRep(rep);
 }
 
-YKey::YKey(Qt::Key key, Qt::KeyboardModifiers modifiers)
+YKey::YKey(int key, Qt::KeyboardModifiers modifiers)
     : mKey(key)
     , mModifiers(modifiers) 
 {

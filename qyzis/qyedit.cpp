@@ -426,10 +426,8 @@ void QYEdit::unregisterModifierKeys( const QString& keys )
 void QYEdit::sendMappedKey( const QString & keys )
 {
     dbg().SPrintf("sendMappedKey( keys=%s )", qp(keys) );
-    YKeySequence input(keys);
-    YKeySequence::const_iterator parsePos = input.begin();
-    
-        YSession::self()->sendMultipleKeys( static_cast<YView *>( mView ), input, parsePos );
+    YKeySequence inputs(keys);
+    YSession::self()->sendMultipleKeys( static_cast<YView *>( mView ), inputs);
 }
 
 void QYEdit::inputMethodEvent ( QInputMethodEvent * )

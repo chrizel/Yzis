@@ -76,8 +76,7 @@ CmdState YModePool::sendKey( const YKey &key )
         mView->purgeInputBuffer();
         mapMode = 0;
         YKeySequence inputs(mapped);
-        YKeySequence::const_iterator parsePos = inputs.begin();
-            return YSession::self()->sendMultipleKeys( mView, inputs, parsePos );
+            return YSession::self()->sendMultipleKeys( mView, inputs);
     }
 
     dbg() << "Appending to input buffer " << mKey.toString() << endl;

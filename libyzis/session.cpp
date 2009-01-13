@@ -631,14 +631,13 @@ void YSession::scriptSendMultipleKeys ( const QString& text)
 {
     dbg() << "scriptSendMultipleKeys(" << text << ")" << endl;
     YKeySequence inputs(text);
-    YKeySequence::const_iterator parsePos = inputs.begin();
 
-    sendMultipleKeys( currentView(),  inputs, parsePos);
+    sendMultipleKeys( currentView(),  inputs);
     QCoreApplication::instance()->processEvents();
     /* }*/
 }
 
-CmdState YSession::sendMultipleKeys( YView * view, YKeySequence & inputs, YKeySequence::const_iterator &parsePos)
+CmdState YSession::sendMultipleKeys( YView * view, YKeySequence & inputs)
 {
     CmdState state = CmdOk;
     dbg() << "sendMultipleKeys(" << view << ", keys=" << inputs.toString() << ")" << endl;
@@ -646,7 +645,7 @@ CmdState YSession::sendMultipleKeys( YView * view, YKeySequence & inputs, YKeySe
         view->modePool()->change( YMode::ModeCommand );
     }
 
-    for(; parsePos != inputs.end() && state != CmdStopped && state != CmdError; ++parsePos ) {
+    for( YKeySequence::const_iterator parsePos = inputs.begin() ; parsePos != inputs.end() && state != CmdStopped && state != CmdError; ++parsePos ) {
         if ( view->modePool()->current()->mapMode() & MapCmdline ) {
             if ( *parsePos == Qt::Key_Escape
                  || *parsePos == Qt::Key_Enter

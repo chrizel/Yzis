@@ -1747,8 +1747,7 @@ CmdState YModeCommand::replayMacro( const YCommandArgs &args )
     for ( int i = 0; i < args.count; i++ ) {
         for ( int ab = 0 ; ab < args.regs.size(); ++ab) {
             YKeySequence inputs(YSession::self()->getRegister(args.regs.at(ab))[0]);
-            YKeySequence::const_iterator parsePos = inputs.begin();
-            if ( YSession::self()->sendMultipleKeys(args.view, inputs, parsePos) ) {
+            if ( YSession::self()->sendMultipleKeys(args.view, inputs) ) {
                 args.view->commitNextUndo();
                 return CmdStopped;
             }    

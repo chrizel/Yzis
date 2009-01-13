@@ -494,7 +494,7 @@ public:
     //-------------------------------------------------------
 
     /** Copied from view */
-    CmdState sendMultipleKeys( YView * view, YKeySequence &keys, YKeySequence::const_iterator &parsePos );
+    CmdState sendMultipleKeys( YView * view, YKeySequence &keys);
 
     //-------------------------------------------------------
     // ----------------- Send events to GUI

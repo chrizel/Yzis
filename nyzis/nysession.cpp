@@ -156,16 +156,15 @@ bool NYSession::processInput(int /*fd*/)
         "and very strange (>KEY_MAX) char received from ncurses, please report : " << (int) c << endl;
         return true;
     }
+    // detect/remove the ncurses 'control' flag
     if ( iscntrl( c ) ) {
         modifiers |= Qt::ControlModifier;
         c += 96;
     }
-    if ( isupper( c ) ) {
-        modifiers |= Qt::ShiftModifier;
-    }
     //yzDebug() << "sendKey < " << c << " (" << QString( QChar( c ) ) << ") modifiers=" << modifiers << endl;
     //TODO: META
-    sendKey( currentView(), YKey( c, modifiers) );
+    sendKey( currentView(), YKey( c, modifiers));
+//    sendKey( currentView(), YKey( c, modifiers, QChar(c)));
 
     return true;
 }

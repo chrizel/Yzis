@@ -311,7 +311,7 @@ bool YKeySequence::match(const_iterator &pos, const const_iterator &othEnd) cons
 int YKeySequence::parseUInt(const_iterator &pos) const
 {
     int tot = 0;
-    QChar cur = *pos;
+    QChar cur = QChar(pos->key());
     
     if ( !cur.isDigit() || cur.digitValue() == 0 )
         return -1;
@@ -322,7 +322,7 @@ int YKeySequence::parseUInt(const_iterator &pos) const
         ++pos;
         if ( pos == end() )
             return tot;
-        cur = *pos;
+        cur = QChar(pos->key());
     }
     return tot;
 }

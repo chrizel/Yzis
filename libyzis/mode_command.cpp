@@ -262,8 +262,8 @@ CmdState YModeCommand::execCommand(YView *view, const YKeySequence &inputs,
             ++parsePos;
             if ( parsePos == inputs.end() )
                 break;
-            if ( parsePos->isUnicode() )
-                regs << *parsePos;
+            if ( !parsePos->text().isEmpty() )
+                regs << QChar(parsePos->key());
             else
                 return CmdError;
             ++parsePos;
@@ -1128,7 +1128,7 @@ YCursor YModeCommand::gotoMark( const YMotionArgs &args, CmdState *state , Motio
 {
     YCursor ret;
     YViewCursor viewCursor = args.view->viewCursor();
-    QChar asChar = *(*(args.parsePos));
+    QChar asChar = QChar( (*args.parsePos)->key());
     YViewMarker *mark = args.view->buffer()->viewMarks();
     if ( mark->contains(asChar)){
         *state = CmdOk;

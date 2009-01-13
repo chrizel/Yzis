@@ -45,7 +45,6 @@ public:
 
     void addModifier(Qt::KeyboardModifier m) { mModifiers |= m; }
     void setKey(Qt::Key key) { mKey = key; mText=QChar(key);}
-    void setKey(QChar ch) { mKey = (Qt::Key) ch.unicode(); mText = ch; mModifiers &= ~Qt::ShiftModifier; }
 
     QString text() const { return mText; }
     int key() const { return mKey; }
@@ -55,15 +54,6 @@ public:
         mText = oth.mText;
         mModifiers = oth.mModifiers;
         return *this;
-    }
-
-    bool isUnicode() const { return mKey <= 0xffff && mKey >= 0; }
-
-    operator QChar() const {
-        if ( isUnicode())
-            return QChar(mKey);
-        else
-            return QChar();
     }
 
     bool operator==(const YKey &oth) const {

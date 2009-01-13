@@ -26,6 +26,13 @@
 #include <QVector>
 
 // Represents pure hardware keys
+//
+
+/** This is basically a QKeyEvent, although we can not use a QKeyEvent for
+ * two reasons
+ *  1) it is part of QtGui and not QtCore
+ *  2) it might have some more information that we don't care about (sizeoff==24)
+ */
 class YZIS_EXPORT YKey
 {
 public:
@@ -37,9 +44,10 @@ public:
     int modifiers() const { return mModifiers; }
 
     void addModifier(Qt::KeyboardModifier m) { mModifiers |= m; }
-    void setKey(Qt::Key key) { mKey = key; }
-    void setKey(QChar ch) { mKey = (Qt::Key) ch.unicode(); mModifiers &= ~Qt::ShiftModifier; }
+    void setKey(Qt::Key key) { mKey = key; mText=QChar(key);}
+    void setKey(QChar ch) { mKey = (Qt::Key) ch.unicode(); mText = ch; mModifiers &= ~Qt::ShiftModifier; }
 
+    QString text() const { return mText; }
     int key() const { return mKey; }
 
     YKey & operator=(const YKey &oth) {
@@ -48,7 +56,7 @@ public:
         mModifiers = oth.mModifiers;
         return *this;
     }
-    
+
     bool isUnicode() const { return mKey <= 0xffff && mKey >= 0; }
 
     operator QChar() const {
@@ -59,9 +67,8 @@ public:
     }
 
     bool operator==(const YKey &oth) const {
-        return (mKey == oth.mKey) && (mModifiers == oth.mModifiers);
+        return (mKey == oth.mKey) && (mText == oth.mText) && (mModifiers == oth.mModifiers);
     }
-//    bool operator!=(const YKey &oth) const { return (mKey != oth.mKey) || (mModifiers != oth.mModifiers); }
     bool operator!=(const YKey &oth) const { return !operator==(oth); }
     
 private:

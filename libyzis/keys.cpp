@@ -93,8 +93,6 @@ YKey::YKey(int key, Qt::KeyboardModifiers modifiers, const QString & text )
     , mModifiers(modifiers)
 {
     initKeyTable();
-    if ( isUnicode() )
-        mModifiers &= ~Qt::ShiftModifier;
 }
 
 

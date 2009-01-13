@@ -807,7 +807,7 @@ CmdState YModeEx::substitute( const YExCommandArgs& args )
     YCursor start( 0, args.fromLine );
     YSession::self()->search()->forward( args.view->buffer(), search, &found, start );
     if ( found ) {
-        for ( int i = args.fromLine; i <= args.toLine; i++ ) {
+        for ( uint i = args.fromLine; i <= args.toLine; i++ ) {
             if ( args.view->buffer()->substitute( search, replace, options.contains( "g" ), i ) ) {
                 needsUpdate = true;
                 lastLine = i;

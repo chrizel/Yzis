@@ -87,9 +87,10 @@ void initKeyTable()
     aliasTable["DELETE"] = Qt::Key_Delete;
 }
 
-YKey::YKey(int key, Qt::KeyboardModifiers modifiers)
+YKey::YKey(int key, Qt::KeyboardModifiers modifiers, const QString & text )
     : mKey(key)
-    , mModifiers(modifiers) 
+    , mText(text)
+    , mModifiers(modifiers)
 {
     initKeyTable();
     if ( isUnicode() )
@@ -121,7 +122,7 @@ bool YKey::parseBasicRep(QString rep)
     // First deal with as-is characters
     if ( rep.length() == 1 ) {
         QChar c(rep.at(0));
-        mKey = (Qt::Key) c.unicode();
+        mKey = c.unicode();
         // Assume single unicode keys might be obtained by shift, so no extra info there
         mModifiers &= ~Qt::ShiftModifier;
         return true;
@@ -170,7 +171,6 @@ bool YKey::parseModifiers(const QString &mods)
 /* Encode key event into vim form. */
 QString YKey::toString() const
 {
-//    QChar c(mKey);
     QString repr = toBasicRep();
     QString mod;
 
@@ -189,7 +189,7 @@ QString YKey::toString() const
     return repr;
 }
 
-// Return value is length of input used in forming key, -1 on fail
+// Return value is length of input used in forming key, -1 on failure
 int YKey::fromString(const QString &key)
 {
     QRegExp charFormat("^<((?:\\w-)*)([^>]+)>|^(.)");
@@ -197,12 +197,12 @@ int YKey::fromString(const QString &key)
     QString basicKey;
     
     mKey = Qt::Key_unknown;
+    mText="";
     mModifiers = Qt::NoModifier;
     
     charFormat.indexIn(key);
 
     if ( charFormat.matchedLength() == -1 ) {
-        mKey = Qt::Key_unknown;
         return -1;
     }
 
@@ -213,13 +213,11 @@ int YKey::fromString(const QString &key)
     else {
         basicKey = charFormat.cap(2);
         if ( ! parseModifiers(charFormat.cap(1)) ) {
-            mKey = Qt::Key_unknown;
             return -1;
         }
     }
     
     if ( ! parseBasicRep(basicKey) ) {
-        mKey = Qt::Key_unknown;
         return -1;
     }
 
@@ -315,9 +313,8 @@ bool YKeySequence::match(const_iterator &pos, const const_iterator &othEnd) cons
 int YKeySequence::parseUInt(const_iterator &pos) const
 {
     int tot = 0;
-    QChar cur;
+    QChar cur = *pos;
     
-    cur = *pos;
     if ( !cur.isDigit() || cur.digitValue() == 0 )
         return -1;
     
@@ -331,5 +328,4 @@ int YKeySequence::parseUInt(const_iterator &pos) const
     }
     return tot;
 }
-        
         

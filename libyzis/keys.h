@@ -29,7 +29,7 @@
 class YZIS_EXPORT YKey
 {
 public:
-    YKey(int key = Qt::Key_unknown, Qt::KeyboardModifiers modifiers=Qt::NoModifier);
+    YKey(int key = Qt::Key_unknown, Qt::KeyboardModifiers modifiers=Qt::NoModifier, const QString & text = QString());
 
     QString toString() const;
     int fromString(const QString &);
@@ -44,6 +44,7 @@ public:
 
     YKey & operator=(const YKey &oth) {
         mKey = oth.mKey;
+        mText = oth.mText;
         mModifiers = oth.mModifiers;
         return *this;
     }
@@ -51,7 +52,7 @@ public:
     bool isUnicode() const { return mKey <= 0xffff && mKey >= 0; }
 
     operator QChar() const {
-        if ( mKey <= 0xffff && mKey >= 0)
+        if ( isUnicode())
             return QChar(mKey);
         else
             return QChar();
@@ -60,9 +61,8 @@ public:
     bool operator==(const YKey &oth) const {
         return (mKey == oth.mKey) && (mModifiers == oth.mModifiers);
     }
-    bool operator!=(const YKey &oth) const {
-        return (mKey != oth.mKey) || (mModifiers != oth.mModifiers);
-    }
+//    bool operator!=(const YKey &oth) const { return (mKey != oth.mKey) || (mModifiers != oth.mModifiers); }
+    bool operator!=(const YKey &oth) const { return !operator==(oth); }
     
 private:
     QString toBasicRep() const;
@@ -71,6 +71,7 @@ private:
     
 private:
     int mKey;
+    QString mText;
     Qt::KeyboardModifiers mModifiers; 
 };
 

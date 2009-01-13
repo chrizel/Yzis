@@ -230,7 +230,7 @@ void YSearch::highlightLine( YBuffer* buffer, int line )
 
         /*
         foreach( YView *view, views ) {
-            //XXX view->getSelectionPool()->setSearch( searchMap );
+            XXX view->getSelectionPool()->setSearch( searchMap );
         }
         */
     }

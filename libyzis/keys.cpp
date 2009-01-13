@@ -32,19 +32,10 @@
 
 using namespace std;
 
-QMap<QString, Qt::Key> YKey::keyTable;
-QMap<QString, Qt::Key> YKey::aliasTable;
+QMap<QString, Qt::Key> keyTable;
+QMap<QString, Qt::Key> aliasTable;
 
-YKey::YKey(QChar rep, Qt::KeyboardModifiers modifiers)
-    : mModifiers(modifiers)
-{
-    initKeyTable();
-
-    parseBasicRep(rep);
-}
-
-
-void YKey::initKeyTable()
+void initKeyTable()
 {
     if ( !  keyTable.empty() )
         return;
@@ -94,6 +85,22 @@ void YKey::initKeyTable()
     aliasTable["PUP"] = Qt::Key_PageUp;
     aliasTable["PDOWN"] = Qt::Key_PageDown;
     aliasTable["DELETE"] = Qt::Key_Delete;
+}
+
+YKey::YKey(QChar rep, Qt::KeyboardModifiers modifiers)
+    : mModifiers(modifiers)
+{
+    initKeyTable();
+    parseBasicRep(rep);
+}
+
+YKey::YKey(Qt::Key key, Qt::KeyboardModifiers modifiers)
+    : mKey(key)
+    , mModifiers(modifiers) 
+{
+    initKeyTable();
+    if ( isUnicode() )
+        mModifiers &= ~Qt::ShiftModifier;
 }
 
 

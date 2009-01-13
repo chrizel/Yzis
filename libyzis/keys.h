@@ -29,10 +29,7 @@
 class YZIS_EXPORT YKey
 {
 public:
-    YKey(Qt::Key key = Qt::Key_unknown, Qt::KeyboardModifiers modifiers=Qt::NoModifier)
-        : mKey(key), mModifiers(modifiers) 
-    { initKeyTable(); if ( isUnicode() ) mModifiers &= ~Qt::ShiftModifier; }
-
+    YKey(Qt::Key key = Qt::Key_unknown, Qt::KeyboardModifiers modifiers=Qt::NoModifier);
     YKey(QChar rep, Qt::KeyboardModifiers modifiers=Qt::NoModifier);
 
 
@@ -73,15 +70,10 @@ private:
     QString toBasicRep() const;
     bool parseBasicRep(QString rep);
     bool parseModifiers(const QString &mods);
-
-    static void initKeyTable();
     
 private:
     Qt::Key mKey;
     Qt::KeyboardModifiers mModifiers; 
-
-    static QMap<QString, Qt::Key> keyTable;
-    static QMap<QString, Qt::Key> aliasTable;
 };
 
 class YZIS_EXPORT YKeySequence

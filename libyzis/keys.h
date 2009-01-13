@@ -41,13 +41,16 @@ public:
     QString toString() const;
     int fromString(const QString &);
 
-    int modifiers() const { return mModifiers; }
 
-    void addModifier(Qt::KeyboardModifier m) { mModifiers |= m; }
+
+    // dont use operator QChar() here, i want an explicit cast only
+    QChar getChar(void) const {  return (mText.size()==1)?mText.at(0):QChar();}
     void setKey(Qt::Key key) { mKey = key; mText=QChar(key);}
 
-    QString text() const { return mText; }
+    // getters
     int key() const { return mKey; }
+    QString text() const { return mText; }
+    int modifiers() const { return mModifiers; }
 
     YKey & operator=(const YKey &oth) {
         mKey = oth.mKey;

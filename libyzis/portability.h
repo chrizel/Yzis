@@ -21,6 +21,11 @@
 #ifndef PORTABILITY_H
 #define PORTABILITY_H
 
+/*
+ * IMPORTANT : please document which platform needs what you add (include,
+ * define, whatever..)
+ */
+
 #ifdef YZIS_WIN32_GCC
 // ooh, we are on windows with gcc
 
@@ -49,12 +54,11 @@
 
 #else
 // ahh, we are on unix
-#include <unistd.h>
- #include <dirent.h>
- #include <pwd.h>
-//#include "config.h"
+
+//#include <unistd.h>
+#include <pwd.h> // still needed for kate/*, which is bad
 #include "translator.h"
- #include <libintl.h>
+//#include <libintl.h>
 
 #define CHECK_GETEUID( v )  (v == geteuid())
 #endif

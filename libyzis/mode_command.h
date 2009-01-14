@@ -216,6 +216,9 @@ public:
     YCursor moveRightWrap(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
     YCursor moveDown(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
     YCursor moveUp(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
+    YCursor moveFromBottom(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
+    YCursor moveFromTop(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
+    YCursor moveToCenter(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
     YCursor moveWordForward(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
     YCursor moveSWordForward(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
     YCursor moveWordBackward(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);

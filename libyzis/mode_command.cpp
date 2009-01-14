@@ -118,6 +118,9 @@ void YModeCommand::initMotionPool()
     motions.append( new YMotion(YKeySequence("k"), &YModeCommand::moveUp,   ArgNone, MotionTypeLinewise) );
     motions.append( new YMotion(YKeySequence("h"), &YModeCommand::moveLeft, ArgNone) );
     motions.append( new YMotion(YKeySequence("l"), &YModeCommand::moveRight, ArgNone) );
+    motions.append( new YMotion(YKeySequence("L"), &YModeCommand::moveFromBottom, ArgNone));
+    motions.append( new YMotion(YKeySequence("H"), &YModeCommand::moveFromTop, ArgNone));
+    motions.append( new YMotion(YKeySequence("M"), &YModeCommand::moveToCenter, ArgNone));
     motions.append( new YMotion(YKeySequence("<BS>"), &YModeCommand::moveLeftWrap, ArgNone) );
     motions.append( new YMotion(YKeySequence("<SPACE>"), &YModeCommand::moveRightWrap, ArgNone) );
     motions.append( new YMotion(YKeySequence("f"), &YModeCommand::findNext, ArgChar, MotionTypeInclusive) );
@@ -450,7 +453,48 @@ YCursor YModeCommand::moveUp(const YMotionArgs &args, CmdState *state, MotionSti
     *state = CmdOk;
 	return args.view->viewCursorMoveVertical(-args.count).buffer();
 }
-
+YCursor YModeCommand::moveFromBottom(const YMotionArgs &args, CmdState *state, MotionStick* ms)
+{
+	if ( ms != NULL ) *ms = MotionNoStick;
+	    *state = CmdOk;
+	int line = args.view->bottomLine()-args.count+1;
+	//If args.count is too high, don't go after the first line of the view.
+	if (line < args.view->topLine()) {
+		line = args.view->topLine();
+	}
+	YCursor cursor = args.view->viewCursor().buffer();
+	cursor.setLine(line);
+	cursor.setColumn( args.view->buffer()->firstNonBlankChar(line) );
+	
+	YSession::self()->saveJumpPosition();
+	return cursor;
+}
+YCursor YModeCommand::moveFromTop(const YMotionArgs &args, CmdState *state, MotionStick* ms) 
+{
+	if ( ms != NULL ) *ms = MotionNoStick;
+	    *state = CmdOk;
+	int line = args.view->topLine()+args.count-1;
+	//If args.count is too high, don't go after the last line of the view.
+	if (line > args.view->bottomLine()) {
+		line = args.view->bottomLine();
+	}
+	YCursor cursor = args.view->viewCursor().buffer();
+	cursor.setLine(line);
+	cursor.setColumn( args.view->buffer()->firstNonBlankChar(line) );
+	YSession::self()->saveJumpPosition();
+	return cursor;
+}
+YCursor YModeCommand::moveToCenter(const YMotionArgs &args, CmdState *state, MotionStick* ms) 
+{
+	if ( ms != NULL ) *ms = MotionNoStick;
+	    *state = CmdOk;
+	int line = (args.view->topLine()+args.view->bottomLine())/2;
+	YCursor cursor = args.view->viewCursor().buffer();
+	cursor.setLine(line);
+	cursor.setColumn( args.view->buffer()->firstNonBlankChar(line) );
+	YSession::self()->saveJumpPosition();
+	return cursor;
+}
 YCursor YModeCommand::scrollPageUp(const YMotionArgs &args, CmdState *state, MotionStick* stick )
 {
 	if ( stick != NULL ) *stick = MotionNoStick;

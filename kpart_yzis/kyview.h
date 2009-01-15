@@ -28,7 +28,7 @@ class KYView : public QYView
 {
     Q_OBJECT
 public:
-    KYView( YBuffer* doc, QWidget* parent );
+    KYView( YBuffer* doc);
     virtual ~KYView();
 
 	virtual void guiUpdateFileName();

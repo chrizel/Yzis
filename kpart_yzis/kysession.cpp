@@ -49,7 +49,7 @@ void KYSession::createInstance()
 YView* KYSession::guiCreateView(YBuffer* buffer)
 {
     yzDebug() << "doCreateView( " << buffer->toString() << ")" << endl;
-    KYView* view = new KYView(buffer, 0);
+    KYView* view = new KYView(buffer);
     YASSERT_MSG(view, "KYSession::createView : failed creating a new KYView");
     return view;
 }

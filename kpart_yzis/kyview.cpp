@@ -26,7 +26,7 @@
 
 #define dbg() yzDebug("KYView")
 
-KYView::KYView( YBuffer* buffer, QWidget* parent )
+KYView::KYView( YBuffer* buffer)
         : QYView(buffer, KYSession::self())
 {
 }

@@ -75,7 +75,7 @@ void TestYDebugBackend::testParseArgv()
     QCOMPARE( dbe->debugLevel(), YZ_DEBUG_LEVEL );
     QCOMPARE( dbe->areaLevel("a"), YZ_DEBUG_LEVEL );
 
-    char * my_argv[10];
+    const char * my_argv [10];
     int my_argc;
 
     my_argv[0] = "some_program";

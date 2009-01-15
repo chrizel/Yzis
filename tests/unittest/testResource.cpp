@@ -127,9 +127,9 @@ void TestResource::init()
     QVERIFY( d.cd("yzishome" ) );
 
 #ifdef YZIS_WIN32_MSVC
-    QCOMPARE( _putenv( "YZISHOME=./yzishome"), 0 );
+    QCOMPARE( _putenv( (char*) "YZISHOME=./yzishome"), 0 );
 #else
-    QCOMPARE( putenv( "YZISHOME=./yzishome"), 0 );
+    QCOMPARE( putenv( (char*)"YZISHOME=./yzishome"), 0 );
 #endif
 
     mResMgr = new YResourceMgr();

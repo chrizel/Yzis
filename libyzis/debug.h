@@ -275,7 +275,7 @@ public:
       * The argument list is not modified. Internally, a QStringList
       * is build and the previous function is called
       */
-    void parseArgv(int argc, char * const * argv);
+    void parseArgv(int argc, const char * const * argv);
 
     /** Returns a string describing the YDebugBackend current configuration
       */

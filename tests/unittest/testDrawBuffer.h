@@ -1,6 +1,6 @@
 
 #ifndef TEST_DRAWBUFFER_H
-#define TEST_DRAWBUFFER_U
+#define TEST_DRAWBUFFER_H
 
 #include <QtTest/QtTest>
 
@@ -16,6 +16,5 @@ private slots:
 
 };
 
-#endif
-
+#endif // TEST_DRAWBUFFER_H
 

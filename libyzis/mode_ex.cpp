@@ -147,6 +147,7 @@ void YModeEx::leave( YView* view )
 CmdState YModeEx::execCommand( YView* view, const YKeySequence &inputs, 
                                YKeySequence::const_iterator &parsePos )
 {
+    Q_UNUSED(inputs);
     dbg() << "YModeEx::execCommand(" << view << ",..., " << parsePos << ")"
         << endl;
     YKey key = *parsePos;
@@ -508,6 +509,8 @@ int YModeEx::rangeVisual( const YExRangeArgs& args )
         else if ( args.arg.mid( 1 ) == ">" )
             return visual[ 0 ].toPos().y();
     }
+#else
+    Q_UNUSED(args);
 #endif
     return -1;
 }

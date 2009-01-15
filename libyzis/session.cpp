@@ -73,7 +73,7 @@ YSessionIface::~YSessionIface()
 
 YSession* YSession::mInstance = 0;
 
-void YSession::initDebug( int argc, char ** argv )
+void YSession::initDebug( int argc, char * const * argv )
 {
     // initDebug() must be run early in the creation process
     YDebugBackend::self()->parseRcfile( DEBUGRC_FNAME );

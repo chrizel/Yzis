@@ -572,7 +572,7 @@ YRawData YView::setSelection( yzis::SelectionType type, const YInterval& bufferI
  * Drawing engine
  */
 
-bool YView::isColumnVisible( int column, int ) const
+bool YView::isColumnVisible( int , int ) const
 {
 	/* TODO */
 	return true;

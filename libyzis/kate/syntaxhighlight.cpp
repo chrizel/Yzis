@@ -272,7 +272,7 @@ class YzisHlLineContinue : public YzisHlItem
 
     virtual bool endEnable(QChar c) {return c == '\0';}
     virtual int checkHgl(const QString& text, int offset, int len);
-    virtual bool lineContinue(){return true;}
+    virtual bool lineContinue() const {return true;}
 };
 
 class YzisHlCStringChar : public YzisHlItem

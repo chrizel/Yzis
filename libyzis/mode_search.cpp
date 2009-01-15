@@ -84,6 +84,7 @@ void YModeSearch::initModifierKeys()
 }
 CmdState YModeSearch::execCommand( YView* view, const YKeySequence& keys, YKeySequence::const_iterator &parsePos )
 {
+    Q_UNUSED(keys);
     //XXX YSelection* searchSelection = view->getSelectionPool()->search();
 
     if ( *parsePos == Qt::Key_Enter || *parsePos == Qt::Key_Return) {

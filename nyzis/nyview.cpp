@@ -131,7 +131,6 @@ void NYView::guiScroll( int dx, int dy )
 		wscrl( editor, dy );
 		scrollok( editor, false );
 
-		int left = 0;
 		int top = 0;
 		int n = qAbs(dy);
 		if ( dy > 0 ) {

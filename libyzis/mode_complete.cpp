@@ -147,6 +147,7 @@ void YModeCompletion::doComplete( YView* view, bool forward )
 CmdState YModeCompletion::execCommand( YView* view, const YKeySequence &keys, 
                                        YKeySequence::const_iterator &parsePos )
 {
+    Q_UNUSED(keys);
     bool initOK = true;
     YKey _key = *parsePos;
 

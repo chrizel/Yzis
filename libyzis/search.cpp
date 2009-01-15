@@ -228,9 +228,11 @@ void YSearch::highlightLine( YBuffer* buffer, int line )
             }
         } while ( found );
 
+        /*
         foreach( YView *view, views ) {
             //XXX view->getSelectionPool()->setSearch( searchMap );
         }
+        */
     }
 }
 
@@ -261,6 +263,9 @@ void YSearch::shiftHighlight( YBuffer* buffer, int fromLine, int shift )
 
         foreach( YView *view, views )
         d->highlightSearch( view, searchMap );
+#else
+    Q_UNUSED(fromLine);
+    Q_UNUSED(shift);
 #endif
     }
 }
@@ -277,6 +282,9 @@ void YSearch::Private::highlightSearch( YView *view, YSelectionMap searchMap )
         //  dbg() << "new search Map : " << *(vMap) << endl;
     }
     view->commitPaintEvent();
+#else
+    Q_UNUSED(view);
+    Q_UNUSED(searchMap);
 #endif
 }
 

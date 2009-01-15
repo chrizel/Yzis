@@ -313,6 +313,7 @@ YModeVisualBlock::~YModeVisualBlock()
 
 void YModeVisualBlock::cursorMoved( YView* mView )
 {
+    Q_UNUSED(mView);
 	//TODO
 }
 

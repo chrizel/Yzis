@@ -207,6 +207,8 @@ void YModeIntro::leave( YView* mView )
 }
 CmdState YModeIntro::execCommand( YView* mView, const YKeySequence &keys, YKeySequence::const_iterator &parsePos )
 {
+    Q_UNUSED(keys);
+    Q_UNUSED(parsePos);
     mView->modePool()->change( ModeCommand );
     return mView->modePool()->replayKey();
 }

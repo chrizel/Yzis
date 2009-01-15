@@ -158,7 +158,7 @@ public:
             * initDebug() should be called even before YSession() creation.
             *
       */
-    static void initDebug(int argc, char ** argv);
+    static void initDebug(int argc, char * const * argv);
 
     /** YZis singleton instance.
            *

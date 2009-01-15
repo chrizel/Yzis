@@ -105,12 +105,12 @@ QString QYView::guiGetCommandLineText() const
     return mCommandLine->text();
 }
 
-void QYView::focusInEvent( QFocusEvent * e )
+void QYView::focusInEvent( QFocusEvent * )
 {
     dbg() << "focusInEvent() for " << buffer()->fileNameShort() << endl;
 }
 
-void QYView::resizeEvent( QResizeEvent * e )
+void QYView::resizeEvent( QResizeEvent * )
 {
     dbg() << "resizeEvent() for " << buffer()->fileNameShort() << endl;
 }

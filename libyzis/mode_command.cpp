@@ -695,6 +695,7 @@ YCursor YModeCommand::gotoEOL(const YMotionArgs &args, CmdState *state, MotionSt
 
 YCursor YModeCommand::gotoStartOfDocument(const YMotionArgs &args, CmdState *state, MotionStick* )
 {
+    Q_UNUSED(args);
     *state = CmdOk;
 	return YCursor(0,0);
 }
@@ -1158,6 +1159,7 @@ YCursor YModeCommand::firstNonBlankPreviousLine( const YMotionArgs &args, CmdSta
 
 YCursor YModeCommand::gotoLine(const YMotionArgs &args, CmdState *state, MotionStick* stick)
 {
+    Q_UNUSED(stick);
     YViewCursor viewCursor = args.view->viewCursor();
     int line = 0;
     dbg() << "gotoLine," << args.count << endl;
@@ -1180,6 +1182,7 @@ YCursor YModeCommand::gotoLine(const YMotionArgs &args, CmdState *state, MotionS
 
 YCursor YModeCommand::gotoColumn(const YMotionArgs &args, CmdState *state, MotionStick* stick)
 {
+    Q_UNUSED(stick);
     int columnToGo=0;
     int lineToGo;
 

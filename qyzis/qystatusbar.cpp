@@ -36,7 +36,7 @@ void QYStatusBar::setMode(const QString& mode)
     m_mode->setText(mode);
 }
 
-void QYStatusBar::setFileName(const QString& filename)
+void QYStatusBar::setFileName(const QString& /*filename*/)
 {}
 
 void QYStatusBar::setFileInfo(bool isNew, bool isModified)

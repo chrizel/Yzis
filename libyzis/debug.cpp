@@ -249,7 +249,7 @@ void YDebugBackend::parseRcfile(const char * filename)
 }
 
 
-void YDebugBackend::parseArgv(int argc, char ** argv)
+void YDebugBackend::parseArgv(int argc, char * const * argv)
 {
     QStringList argvSl;
     for ( int i = 0; i < argc; i++) {

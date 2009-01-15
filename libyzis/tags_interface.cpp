@@ -238,7 +238,7 @@ bool tagJumpTo ( const QString &word )
 
     tagEntry entry;
     lastsearch = word.toUtf8();
-    int tagResult;
+    int tagResult = TagSuccess;
 
     // look through each tag file in order for the tag
     // if we find one, don't search the rest of the tag files

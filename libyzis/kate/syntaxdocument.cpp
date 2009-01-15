@@ -31,7 +31,7 @@
 #include "internal_options.h"
 #include "session.h"
 #include "resourcemgr.h"
-#include <dirent.h>
+
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <QDir>
@@ -391,22 +391,28 @@ static void lookupDirectory(const QString& path, const QString &relPart, const Q
   if (recursive || pattern.contains('?') || pattern.contains('*'))
   {
     // We look for a set of files.
-    DIR *dp = opendir( QFile::encodeName(path));
-    if (!dp)
+    //DIR *dp = opendir( QFile::encodeName(path));
+    //if (!dp)
+    QDir dir(QFile::encodeName(path));
+    if (!dir.exists()) 
       return;
 
 //    assert(path.at(path.length() - 1) == '/');
 
-    struct dirent *ep;
+    //struct dirent *ep;
     struct stat buff;
 
     QString _dot(".");
     QString _dotdot("..");
 
-    while( ( ep = readdir( dp ) ) != 0L )
+    //while( ( ep = readdir( dp ) ) != 0L )
+    QFileInfoList fileList = dir.entryInfoList();
+    for (int i = 0; i < fileList.size(); i++)
     {
-      QString fn( QFile::decodeName(ep->d_name));
+      //QString fn( QFile::decodeName(ep->d_name));
+      QString fn( fileList.at(i).fileName());
       if (fn == _dot || fn == _dotdot || fn.at(fn.length() - 1) == QChar( '~' ))
+
 	continue;
 
       if (!recursive && !regexp.exactMatch(fn))
@@ -432,7 +438,7 @@ static void lookupDirectory(const QString& path, const QString &relPart, const Q
         }
       }
     }
-    closedir( dp );
+    //closedir( dp );
   }
   else
   {
@@ -492,19 +498,24 @@ static void lookupPrefix(const QString& prefix, const QString& relpath, const QS
     if (path.contains('*') || path.contains('?')) {
 
 	QRegExp pathExp(path, Qt::CaseSensitive, QRegExp::Wildcard);
-	DIR *dp = opendir( QFile::encodeName(prefix) );
-	if (!dp) {
+	//DIR *dp = opendir( QFile::encodeName(prefix) );
+	//if (!dp) {
+    QDir dir(QFile::encodeName(prefix));
+    if (!dir.exists()) {
 	    return;
 	}
 
-	struct dirent *ep;
+	//struct dirent *ep;
 
         QString _dot(".");
         QString _dotdot("..");
 
-	while( ( ep = readdir( dp ) ) != 0L )
+	//while( ( ep = readdir( dp ) ) != 0L )
+    QFileInfoList fileList = dir.entryInfoList();
+    for (int i = 0; i < fileList.size(); i++)
 	    {
-		QString fn( QFile::decodeName(ep->d_name));
+		//QString fn( QFile::decodeName(ep->d_name));
+        QString fn( fileList.at(i).fileName());
 		if (fn == _dot || fn == _dotdot || fn.at(fn.length() - 1) == '~')
 		    continue;
 
@@ -519,7 +530,7 @@ static void lookupPrefix(const QString& prefix, const QString& relpath, const QS
 		    lookupPrefix(fn + '/', rest, rfn + '/', regexp, list, relList, recursive, unique);
 	    }
 
-	closedir( dp );
+	//closedir( dp );
     } else {
         // Don't stat, if the dir doesn't exist we will find out
         // when we try to open it.

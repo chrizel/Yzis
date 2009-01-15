@@ -35,6 +35,14 @@ target_link_libraries(yzis_unittest
 
 install(TARGETS yzis_unittest DESTINATION bin)
 
+if (MINGW)
+    SET(CMAKE_EXE_LINKER_FLAGS 
+        "-Wl,-enable-stdcall-fixup -Wl,-enable-auto-import -Wl,-enable-runtime-pseudo-reloc " 
+        ${CMAKE_EXE_LINKER_FLAGS}
+        )
+endif(MINGW)
+
+
 add_test(yzis_unittest_TestDebug    yzis_unittest TestDebug )
 add_test(yzis_unittest_TestResource yzis_unittest TestResource )
 add_test(yzis_unittest_TestColor    yzis_unittest TestColor )

@@ -37,6 +37,10 @@ if (MINGW)
                             < ${CMAKE_CURRENT_SOURCE_DIR}/qyzis_ico.rc
                         )
     SET( qyzis_SRCS ${qyzis_SRCS} ${CMAKE_CURRENT_BINARY_DIR}/qyzis_ico.obj )
+    SET(CMAKE_EXE_LINKER_FLAGS 
+        "-Wl,-enable-stdcall-fixup -Wl,-enable-auto-import -Wl,-enable-runtime-pseudo-reloc " 
+        ${CMAKE_EXE_LINKER_FLAGS}
+        )
 endif(MINGW)
 
 if (WIN32)

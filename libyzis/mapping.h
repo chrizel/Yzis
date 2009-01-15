@@ -29,7 +29,7 @@
 class YZMapping
 {
 public:
-    virtual ~YZMapping();
+    ~YZMapping();
 
     static YZMapping *self();
 

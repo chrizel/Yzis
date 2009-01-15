@@ -60,7 +60,6 @@ public:
     {
         setNamedColor( name );
     }
-    virtual ~YColor();
 
     void setRgb( QRgb );
     /**

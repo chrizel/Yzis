@@ -42,9 +42,6 @@ YDrawBuffer::YDrawBuffer( const YView* view, int columns, int lines ) :
 	setScreenSize(columns, lines);
 	mContent << (YDrawSection() << YDrawLine());
 }
-YDrawBuffer::~YDrawBuffer()
-{
-}
 
 void YDrawBuffer::setScreenSize( int columns, int lines ) 
 {

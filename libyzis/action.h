@@ -47,7 +47,7 @@ class YZIS_EXPORT YZAction
 
 public:
     YZAction( YBuffer* buffer );
-    virtual ~YZAction( );
+    ~YZAction();
 
     // YCursor versions
     void insertChar( YView* pView, const YCursor pos, const QString& text );

@@ -24,8 +24,6 @@
 
 YFont::YFont()
 {}
-YFont::~YFont()
-{}
 
 void YFont::setWeight( int weight )
 {

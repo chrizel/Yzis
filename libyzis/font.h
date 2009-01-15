@@ -40,7 +40,6 @@ public :
     };
 
     YFont();
-    virtual ~YFont();
 
     void setWeight( int weight );
     void setItalic( bool enable );

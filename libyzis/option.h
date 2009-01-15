@@ -81,7 +81,7 @@ public :
     YOptionValue( const YOptionValue& ov );
 
     /** Destructor */
-    virtual ~YOptionValue();
+    ~YOptionValue();
 
     /** Assign option value from a boolean \p value */
     void setBoolean( bool value );

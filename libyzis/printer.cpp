@@ -48,9 +48,6 @@ YZPrinter::YZPrinter( YView *view ) /*: QPrinter(QPrinter::PrinterResolution) */
     setColorMode( QPrinter::Color );*/
 }
 
-YZPrinter::~YZPrinter( )
-{}
-
 void YZPrinter::printToFile( const QString& path )
 {
     /*setOutputToFile( true );

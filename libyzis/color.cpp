@@ -253,8 +253,6 @@ YColor::YColor( Qt::GlobalColor color )
 
     setRgb( global_colors[color] );
 }
-YColor::~YColor()
-{}
 
 void YColor::invalidate()
 {

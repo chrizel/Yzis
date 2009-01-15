@@ -81,7 +81,6 @@ class YZIS_EXPORT YDrawBuffer
 public:
 
     YDrawBuffer( const YView* view, int columns, int height );
-    virtual ~YDrawBuffer();
 
 	/*
 	 * Returns the buffer line number corresponding to

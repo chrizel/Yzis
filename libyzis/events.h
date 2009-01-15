@@ -36,7 +36,7 @@ public:
      * Default constructor
      */
     YEvents();
-    virtual ~YEvents();
+    ~YEvents();
 
     /**
      * Connect a Lua function to a specific event

@@ -243,17 +243,17 @@ endwhile:
         switch (*sig++) {
         case 'd' :
             if (!lua_isnumber(L, nres))
-                ; //error
+                (void)0; //error
             *va_arg(vl, double*) = lua_tonumber(L, nres);
             break;
         case 'i' :
             if (!lua_isnumber(L, nres))
-                ; //error
+                (void)0; //error
             *va_arg(vl, int*) = (int)lua_tonumber(L, nres);
             break;
         case 's' :
             if (!lua_isstring(L, nres))
-                ; //error
+                (void)0; //error
             *va_arg(vl, const char**) = lua_tostring(L, nres);
             break;
         default:

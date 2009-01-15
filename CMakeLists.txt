@@ -36,12 +36,10 @@ include(MacroAdditionalCleanFiles)
 set( CCMAKE_CXX_FLAGS_RELEASE "-O3" )
 set( CCMAKE_C_FLAGS_RELEASE "-O3" )
 
-set( CMAKE_CXX_FLAGS_DEBUG "-g3 -Wall -DDEBUG" )
-set( CMAKE_C_FLAGS_DEBUG "-g3 -Wall -DDEBUG" )
-
 ########################## options for compilation
 #
 if (WIN32)
+    # on windows, we default to off
     option(ENABLE_NYZIS "enable nyzis compilation" OFF)
 else(WIN32)
     option(ENABLE_NYZIS "enable nyzis compilation" ON)
@@ -58,29 +56,41 @@ option(GENERATE_DOC "Generate doxygen documentation during build" OFF)
 
 option(ENABLE_SAFE_MODE "prevent yzis from crashing when some bugs occured" ON)
 
-########################## platform specific stuff
-#
-if (WIN32)
-    add_definitions("-DYZIS_WIN32_GCC")
-    find_package(GNUWIN32)
-    link_libraries(imm32 winmm)  # missing by default :/
-endif(WIN32)
-
-#if(WIN32 AND CMAKE_COMPILER_IS_GNUCXX)
-#  set(CMAKE_CXX_FLAGS "-static-libgcc ${CMAKE_CXX_FLAGS}")
-#  link_directories(${CMAKE_BINARY_DIR}/staticlibs) # override dynamic libs
-#endif(WIN32 AND CMAKE_COMPILER_IS_GNUCXX)
 
 find_package(Magic REQUIRED)
 find_package(Gettext REQUIRED)
 
+
+#
+# platform specific settings
+#
+
+if (NOT MSVC)
+    # actually means that we are using gcc
+    set( CMAKE_CXX_FLAGS_DEBUG "-g3 -Wall -DDEBUG" )
+    set( CMAKE_C_FLAGS_DEBUG "-g3 -Wall -DDEBUG" )
+endif (NOT MSVC)
+
+if (MINGW)
+    add_definitions("-DYZIS_WIN32_GCC")
+    find_package(GNUWIN32)
+    link_libraries(imm32 winmm)  # missing by default :/
+endif(MINGW)
+
+if (MSVC)
+    set( CMAKE_CXX_FLAGS_DEBUG "-DDEBUG -DYZIS_FULL_TEMPLATE_EXPORT_INSTANTIATION -DDONT_HAVE_SYS_STAT_H -D_CRT_SECURE_NO_WARNINGS" )
+    set( CMAKE_C_FLAGS_DEBUG "-DDEBUG -DYZIS_FULL_TEMPLATE_EXPORT_INSTANTIATION -DDONT_HAVE_SYS_STAT_H -D_CRT_SECURE_NO_WARNINGS" )
+    add_definitions("-DYZIS_WIN32_MSVC")
+endif (MSVC)
+
 if (UNIX)
     find_package(X11 REQUIRED)
+    add_definitions("-DYZIS_UNIX")
 endif (UNIX)
 
-
 if (APPLE) # XXX: workaround intl for Mac OSX
-	set(GETTEXT_LIBRARIES ${LIBINTL_LIBRARY})
+    set(GETTEXT_LIBRARIES ${LIBINTL_LIBRARY})
+    add_definitions("-DYZIS_APPLE")
 endif(APPLE)
 
 ### lua

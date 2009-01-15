@@ -21,6 +21,11 @@
 #ifndef PORTABILITY_H
 #define PORTABILITY_H
 
+/*
+ * IMPORTANT : please document which platform needs what you add (include,
+ * define, whatever..)
+ */
+
 #ifdef YZIS_WIN32
  // we are on windows with gcc or msvc
 
@@ -37,12 +42,8 @@
 
 #if defined (YZIS_UNIX) || defined (YZIS_APPLE)
  // we are on unix (or mac?)
- #include <unistd.h>
- #include <dirent.h>
- #include <pwd.h>
- //#include "config.h"
+ #include <pwd.h> // still needed for kate/*, which is bad
  #include "translator.h"
- #include <libintl.h>
 
  #define CHECK_GETEUID( v )  (v == geteuid())
 #endif /* YZIS_UNIX || YZIS_APPLE */
@@ -97,8 +98,6 @@
  #define YZIS_DUMMY_COMPARISON_OPERATOR(C)
  #define YZIS_DUMMY_QHASH_FUNCTION(C)
 #endif /* YZIS_WIN32_MSVC */
-
-
 
 #endif // PORTABILITY_H
 

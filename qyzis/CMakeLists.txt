@@ -37,7 +37,7 @@ qt4_wrap_ui(qyzis_SRCS ${qyzis_UI})
 qt4_wrap_cpp(qyzis_MOC_SRCS ${qyzis_MOC})
 qt4_add_resources(qyzis_RESOURCES qyzis.qrc)
 
-if (WIN32)
+if (MINGW)
     # resource compilation for MinGW
     ADD_CUSTOM_COMMAND( OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/qyzis_ico.obj
                         COMMAND windres.exe 
@@ -46,12 +46,16 @@ if (WIN32)
                             < ${CMAKE_CURRENT_SOURCE_DIR}/qyzis_ico.rc
                         )
     SET( qyzis_SRCS ${qyzis_SRCS} ${CMAKE_CURRENT_BINARY_DIR}/qyzis_ico.obj )
-endif (WIN32)
+endif(MINGW)
 
 if (WIN32)
+    # common to windows msvc/mingw32
     add_executable(qyzis ${qyzis_SRCS} ${qyzis_MOC_SRCS} ${qyzis_RESOURCES} ${qyzis_UI_SRCS} )
     install(TARGETS qyzis DESTINATION bin)
-    set_target_properties(qyzis PROPERTIES LINK_FLAGS "-mwindows")
+    if (MINGW)
+        # specific to mingw32
+        set_target_properties(qyzis PROPERTIES LINK_FLAGS "-mwindows")
+    endif (MINGW)
 endif (WIN32)
 
 if (UNIX)

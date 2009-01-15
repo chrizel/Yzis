@@ -13,5 +13,5 @@ private slots:
 
 };
 
-#endif
+#endif // TEST_BUFFERCHANGES_H
 

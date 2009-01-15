@@ -15,11 +15,7 @@ set(libyzisrunner_SRCS
    main.cpp
 )
 
-set(libyzisrunner_MOC
-    NoGuiSession.h
-)
-
-qt4_wrap_cpp(libyzisrunner_MOC_SRCS ${libyzisrunner_MOC})
+qt4_automoc(${libyzisrunner_SRCS})
 
 if(MINGW)
     set(CMAKE_EXE_LINKER_FLAGS 
@@ -32,10 +28,10 @@ if (APPLE)
 	# Mac OSX Bundle
 	set(MACOSX_BUNDLE_BUNDLE_NAME libyzisrunner)
 	set(MACOSX_BUNDLE_ICON_FILE libyzisrunner.icns)
-	add_executable(libyzisrunner MACOSX_BUNDLE ${libyzisrunner_SRCS} ${libyzisrunner_MOC_SRCS})
+	add_executable(libyzisrunner MACOSX_BUNDLE ${libyzisrunner_SRCS})
 	install(TARGETS libyzisrunner DESTINATION ${APPLE_APPLICATION_DIR})
 else (APPLE)
-	add_executable(libyzisrunner ${libyzisrunner_SRCS} ${libyzisrunner_MOC_SRCS} )
+	add_executable(libyzisrunner ${libyzisrunner_SRCS} )
 	install(TARGETS libyzisrunner DESTINATION bin)
 endif (APPLE)
 

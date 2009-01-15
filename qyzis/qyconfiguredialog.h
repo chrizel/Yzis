@@ -16,6 +16,8 @@
 *  Boston, MA 02110-1301, USA.
 */
 
+#ifndef QYCONFIGUREDIAGLOG_H
+#define QYCONFIGUREDIAGLOG_H
 
 #include <QDialog>
 
@@ -29,4 +31,4 @@ public :
     QYConfigureDialog( QWidget* parent = 0 );
 };
 
-
+#endif // QYCONFIGUREDIAGLOG_H

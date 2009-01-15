@@ -84,3 +84,5 @@ void QYCommandLine::focusOutEvent (QFocusEvent *e)
     QLineEdit::focusOutEvent(e);
 }
 
+#include "qycommandline.moc"
+

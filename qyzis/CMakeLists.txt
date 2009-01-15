@@ -23,18 +23,9 @@ set(qyzis_SRCS
    qyview.cpp 
 )
 
-set(qyzis_MOC
-   qycommandline.h
-   qyconfiguredialog.h
-   qycursor.h
-   qyedit.h
-   qylinenumbers.h
-   qysession.h
-   qyview.h
-)
 
+qt4_automoc(${qyzis_SRCS})
 qt4_wrap_ui(qyzis_SRCS ${qyzis_UI})
-qt4_wrap_cpp(qyzis_MOC_SRCS ${qyzis_MOC})
 qt4_add_resources(qyzis_RESOURCES qyzis.qrc)
 
 if (MINGW)
@@ -50,7 +41,7 @@ endif(MINGW)
 
 if (WIN32)
     # common to windows msvc/mingw32
-    add_executable(qyzis ${qyzis_SRCS} ${qyzis_MOC_SRCS} ${qyzis_RESOURCES} ${qyzis_UI_SRCS} )
+    add_executable(qyzis ${qyzis_SRCS} ${qyzis_RESOURCES} ${qyzis_UI_SRCS} )
     install(TARGETS qyzis DESTINATION bin)
     if (MINGW)
         # specific to mingw32
@@ -59,7 +50,7 @@ if (WIN32)
 endif (WIN32)
 
 if (UNIX)
-    add_executable(qyzis ${qyzis_SRCS} ${qyzis_MOC_SRCS} ${qyzis_RESOURCES} ${qyzis_UI_SRCS} )
+    add_executable(qyzis ${qyzis_SRCS} ${qyzis_RESOURCES} ${qyzis_UI_SRCS} )
     install(TARGETS qyzis DESTINATION bin)
 endif (UNIX)
 
@@ -67,7 +58,7 @@ if(APPLE)
 	# Mac OSX Bundle
 	set(MACOSX_BUNDLE_BUNDLE_NAME QYzis)
 	set(MACOSX_BUNDLE_ICON_FILE qyzis.icns)
-	add_executable(qyzis MACOSX_BUNDLE ${qyzis_SRCS} ${qyzis_MOC_SRCS})
+	add_executable(qyzis MACOSX_BUNDLE ${qyzis_SRCS})
 	install(TARGETS qyzis DESTINATION ${APPLE_APPLICATION_DIR})
 endif (APPLE)
 

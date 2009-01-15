@@ -336,3 +336,6 @@ void TestResource::testWConfigFile()
     QCOMPARE( resource, expected );
 
 }
+
+#include "testResource.moc"
+

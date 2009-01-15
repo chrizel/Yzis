@@ -149,3 +149,5 @@ void TestDrawBuffer::testDrawBufferEmpty()
 	QVERIFY(!it.isValid());
 }
 
+#include "testDrawBuffer.moc"
+

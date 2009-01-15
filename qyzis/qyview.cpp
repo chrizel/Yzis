@@ -335,4 +335,5 @@ void QYView::scrollView( int value )
     }
 }
 
+#include "qyview.moc"
 

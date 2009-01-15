@@ -10,19 +10,9 @@ set(yzis_unittest_SRCS
 	testDrawBuffer.cpp
 )
 
-# files needing moc
-set(yzis_unittest_MOCS 
-   testDebug.h
-   testColor.h
-   testResource.h
-   testBufferChanges.h
-   testDrawCell.h
-	testDrawBuffer.h
-)
+qt4_automoc(${yzis_unittest_SRCS})
 
-qt4_wrap_cpp(yzis_unittest_MOC_SRCS ${yzis_unittest_MOCS})
-
-add_executable(yzis_unittest ${yzis_unittest_SRCS} ${yzis_unittest_MOC_SRCS} )
+add_executable(yzis_unittest ${yzis_unittest_SRCS})
 
 include_directories( 
     ${CMAKE_BINARY_DIR} 

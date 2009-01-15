@@ -162,3 +162,6 @@ YDebugStream& operator<<( YDebugStream& out, const QYCursor::CursorShape & shape
     }
     return out;
 }
+
+#include "qycursor.moc"
+

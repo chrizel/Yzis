@@ -428,3 +428,5 @@ void NYSession::initialiseKeycodes()
      keycodes[ KEY_MAX ] = ;*/
 }
 
+#include "nysession.moc"
+

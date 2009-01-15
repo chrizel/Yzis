@@ -43,3 +43,5 @@ void TestColor::subTestColor( const QString& name,
     CHECK_VALIDITY()
 }
 
+#include "testColor.moc"
+

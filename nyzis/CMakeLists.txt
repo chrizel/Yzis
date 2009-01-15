@@ -12,10 +12,9 @@ set(nyzis_SRCS
    nyview.cpp
    nystatusbar.cpp
 )
-set(nyzis_MOC nysession.h)
 
-qt4_wrap_cpp( nyzis_MOC_SRCS ${nyzis_MOC} )
-add_executable(nyzis ${nyzis_SRCS} ${nyzis_MOC_SRCS} )
+qt4_automoc(${nyzis_SRCS})
+add_executable(nyzis ${nyzis_SRCS})
 target_link_libraries(nyzis ${NCURSES_LIBRARIES} ${QT_QTCORE_LIBRARY} yzis )
 
 if (ENABLE_X_IN_NYZIS)

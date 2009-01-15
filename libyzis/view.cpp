@@ -580,7 +580,7 @@ bool YView::isColumnVisible( int column, int ) const
 bool YView::isLineVisible( int l ) const
 {
 	/* screen line */
-	return l >= 0 and l < mDrawBuffer.screenHeight();
+	return l >= 0 && l < mDrawBuffer.screenHeight();
 }
 
 const YColor& YView::drawColor ( int col, int line ) const

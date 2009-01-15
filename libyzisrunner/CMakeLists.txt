@@ -17,13 +17,6 @@ set(libyzisrunner_SRCS
 
 qt4_automoc(${libyzisrunner_SRCS})
 
-if(MINGW)
-    set(CMAKE_EXE_LINKER_FLAGS 
-        "-Wl,-enable-stdcall-fixup -Wl,-enable-auto-import -Wl,-enable-runtime-pseudo-reloc " 
-        ${CMAKE_EXE_LINKER_FLAGS}
-        )
-endif(MINGW)
-
 if (APPLE)
 	# Mac OSX Bundle
 	set(MACOSX_BUNDLE_BUNDLE_NAME libyzisrunner)

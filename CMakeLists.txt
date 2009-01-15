@@ -78,6 +78,10 @@ if (MINGW)
     add_definitions("-DYZIS_WIN32_GCC")
     find_package(GNUWIN32)
     link_libraries(imm32 winmm)  # missing by default :/
+    SET(CMAKE_EXE_LINKER_FLAGS 
+        "-Wl,-enable-stdcall-fixup -Wl,-enable-auto-import -Wl,-enable-runtime-pseudo-reloc " 
+        ${CMAKE_EXE_LINKER_FLAGS}
+        )
 endif(MINGW)
 
 if (MSVC)

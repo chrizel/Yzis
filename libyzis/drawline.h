@@ -21,6 +21,7 @@
 #define DRAWLINE_H
 
 #include <QList>
+#include <QVector>
 
 #include "yzis.h"
 #include "color.h"
@@ -64,7 +65,7 @@ private:
 
 	friend class YDrawBuffer;
 	friend class YDrawBufferIterator;
-    friend YDebugStream& operator<< ( YDebugStream& out, const YDrawLine& dl );
+    friend YZIS_EXPORT YDebugStream& operator<< ( YDebugStream& out, const YDrawLine& dl );
 };
 extern YZIS_EXPORT YDebugStream& operator<< ( YDebugStream& out, const YDrawLine& dl );
 

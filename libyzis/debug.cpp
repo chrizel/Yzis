@@ -32,7 +32,11 @@
 /* Std */
 #include <ctype.h>
 #include <stdarg.h>
-#include <strings.h>
+#ifdef YZIS_WIN32_MSVC
+# include <string.h>
+#else
+# include <strings.h>
+#endif
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/stat.h>
@@ -163,7 +167,7 @@ void YDebugBackend::setDebugOutputTemp()
 {
 	closeOutput();
 
-#ifndef YZIS_WIN32_GCC
+#ifndef YZIS_WIN32
 	QString tmpname = "yzis-"+QString(getpwuid(geteuid())->pw_name)+"-XXXXXX.log";
 #else
 	QString tmpname = "yzis-XXXXXX.log";

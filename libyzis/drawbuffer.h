@@ -307,7 +307,7 @@ private :
 	
 	const YView* mView;
 
-    friend YDebugStream& operator<< ( YDebugStream& out, const YDrawBuffer& buff );
+    friend YZIS_EXPORT YDebugStream& operator<< ( YDebugStream& out, const YDrawBuffer& buff );
 
 };
 

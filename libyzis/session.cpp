@@ -136,7 +136,7 @@ void YSession::init()
 void YSession::initLanguage()
 {
     setlocale( LC_ALL, "");
-#ifndef YZIS_WIN32_GCC
+#ifndef YZIS_WIN32
     bindtextdomain( "yzis", QString("%1%2").arg( PREFIX ).arg("/share/locale").toUtf8().data() );
     bind_textdomain_codeset( "yzis", "UTF-8" );
     textdomain( "yzis" );

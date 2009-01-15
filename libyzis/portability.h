@@ -21,42 +21,84 @@
 #ifndef PORTABILITY_H
 #define PORTABILITY_H
 
-#ifdef YZIS_WIN32_GCC
-// ooh, we are on windows with gcc
+#ifdef YZIS_WIN32
+ // we are on windows with gcc or msvc
 
-#include <libintl.h>
-// GnuWin32 uses libintl 0.14 which redefines sprintf and printf
-// but this conflicts with our use of QString::sprintf()
-#undef sprintf
+ #include <libintl.h>
+ // libintl redefines sprintf and printf
+ // but this conflicts with our use of QString::sprintf()
+ #undef sprintf
  #undef printf
 
-/*
- // emulate chmod
- #define chmod( fname , flag )
- #define S_IRUSR 0 
- #define S_IWUSR 0
- 
- // emulate lstat
- #define lstat stat
- 
- // make stat work
- #define S_ISLNK( v )  (0)
- #define S_ISREG( v )  (v & _S_IFREG)
-*/
+ // make geteuid work
+ #define CHECK_GETEUID( v )  (1)
 
-// make geteuid work
-#define CHECK_GETEUID( v )  (1)
+#endif /* YZIS_WIN32 */
 
-#else
-// ahh, we are on unix
-#include <unistd.h>
+#if defined (YZIS_UNIX) || defined (YZIS_APPLE)
+ // we are on unix (or mac?)
+ #include <unistd.h>
  #include <dirent.h>
  #include <pwd.h>
-//#include "config.h"
-#include "translator.h"
+ //#include "config.h"
+ #include "translator.h"
  #include <libintl.h>
 
-#define CHECK_GETEUID( v )  (v == geteuid())
-#endif
+ #define CHECK_GETEUID( v )  (v == geteuid())
+#endif /* YZIS_UNIX || YZIS_APPLE */
+
+
+#ifdef YZIS_WIN32_MSVC
+  // windows msvc
+
+ #ifndef S_ISREG
+   #define S_ISREG(x) (((x) & S_IFMT) == S_IFREG)
+ #endif
+
+ #ifndef S_ISDIR
+   #define S_ISDIR(m)  (((m)& S_IFMT) == S_IFDIR)
+ #endif
+
+ #ifndef S_IRUSR
+   #if S_IREAD
+     #define S_IRUSR S_IREAD
+   #else
+     #define S_IRUSR 00400
+   #endif
+ #endif
+
+ #ifndef S_IWUSR
+   #if S_IWRITE
+     #define S_IWUSR S_IWRITE
+   #else
+     #define S_IWUSR 00200
+   #endif
+ #endif
+
+#endif /* YZIS_WIN32_MSVC */
+
+/* For an explanation of where this YZIS_FULL_TEMPLATE_EXPORT_INSTANTIATION
+ * stuff comes from, see:
+ * http://websvn.kde.org/trunk/KDE/kdelibs/kdemacros.h.in?view=markup&pathrev=505607
+ * http://lists.trolltech.com/qt-interest/2006-02/thread00180-0.html
+ */
+#ifdef YZIS_WIN32_MSVC
+ #define YZIS_DUMMY_COMPARISON_OPERATOR(C) \
+    bool operator==(const C&) const { \
+        qWarning(#C"::operator==(const "#C"&) was called"); \
+        return false; \
+    }
+ #define YZIS_DUMMY_QHASH_FUNCTION(C) \
+    inline uint qHash(const C) { \
+        qWarning("inline uint qHash(const "#C") was called"); \
+        return 0; \
+    }
+#else /* YZIS_WIN32_MSVC */
+ #define YZIS_DUMMY_COMPARISON_OPERATOR(C)
+ #define YZIS_DUMMY_QHASH_FUNCTION(C)
+#endif /* YZIS_WIN32_MSVC */
+
+
 
 #endif // PORTABILITY_H
+

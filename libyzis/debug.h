@@ -581,7 +581,11 @@ YZIS_EXPORT YDebugStream yzFatal( const char * area = "" );
   * In the example, the function name will be the same, but the line number
   * will help to distinguish between the two calls.
   */
-#define HERE() qp(QString("%1:%2 ").arg(__PRETTY_FUNCTION__).arg(__LINE__))
+#ifdef YZIS_WIN32_MSVC
+# define HERE() qp(QString("%1:%2 ").arg(__FUNCDNAME__).arg(__LINE__))
+#else
+# define HERE() qp(QString("%1:%2 ").arg(__PRETTY_FUNCTION__).arg(__LINE__))
+#endif
 
 /** Returns a string composed of the filename, a colon and the current line
   * number of the execution. Quite convenient when debugging:

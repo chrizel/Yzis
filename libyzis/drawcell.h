@@ -20,8 +20,11 @@
 #ifndef DRAWCELL_H
 #define DRAWCELL_H
 
+#include "portability.h"
+
 /* Qt */
 #include <QList>
+#include <QSet>
 
 /* Yzis */
 #include "yzis.h"
@@ -66,6 +69,8 @@ public:
 	YDrawCell left_steps( int steps ) const;
 	YDrawCell mid_steps( int steps ) const;
 
+    YZIS_DUMMY_COMPARISON_OPERATOR(YDrawCell)
+
 private:
 	int mSelections;
 	YColor mColorForeground;
@@ -75,5 +80,7 @@ private:
 	QList<int> mSteps;
 	int mStepsShift;
 };
+
+YZIS_DUMMY_QHASH_FUNCTION(YDrawCell)
 
 #endif

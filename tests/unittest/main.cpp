@@ -17,7 +17,11 @@ void toArgvArray( QStringList l, char ** argv, int * argc )
 {
     *argc = 0;
     foreach( QString s, l ) {
+#ifdef YZIS_WIN32_MSVC
+        argv[(*argc)++] = _strdup( qPrintable(s) );
+#else
         argv[(*argc)++] = strdup( qPrintable(s) );
+#endif
     }
 }
 

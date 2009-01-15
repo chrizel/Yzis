@@ -46,8 +46,6 @@
 /* Qt */
 #include <QTextCodec>
 
-#include <libintl.h>
-
 #define dbg()    yzDebug("YBuffer")
 #define err()    yzError("YBuffer")
 
@@ -1029,7 +1027,7 @@ QString YBuffer::tildeExpand( const QString& path )
         if ( path[1] == '/' || path.length() == 1 ) {
             ret = QDir::homePath() + path.mid( 1 );
         }
-#ifndef YZIS_WIN32_GCC
+#ifndef YZIS_WIN32
         else {
             int pos = path.indexOf('/');
             if ( pos < 0 ) // eg: ~username (without /)

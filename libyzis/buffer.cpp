@@ -460,6 +460,16 @@ int YBuffer::firstNonBlankChar( int line ) const
     return i;
 }
 
+int YBuffer::lastNonBlankChar( int line) const
+{
+	QString s = textline(line);
+	if ( s.isEmpty() ) return 0;
+	int i = s.length()-1;
+	while (i > 0 && s.at(i).isSpace()) 
+			i--;
+	return i;
+}
+
 // ------------------------------------------------------------------------
 //                            File Operations
 // ------------------------------------------------------------------------

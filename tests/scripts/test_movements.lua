@@ -339,6 +339,18 @@ TestMovements = {} --class
 	    assertPos( 3, 9 )
 	    sendkeys("5b")
 	    assertPos( 2, 13 )
+
+		-- test g_ (go to last non-blank char)
+		clearBuffer()
+		sendkeys("itest for g_ with spaces after      <ESC>")
+		sendkeys("o<ESC>")
+		sendkeys("ggg_")
+		assertPos(1,29)
+		sendkeys("$g_")
+		assertPos(1,29)
+		sendkeys("jg_")
+		assertPos(2,1)    
+
 	    --cleanup
 		clearBuffer()
 	    set("startofline&")
@@ -405,6 +417,7 @@ TestMovements = {} --class
 	    assertPos( 1, 1 )
 	    sendkeys("ge")
 	    assertPos( 1, 1 )
+
 	end
 
 --[[

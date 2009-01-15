@@ -199,6 +199,11 @@ public:
      */
     int firstNonBlankChar( int line ) const;
 
+    /** 
+     * Return the column of the last non-blank character in the line
+     */
+    int lastNonBlankChar( int line) const;
+
     //-------------------------------------------------------
     // ----------------- Buffer content
     //-------------------------------------------------------

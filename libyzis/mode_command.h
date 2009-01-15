@@ -238,6 +238,7 @@ public:
     YCursor repeatFind(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
     YCursor matchPair(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
     YCursor firstNonBlank(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
+    YCursor lastNonBlank(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
     YCursor gotoMark(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
     YCursor firstNonBlankNextLine(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);
     YCursor firstNonBlankPreviousLine(const YMotionArgs &args, CmdState *state, MotionStick* ms = NULL);

@@ -114,6 +114,7 @@ void YModeCommand::initMotionPool()
     motions.append( new YMotion(YKeySequence("E"), &YModeCommand::moveSWordEndForward, ArgNone, MotionTypeInclusive) );
     motions.append( new YMotion(YKeySequence("ge"), &YModeCommand::moveWordEndBackward, ArgNone) );
     motions.append( new YMotion(YKeySequence("gE"), &YModeCommand::moveSWordEndBackward, ArgNone) );
+    motions.append( new YMotion(YKeySequence("g_"), &YModeCommand::lastNonBlank, ArgNone) );
     motions.append( new YMotion(YKeySequence("j"), &YModeCommand::moveDown, ArgNone, MotionTypeLinewise) );
     motions.append( new YMotion(YKeySequence("k"), &YModeCommand::moveUp,   ArgNone, MotionTypeLinewise) );
     motions.append( new YMotion(YKeySequence("h"), &YModeCommand::moveLeft, ArgNone) );
@@ -1115,6 +1116,13 @@ YCursor YModeCommand::moveSWordEndBackward(const YMotionArgs &args, CmdState *st
         args.view->gotoLinePositionAndStick( result );
 
     return result;
+}
+
+YCursor YModeCommand::lastNonBlank(const YMotionArgs &args, CmdState *state, MotionStick* )
+{
+    *state = CmdOk;
+	int line = args.view->viewCursor().line();
+	return YCursor(args.view->buffer()->lastNonBlankChar(line), line);
 }
 
 YCursor YModeCommand::firstNonBlank(const YMotionArgs &args, CmdState *state, MotionStick* )

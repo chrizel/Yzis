@@ -93,6 +93,11 @@ YKey::YKey(int key, Qt::KeyboardModifiers modifiers, const QString & text )
     , mModifiers(modifiers)
 {
     initKeyTable();
+#if 1
+    // TODO : should be removed, hackish
+    if (mKey <= 0xffff && mKey >= 0) // is unicode ?
+        mModifiers &= ~Qt::ShiftModifier;
+#endif
 }
 
 

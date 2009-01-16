@@ -45,7 +45,11 @@ public:
 
     // dont use operator QChar() here, i want an explicit cast only
     QChar getChar(void) const {  return (mText.size()==1)?mText.at(0):QChar();}
-    void setKey(Qt::Key key) { mKey = key; mText=QChar(key);}
+    void setKey(int key) { mKey = key; mText=QChar(key);}
+#if 1
+    // should be removed
+    void setKey(QChar ch) { mKey = (Qt::Key) ch.unicode(); mText = ch; mModifiers &= ~Qt::ShiftModifier; }
+#endif
 
     // getters
     int key() const { return mKey; }
@@ -60,6 +64,8 @@ public:
     }
 
     bool operator==(const YKey &oth) const {
+        return (mKey == oth.mKey) && (mModifiers == oth.mModifiers);
+        // TODO : should be, but doesn't work yet
         return (mKey == oth.mKey) && (mText == oth.mText) && (mModifiers == oth.mModifiers);
     }
     bool operator!=(const YKey &oth) const { return !operator==(oth); }

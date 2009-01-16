@@ -215,7 +215,16 @@ void QYEdit::keyPressEvent ( QKeyEvent * e )
 			e->ignore();
             return;
     }*/
+    // TODO: comprehensive solution
+#if 1
+    if ( ALPHABET(e->key()) && !(e->modifiers() & Qt::ShiftModifier)) {
+        key.setKey( QChar(e->key()).toLower() );
+    }
+    else
+        key = YKey((Qt::Key)e->key(),e->modifiers());
+#else
     key = YKey(e->key(),e->modifiers(), e->text());
+#endif
     dbg().SPrintf("Event transferred to YSession");
     YSession::self()->sendKey( static_cast<YView*>( mView ), key);
     e->accept();

@@ -558,6 +558,7 @@ void YBuffer::load(const QString& file)
 
     //stop redraws
     d->enableUpdateView = false;
+    d->isLoading = true;
 
 	clearText();
 
@@ -570,7 +571,6 @@ void YBuffer::load(const QString& file)
 
     //opens and eventually create the file
     d->undoBuffer->setInsideUndo( true );
-    d->isLoading = true;
     d->currentEncoding = getLocalStringOption( "encoding" );
     if ( QFile::exists(d->path) && fl.open( QIODevice::ReadOnly ) ) {
         QTextCodec* codec;

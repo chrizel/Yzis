@@ -270,6 +270,7 @@ bool YDrawBuffer::scrollLineToTop( int line, int* scroll_horizontal, int* scroll
 		}
 		mScreenTopBufferLine = line;
 		*scroll_vertical = delta;
+		fill();
 		return true;
 	}
 	return false;
@@ -316,6 +317,24 @@ bool YDrawBuffer::scrollLineToCenter( int line, int* scroll_horizontal, int* scr
 		}
 	}
 	return scrollLineToTop(topLine, scroll_horizontal, scroll_vertical);
+}
+
+YInterval YDrawBuffer::fill()
+{
+	YInterval affected;
+	int h = currentHeight();
+	if ( h < mScreenHeight ) {
+		int bl = screenBottomBufferLine();
+		int max_bl = mView->buffer()->lineCount();
+		affected.setFrom(YBound(YCursor(0,h)));
+		for ( ++bl; h < mScreenHeight && bl < max_bl; ++bl ) {
+			YDrawSection ds = mView->drawSectionOfBufferLine(bl);
+			h += ds.count();
+			mContent << ds;
+		}
+		affected.setTo(YBound(YCursor(h,0),true));
+	}
+	return affected;
 }
 
 bool YDrawBuffer::targetBufferLine( int bline, int* sid )

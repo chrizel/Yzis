@@ -172,6 +172,12 @@ public:
 	 */
 	inline bool full() const { return currentHeight() >= mScreenHeight; }
 
+
+	/**
+	 * Fill resting space with buffer content
+	 */
+	YInterval fill();
+
 	/**
 	 * Access to the draw section of @arg bl buffer line.
 	 */

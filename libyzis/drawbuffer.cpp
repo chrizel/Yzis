@@ -278,10 +278,6 @@ bool YDrawBuffer::scrollLineToTop( int line, int* scroll_horizontal, int* scroll
 
 bool YDrawBuffer::scrollLineToBottom( int line, int* scroll_horizontal, int* scroll_vertical )
 {
-	int currentBottomLine = screenBottomBufferLine();
-	if ( currentBottomLine == line ) {
-		return false;
-	}
 	int sid;
 	targetBufferLine(line, &sid);
 	int height = mContent[line-mFirstBufferLine].count();

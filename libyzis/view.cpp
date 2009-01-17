@@ -704,6 +704,16 @@ void YView::commitNextUndo()
 
 int YView::currentRow() const
 {
+	/* TODO: how handle when cursor is out of screen?
+	 * 	- make sure it never happen? 
+	 * 	- or, return joker values
+	 * 	- or, return wrong values */
+	if ( currentLine() < mDrawBuffer.screenTopBufferLine() ) {
+		return 0;
+	} else if ( currentLine() > mDrawBuffer.screenBottomBufferLine()+1 ) {
+		/* TODO: how handle this? */
+		return mDrawBuffer.screenHeight()-1;
+	}
 	return mDrawBuffer.bufferDrawSectionScreenLine(currentLine());
 }
 

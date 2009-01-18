@@ -214,7 +214,7 @@ public:
     /** \brief
      * Return the screen width.
     */
-    static int scrscreenwidth(lua_State *L);
+    static int screenwidth(lua_State *L);
 
     /** \brief
      * Deletes the given line.

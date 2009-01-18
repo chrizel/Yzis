@@ -353,11 +353,27 @@ TestMovements = {} --class
         assertPos(2,1)    
         sendkeys("3Gg_")
         assertPos(3, 25)
+        
+        -- test gm (go to the middle of the screen)
+        clearBuffer()
+        insertline(1, "isome short text")
+        insertline(2, "some long text : test test test test test test test test test test test test test test test test test test test test test")
+        insertline(3, "")
+        middlePos=(screenwidth()/2)+1
+        goto(1,1)
+        sendkeys("gm")
+        assertPos(1, 16)
+        sendkeys("j5|")
+        sendkeys("gm")
+        assertPos(2,middlePos)
+        sendkeys("j")
+        sendkeys("gm")
+        assertPos(3,1)
 
-	    --cleanup
-		clearBuffer()
-	    set("startofline&")
-	    set("cindent&")
+        --cleanup
+        clearBuffer()
+        set("startofline&")
+        set("cindent&")
 	end
 
 	function TestMovements:testWordEndMovments()

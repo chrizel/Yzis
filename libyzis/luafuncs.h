@@ -212,6 +212,11 @@ public:
     static int scrgoto(lua_State *L);
 
     /** \brief
+     * Return the screen width.
+    */
+    static int scrscreenwidth(lua_State *L);
+
+    /** \brief
      * Deletes the given line.
         *
      * \b Arguments:

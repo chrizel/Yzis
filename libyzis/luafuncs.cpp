@@ -83,6 +83,7 @@ void YLuaFuncs::registerLuaFuncs(lua_State *L)
     lua_register(L, "winpos", winpos);
     lua_register(L, "goto", _goto);
     lua_register(L, "scrcol", scrcol);
+    lua_register(L, "screenwidth", scrscreenwidth);
     lua_register(L, "scrline", scrline);
     lua_register(L, "scrgoto", scrgoto);
     lua_register(L, "deleteline", deleteline);
@@ -392,6 +393,15 @@ int YLuaFuncs::scrgoto(lua_State *L)
 
     YASSERT_EQUALS( lua_gettop(L), 0 );
     return 0 ;
+}
+int YLuaFuncs::scrscreenwidth(lua_State *L)
+{
+    if(!YLuaEngine::checkFunctionArguments(L, 0, 0, "scrscreenwidth", "")) return 0;
+    YView *cView = YSession::self()->currentView();
+    uint column = cView->getColumnsVisible();
+    lua_pushnumber( L, column);
+    YASSERT_EQUALS( lua_gettop(L), 1 );
+    return 1;
 }
 
 int YLuaFuncs::deleteline(lua_State *L)

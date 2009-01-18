@@ -241,7 +241,7 @@ bool YDrawBuffer::scrollForViewCursor( const YViewCursor& vc, int* scroll_horizo
 
 		YASSERT(mScreenTopBufferLine >= oldScreenTopBufferLine);
 		int delta = 0;
-		for ( int bl = mScreenTopBufferLine; bl > oldScreenTopBufferLine; --bl ) {
+		for ( bl = mScreenTopBufferLine; bl > oldScreenTopBufferLine; --bl ) {
 			delta += mContent[bl-mFirstBufferLine].count();
 		}
 		*scroll_vertical = delta;

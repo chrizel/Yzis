@@ -122,6 +122,7 @@ void YModeCommand::initMotionPool()
     motions.append( new YMotion(YKeySequence("L"), &YModeCommand::moveFromBottom, ArgNone));
     motions.append( new YMotion(YKeySequence("H"), &YModeCommand::moveFromTop, ArgNone));
     motions.append( new YMotion(YKeySequence("M"), &YModeCommand::moveToCenter, ArgNone));
+    motions.append( new YMotion(YKeySequence("%"), &YModeCommand::percentCommand, ArgNone));
     motions.append( new YMotion(YKeySequence("<BS>"), &YModeCommand::moveLeftWrap, ArgNone) );
     motions.append( new YMotion(YKeySequence("<SPACE>"), &YModeCommand::moveRightWrap, ArgNone) );
     motions.append( new YMotion(YKeySequence("f"), &YModeCommand::findNext, ArgChar, MotionTypeInclusive) );
@@ -496,6 +497,63 @@ YCursor YModeCommand::moveToCenter(const YMotionArgs &args, CmdState *state, Mot
 	YSession::self()->saveJumpPosition();
 	return cursor;
 }
+
+YCursor YModeCommand::percentCommand(const YMotionArgs &args, CmdState *state, MotionStick* ms )
+{
+    YCursor cursorBefore = args.view->viewCursor().buffer()  , newCursorPos;
+    QString line = args.view->buffer()->textline(cursorBefore.line());
+    // Characters on which the cursor will jump
+    QString toMatch("\\(\\[\\{") , correspondingMatch("\\)\\]\\}");
+
+    // Find the next opening or closing character on the current line
+    int pos = line.indexOf(QRegExp("["+toMatch+correspondingMatch+"]"), cursorBefore.column());
+
+    // If a supported char is found, switch to the corresponding one
+    if(pos>=0)
+    {
+        newCursorPos.setLineColumn(cursorBefore.line(), pos);
+        int nOpen=0 , nClose=0;
+        int maxLine , l = newCursorPos.line();  
+        int direction; // Match forward or backwards ?
+        QChar ch = line[newCursorPos.column()] , correspondingCh;
+        // If it is an opening character (like (, [ ...), go to the closing character
+        if(toMatch.indexOf(ch) != -1)
+        {
+            correspondingCh = correspondingMatch.at(toMatch.indexOf(ch));
+            direction = 1; //search forward
+            maxLine =  args.view->buffer()->lineCount();
+        }
+        else if (correspondingMatch.indexOf(ch) != -1) 
+        {
+            correspondingCh = toMatch.at(correspondingMatch.indexOf(ch));
+            direction = -1; // search backwards
+            maxLine = -1;
+        }
+        int c = newCursorPos.column();
+        // Find the correponding char
+        while(l != maxLine)
+        {
+            while(c<=line.length() && c>=0)
+            {
+                if(ch == line[c]) nOpen++;
+                else if(correspondingCh == line[c]) {
+                    nClose++;
+                    if (nOpen == nClose) {
+                        newCursorPos.setLineColumn(l, c);
+                        return newCursorPos;
+                    }
+                }
+                c += direction;
+            }
+            l += direction;
+            if(l == maxLine) break;
+            line = args.view->buffer()->textline(l);
+            if(direction == 1) c = 0;   else c = line.length()-1;
+        }
+    }
+    return cursorBefore;
+}
+
 YCursor YModeCommand::scrollPageUp(const YMotionArgs &args, CmdState *state, MotionStick* stick )
 {
 	if ( stick != NULL ) *stick = MotionNoStick;

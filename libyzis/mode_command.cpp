@@ -122,6 +122,7 @@ void YModeCommand::initMotionPool()
     motions.append( new YMotion(YKeySequence("L"), &YModeCommand::moveFromBottom, ArgNone));
     motions.append( new YMotion(YKeySequence("H"), &YModeCommand::moveFromTop, ArgNone));
     motions.append( new YMotion(YKeySequence("M"), &YModeCommand::moveToCenter, ArgNone));
+    motions.append( new YMotion(YKeySequence("gm"), &YModeCommand::moveToMiddleColumn, ArgNone));
     motions.append( new YMotion(YKeySequence("%"), &YModeCommand::percentCommand, ArgNone));
     motions.append( new YMotion(YKeySequence("<BS>"), &YModeCommand::moveLeftWrap, ArgNone) );
     motions.append( new YMotion(YKeySequence("<SPACE>"), &YModeCommand::moveRightWrap, ArgNone) );
@@ -496,6 +497,15 @@ YCursor YModeCommand::moveToCenter(const YMotionArgs &args, CmdState *state, Mot
 	cursor.setColumn( args.view->buffer()->firstNonBlankChar(line) );
 	YSession::self()->saveJumpPosition();
 	return cursor;
+}
+
+YCursor YModeCommand::moveToMiddleColumn(const YMotionArgs &args, CmdState *state, MotionStick* ms)
+{
+    if ( ms != NULL ) *ms = MotionNoStick;
+    *state = CmdOk;
+    YCursor cursor =  args.view->viewCursor().buffer(); 
+    int column = args.view->getColumnsVisible()/2;
+    return args.view->viewCursorFromLineColumn(cursor.line(), column).buffer();
 }
 
 YCursor YModeCommand::percentCommand(const YMotionArgs &args, CmdState *state, MotionStick* ms )

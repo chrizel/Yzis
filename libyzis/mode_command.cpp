@@ -510,6 +510,8 @@ YCursor YModeCommand::moveToMiddleColumn(const YMotionArgs &args, CmdState *stat
 
 YCursor YModeCommand::percentCommand(const YMotionArgs &args, CmdState *state, MotionStick* ms )
 {
+    if ( ms != NULL ) *ms = MotionNoStick;
+    *state = CmdOk;
     YCursor cursorBefore = args.view->viewCursor().buffer()  , newCursorPos;
     QString line = args.view->buffer()->textline(cursorBefore.line());
     // Characters on which the cursor will jump

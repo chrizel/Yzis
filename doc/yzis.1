@@ -1,0 +1,85 @@
+.\"
+.\" Man page for \fBYzis\fP 
+.\" Copyright (C) TANGUY Arnaud <arn.tanguy@gmail.com>
+.\"
+
+.TH  \fBYzis\fP 1 "February 12, 2009" "Version 1.0-beta" "\fBYzis\fP Manual"
+.SH NAME 
+\fBYzis\fP \- A powerful vi-like text editor
+.SH SYNOPSIS
+.B nyzis
+[options] [filename(s)]
+.br
+.B qyzis
+[options] [filename(s)]
+.SH DESCRIPTION
+\fBYzis\fP is a vi-like editor inspired by vim. \fBYzis\fP aims to be a powerful, fast editor with all of Vim's features and hopefully, at some point, more. 
+.br
+\fBYzis\fP is composed of a library called libyzis, and graphics frontend : nyzis for the terminal, qyzis for a graphic window ...
+As vim, \fBYzis\fP is a modal editor, so it behaves differently according to the mode used. The main modes are :
+.TP
+\fBInsert mode\fP
+This mode allow you to type text. To enter in insert mode, press "i" (when in Command mode). 
+.TP
+\fBCommand mode\fP
+In this mode, all the keys you press are interpreted in order to modify the text (delete words, sentences, move...). Press <Esc> to enter in this mode.
+.TP
+\fBVisual mode\fP
+In this mode you can select text by moving with motions keys. To enter visual mode, press "v" (when in Command mode). 
+.TP
+\fBEx mode\fP
+This mode is quite similar to a shell : you enter commands (functions names, setting variables...), and \fBYzis\fP interprets them. To enter in this mode, use ":" when you are in command mode
+.SH OPTIONS
+The following options are supported:
+.TP
+\fB-h\fP , \fB--help\fP 
+Show the command line help
+.TP
+\fB-v\fP , \fB--version\fP 
+Show the current version of \fBYzis\fP
+.TP
+\fB-c\fP <some keys>
+Execute immediately the key presses when \fBYzis\fP starts, as if they were typed by the user.
+.TP
+\fB-s\fP <file>
+Execute a lua script at when \fBYzis\fP starts.
+
+Ex : nyzis -c "iHello world !<ESC>o" will open nyzis with "Hello world !" wrote, and the cursor will be on a new line in insert mode.
+.SH FILES
+Here are the main files for \fBYzis\fP :
+.TP 
+~/.yzis/init.lua
+This file is parsed during startup, any option (except syntax highlighting) can be set there or you can define your own functions there 
+.TP
+~/.yzis/hl.lua
+This file is specific to syntax highlighting customization.  
+.SH SEE ALSO
+vim(1), vimtutor(1)
+.br
+The official wiki which contains general informations about \fBYzis\fP, full documentation : http://www.yzis.org/wiki/index.php/Main_Page
+.SH AUTHORS
+The main authors are :
+\fBThomas Capricelli\fP, \fBLoic Pauleve\fP and \fBMickael Marchand\fP
+.br
+A list of others contributors is available at http://labs.freehackers.org/repositories/stats/yzis
+.SH LICENCE
+.TP
+\fBnyzis\fP, \fBqyzis\fP and \fBkyzis\fP :
+Released under the terms of GNU General Public License. Please
+read the COPYING file for more information. 
+.TP
+\fBlibyzis\fP 
+Published under the terms of the LGPL. 
+.TP
+Copyright (C) 
+.br
+Mickael Marchand <marchand@kde.org>
+.br
+Thomas Capricelli <orzel@freehackers.org> 
+.br 
+Loic Pauleve <panard@inzenet.org>
+.SH BUGS
+If you find a bug, please report at http://labs.freehackers.org/projects/yzis/issues
+.SH HISTORY
+\fBYzis\fP was created to have the power of vim integrated with KDE. As Vim code base was not adapted to be used with graphical applications, \fBYzis\fP was created from scratch.
+See http://www.yzis.org/wiki/index.php/History for more details.

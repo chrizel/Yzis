@@ -15,11 +15,11 @@
 .SH DESCRIPTION
 \fBYzis\fP is a vi-like editor inspired by vim. \fBYzis\fP aims to be a powerful, fast editor with all of Vim's features and hopefully, at some point, more. 
 .br
-\fBYzis\fP is composed of a library called libyzis, and graphics frontend : nyzis for the terminal, qyzis for a graphic window ...
+\fBYzis\fP is composed of a library called libyzis, and graphic frontends : nyzis for the terminal, qyzis for a graphic window ...
 As vim, \fBYzis\fP is a modal editor, so it behaves differently according to the mode used. The main modes are :
 .TP
 \fBInsert mode\fP
-This mode allow you to type text. To enter in insert mode, press "i" (when in Command mode). 
+This mode allow you to type text. You can enter to this mode using "i" (when in Command mode), exit from it using "escape".
 .TP
 \fBCommand mode\fP
 In this mode, all the keys you press are interpreted in order to modify the text (delete words, sentences, move...). Press <Esc> to enter in this mode.
@@ -56,10 +56,10 @@ This file is specific to syntax highlighting customization.
 .SH SEE ALSO
 vim(1), vimtutor(1)
 .br
-The official wiki which contains general informations about \fBYzis\fP, full documentation : http://www.yzis.org/wiki/index.php/Main_Page
+The official wiki which contains general informations about \fBYzis\fP, full documentation : http://www.yzis.org
 .SH AUTHORS
 The main authors are :
-\fBThomas Capricelli\fP, \fBLoic Pauleve\fP and \fBMickael Marchand\fP
+\fBThomas Capricelli\fP, \fBPhilippe Fremy\fP, \fBMickael Marchand\fP and \fBLoic Pauleve\fP
 .br
 A list of others contributors is available at http://labs.freehackers.org/repositories/stats/yzis
 .SH LICENCE
@@ -71,15 +71,17 @@ read the COPYING file for more information.
 \fBlibyzis\fP 
 Published under the terms of the LGPL. 
 .TP
-Copyright (C) 
+Copyright (C) 2003-2009
 .br
 Mickael Marchand <marchand@kde.org>
 .br
 Thomas Capricelli <orzel@freehackers.org> 
 .br 
 Loic Pauleve <panard@inzenet.org>
+.br 
+Philippe Fremy <philippe@freehackers.org>
 .SH BUGS
 If you find a bug, please report at http://labs.freehackers.org/projects/yzis/issues
 .SH HISTORY
 \fBYzis\fP was created to have the power of vim integrated with KDE. As Vim code base was not adapted to be used with graphical applications, \fBYzis\fP was created from scratch.
-See http://www.yzis.org/wiki/index.php/History for more details.
+See http://www.yzis.org/History for more details.

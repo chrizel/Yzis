@@ -250,7 +250,7 @@ void YModeEx::completeCommandLine(YView *view)
                     dbg() << "Adding filter : " << fi.fileName() + "*";
                     cDir = QDir(fi.path()); //get the parent directory to switch over the entries in this directory
                 } else {
-                    mCompletionCurrentSearch = view->buffer()->tildeExpand(mCompletionCurrentSearch);
+                    mCompletionCurrentSearch = tildeExpand(mCompletionCurrentSearch);
                     cDir.cd(mCompletionCurrentSearch);
                 }
                 //list of files in that directory
@@ -1202,7 +1202,7 @@ CmdState YModeEx::foldCreate( const YExCommandArgs& args )
 
 CmdState YModeEx::cd( const YExCommandArgs& args )
 {
-    QString targetDir = YBuffer::tildeExpand(args.arg);
+    QString targetDir = tildeExpand(args.arg);
     if ( QDir::setCurrent(targetDir) ) {
         // we could be using a new tag file, so reset tags
         tagReset();

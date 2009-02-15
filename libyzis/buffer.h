@@ -48,6 +48,9 @@ typedef QVector<YLine*> YBufferData;
 typedef QStringList YRawData;
 
 
+// misc functions
+QString tildeExpand( const QString& path );
+
 /**
  * A buffer is the implementation of the content of a file.
  * 
@@ -466,8 +469,6 @@ public:
     //-------------------------------------------------------
     // ------------ Static
     //-------------------------------------------------------
-
-    static QString tildeExpand( const QString& path );
 
     /** Parses a string containing filename and possibly line col information.
      *

@@ -509,6 +509,7 @@ QString YBuffer::parseFilename( const QString& filename, YCursor* gotoPos )
         return filename;
     }
     QString r_filename = filename;
+    r_filename = tildeExpand(r_filename);
     if ( !QFile::exists( filename ) ) {
         /* match /file/name:line:col */
         QRegExp reg = QRegExp( "(.+):(\\d+):(\\d+):?" );

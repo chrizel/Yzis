@@ -250,6 +250,7 @@ void YModeEx::completeCommandLine(YView *view)
                     dbg() << "Adding filter : " << fi.fileName() + "*";
                     cDir = QDir(fi.path()); //get the parent directory to switch over the entries in this directory
                 } else {
+                    mCompletionCurrentSearch = view->buffer()->tildeExpand(mCompletionCurrentSearch);
                     cDir.cd(mCompletionCurrentSearch);
                 }
                 //list of files in that directory

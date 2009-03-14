@@ -7,6 +7,7 @@ qrc_*cxx
 *.save
 save
 *.old
+activity.png
 *.gmo
 .kdbgrc.*
 core

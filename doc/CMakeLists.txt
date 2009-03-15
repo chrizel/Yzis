@@ -19,7 +19,7 @@ if (ENABLE_DOCUMENTATION)
 
 	FILE( MAKE_DIRECTORY ${apidir} )
 
-	MACRO(add_doc doc_part discription)
+	MACRO(add_doc doc_part description)
 		# this is just that it can be accessed in the doxy.in files
 		SET(documentation_part ${doc_part})
 
@@ -40,7 +40,7 @@ if (ENABLE_DOCUMENTATION)
 			COMMAND ${DOXYGEN}
 			${CMAKE_CURRENT_BINARY_DIR}/${doc_part}.doxy
 			WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-			COMMENT discription
+			COMMENT ${description}
 			)
 
 		# here we just make sure this doc is generated then we run

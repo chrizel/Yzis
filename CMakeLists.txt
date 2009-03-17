@@ -56,6 +56,7 @@ option(GENERATE_DOC "Generate doxygen documentation during build" OFF)
 
 option(ENABLE_SAFE_MODE "prevent yzis from crashing when some bugs occured" ON)
 
+include(ConfigureDoc)
 
 find_package(Magic REQUIRED)
 find_package(Gettext REQUIRED)

@@ -67,3 +67,4 @@ target_link_libraries(qyzis ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} yzis )
 ########### install files ###############
 install( FILES qyzis.desktop DESTINATION ${APPLNK_INSTALL_DIR}/Editors )
 
+add_doc(qyzis libyzis)

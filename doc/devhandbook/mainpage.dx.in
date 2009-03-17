@@ -3,10 +3,7 @@
  
 \section components API documentation
 
-    - <a href="libyzis/html/index.html">libyzis</a>
-    - <a href="nyzis/html/index.html">nyzis</a>
-    - <a href="qyzis/html/index.html">qyzis</a>
-
+@all_doc_links@
 \section other_doc Other documentation
 
 The rest of the documentation is in the Yzis wiki at http://www.yzis.org.

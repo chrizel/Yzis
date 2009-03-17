@@ -86,3 +86,4 @@ else (WIN32)
             )
 endif (WIN32)
 
+add_doc(libyzis)

@@ -25,3 +25,4 @@ endif (ENABLE_X_IN_NYZIS)
 
 install(TARGETS nyzis DESTINATION bin)
 
+add_doc(nyzis libyzis)

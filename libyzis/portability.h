@@ -26,6 +26,9 @@
  * define, whatever..)
  */
 
+#ifdef YZIS_WIN32_GCC
+// ooh, we are on windows with gcc
+
 #ifdef YZIS_WIN32
  // we are on windows with gcc or msvc
 
@@ -40,10 +43,13 @@
 
 #endif /* YZIS_WIN32 */
 
-#if defined (YZIS_UNIX) || defined (YZIS_APPLE)
- // we are on unix (or mac?)
- #include <pwd.h> // still needed for kate/*, which is bad
- #include "translator.h"
+#else
+// ahh, we are on unix
+
+//#include <unistd.h>
+#include <pwd.h> // still needed for kate/*, which is bad
+#include "translator.h"
+//#include <libintl.h>
 
  #define CHECK_GETEUID( v )  (v == geteuid())
 #endif /* YZIS_UNIX || YZIS_APPLE */

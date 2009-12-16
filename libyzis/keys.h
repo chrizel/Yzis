@@ -45,7 +45,7 @@ public:
 
     // dont use operator QChar() here, i want an explicit cast only
     QChar getChar(void) const {  return (mText.size()==1)?mText.at(0):QChar();}
-    void setKey(int key) { mKey = key; mText=QChar(key);}
+    void setKey(Qt::Key key) { mKey = key; mText=QChar(key);}
 #if 1
     // should be removed
     void setKey(QChar ch) { mKey = (Qt::Key) ch.unicode(); mText = ch; mModifiers &= ~Qt::ShiftModifier; }

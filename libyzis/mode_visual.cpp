@@ -32,6 +32,8 @@
 #include "view.h"
 #include "viewcursor.h"
 
+#include <algorithm>
+
 #define dbg()    yzDebug("YModeVisual")
 #define err()    yzError("YModeVisual")
 
@@ -83,11 +85,9 @@ YInterval YModeVisual::buildBufferInterval( YView* mView )
 	YASSERT(mStartViewCursor.contains(mView));
 	YViewCursor beginPos = mStartViewCursor[mView];
 	YViewCursor endPos = mView->viewCursor();
-	if ( beginPos > endPos ) {
-		YViewCursor tmp = endPos;
-		endPos = beginPos;
-		beginPos = tmp;
-	}
+	if ( beginPos > endPos )
+	    std::swap( beginPos, endPos );
+
 	return YInterval(beginPos.buffer(), endPos.buffer());
 }
 
@@ -292,11 +292,9 @@ YInterval YModeVisualLine::buildBufferInterval( YView* mView )
     YASSERT(mStartViewCursor.contains(mView));
     YViewCursor beginPos = mStartViewCursor[mView];
     YViewCursor endPos = mView->viewCursor();
-    if ( beginPos > endPos ) {
-        YViewCursor tmp = endPos;
-        endPos = beginPos;
-        beginPos = tmp;
-    }
+    if ( beginPos > endPos )
+        std::swap( beginPos, endPos );
+
     return YInterval(YCursor(0,beginPos.line()), YBound(YCursor(0,endPos.line()+1), true));
 }
 

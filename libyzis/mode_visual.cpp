@@ -2,6 +2,7 @@
 *  Copyright (C) 2004-2005 Mickael Marchand <marchand@kde.org>,
 *  Copyright (C) 2005-2008 Loic Pauleve <panard@inzenet.org>,
 *  Copyright (C) 2005 Erlend Hamberg <hamberg@stud.ntnu.no>
+*  Copyright (C) 2010 Piotr Rak <piotr.rak@gmail.com>
 *
 *  This library is free software; you can redistribute it and/or
 *  modify it under the terms of the GNU Library General Public
@@ -288,15 +289,15 @@ YModeVisualLine::~YModeVisualLine()
 
 YInterval YModeVisualLine::buildBufferInterval( YView* mView )
 {
-	YASSERT(mStartViewCursor.contains(mView));
-	YViewCursor beginPos = mStartViewCursor[mView];
-	YViewCursor endPos = mView->viewCursor();
-	if ( beginPos > endPos ) {
-		YViewCursor tmp = endPos;
-		endPos = beginPos;
-		beginPos = endPos;
-	}
-	return YInterval(YCursor(0,beginPos.line()), YBound(YCursor(0,endPos.line()+1), true));
+    YASSERT(mStartViewCursor.contains(mView));
+    YViewCursor beginPos = mStartViewCursor[mView];
+    YViewCursor endPos = mView->viewCursor();
+    if ( beginPos > endPos ) {
+        YViewCursor tmp = endPos;
+        endPos = beginPos;
+        beginPos = tmp;
+    }
+    return YInterval(YCursor(0,beginPos.line()), YBound(YCursor(0,endPos.line()+1), true));
 }
 
 /**

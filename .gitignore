@@ -1,4 +1,3 @@
-syntax: glob
 tests\scripts/*.dll
 qrc_*cxx
 *.orig

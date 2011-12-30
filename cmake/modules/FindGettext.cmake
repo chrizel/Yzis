@@ -28,13 +28,16 @@ ELSE (DEFINED CACHED_GETTEXT)
 
   FIND_PATH(LIBINTL_INCLUDE_DIR libintl.h
      /usr/local/include
+     /usr/local/Cellar/gettext/0.18.1.1/include
      ${GNUWIN32_INCLUDE_DIR}
   )
   set(CMAKE_REQUIRED_INCLUDES "${LIBINTL_INCLUDE_DIR}")
   check_include_files(libintl.h HAVE_LIBINTL_H)
   
-  set(GETTEXT_INCLUDE_DIR)
+  set(GETTEXT_INCLUDE_DIR "${LIBINTL_INCLUDE_DIR}")
   set(GETTEXT_LIBRARIES)
+
+  message(STATUS "Found Gettext: ${GETTEXT_INCLUDE_DIR}")
   
   if (HAVE_LIBINTL_H)
      check_function_exists(dgettext LIBC_HAS_DGETTEXT)
@@ -46,6 +49,7 @@ ELSE (DEFINED CACHED_GETTEXT)
            PATHS
            /usr/lib
            /usr/local/lib
+           /usr/local/Cellar/gettext/0.18.1.1/lib
         )
         CHECK_LIBRARY_EXISTS(${LIBINTL_LIBRARY} "dgettext" "" LIBINTL_HAS_DGETTEXT)
         if (LIBINTL_HAS_DGETTEXT)

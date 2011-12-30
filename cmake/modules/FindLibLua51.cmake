@@ -37,6 +37,7 @@ FIND_PATH(LIBLUA51_INCLUDE_DIR lua.h
    /usr/local/include/lua51
    /usr/local/include/lua5.1
    ${GNUWIN32_DIR}/include
+   /usr/local/Cellar/lua/5.1.4/include
 )
 
 FIND_LIBRARY(LIBLUA51_LIBRARIES NAMES lua5.1 lua51 lua
@@ -48,6 +49,7 @@ FIND_LIBRARY(LIBLUA51_LIBRARIES NAMES lua5.1 lua51 lua
    /usr/local/lib
    /usr/local/lib/lua51
    ${GNUWIN32_DIR}/lib
+   /usr/local/Cellar/lua/5.1.4/lib
 )
 
 

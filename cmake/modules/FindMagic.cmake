@@ -10,14 +10,16 @@ FIND_PACKAGE(GNUWIN32)
 
 FIND_PATH(MAGIC_INCLUDE_DIR magic.h
    /usr/local/include
-    ${GNUWIN32_INCLUDE_DIR}
+   ${GNUWIN32_INCLUDE_DIR}
+   /usr/local/Cellar/libmagic/5.04/include
 )
 
 FIND_LIBRARY(MAGIC_LIBRARIES NAMES magic
    PATHS
    /usr/lib
    /usr/local/lib
-    ${GNUWIN32_LIBRARY_DIR}
+   ${GNUWIN32_LIBRARY_DIR}
+   /usr/local/Cellar/libmagic/5.04/lib
 )
 
 if(MAGIC_INCLUDE_DIR AND MAGIC_LIBRARIES)

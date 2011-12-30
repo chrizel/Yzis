@@ -76,6 +76,12 @@ QYEdit::~QYEdit()
     dbg() << "~QYEdit() done" << endl;
 }
 
+int QYEdit::charWidth() const
+{
+    int w = fontMetrics().maxWidth();
+    return w > 0 ? w : fontMetrics().width("W");
+}
+
 QYView* QYEdit::view() const
 {
     return mView;
@@ -83,12 +89,12 @@ QYView* QYEdit::view() const
 
 QPoint QYEdit::translatePositionToReal( const YCursor& c ) const
 {
-    return QPoint( c.x() * fontMetrics().maxWidth(), c.y() * fontMetrics().lineSpacing() );
+    return QPoint( c.x() * charWidth(), c.y() * fontMetrics().lineSpacing() );
 }
 YCursor QYEdit::translateRealToPosition( const QPoint& p, bool ceil ) const
 {
     int height = fontMetrics().lineSpacing();
-    int width = fontMetrics().maxWidth();
+    int width = charWidth();
 
 	int px = qMax(p.x(), 0);
 	int py = qMax(p.y(), 0);
@@ -170,15 +176,15 @@ void QYEdit::updateArea( )
 
     dbg() << "updateArea(): fixedPitch = " << fontInfo().fixedPitch() << endl;
     dbg() << "updateArea(): lineheight = " << fontMetrics().lineSpacing() << endl;
-    dbg() << "updateArea(): maxwidth = " << fontMetrics().maxWidth() << endl;
+    dbg() << "updateArea(): maxwidth = " << charWidth() << endl;
     dbg() << "updateArea(): height = " << height();
 
     int lines = height() / fontMetrics().lineSpacing();
-    int columns = width() / fontMetrics().maxWidth();
+    int columns = width() / charWidth();
 
     dbg().SPrintf("updateArea(): lines,col = %d,%d", lines, columns );
 
-    mUseArea.setBottomRight( QPoint( columns * fontMetrics().maxWidth(), lines * fontMetrics().lineSpacing()) );
+    mUseArea.setBottomRight( QPoint( columns * charWidth(), lines * fontMetrics().lineSpacing()) );
 
     mView->setVisibleArea( columns, lines );
 }
@@ -321,7 +327,7 @@ void QYEdit::paintEvent( QPaintEvent* pe )
 void QYEdit::setCursor( int c, int l )
 {
     // dbg() << "setCursor" << endl;
-    unsigned int x = c * fontMetrics().maxWidth();
+    unsigned int x = c * charWidth();
     if ( mView->getLocalBooleanOption( "rightleft" ) ) {
         x = width() - x - mCursor.width();
     }
@@ -335,7 +341,7 @@ void QYEdit::setCursor( int c, int l )
 
 void QYEdit::scroll( int dx, int dy )
 {
-    int rx = dx * fontMetrics().maxWidth();
+    int rx = dx * charWidth();
     int ry = dy * fontMetrics().lineSpacing();
     mCursor.hide();
     QRect cursorRect = mCursor.rect();
@@ -365,7 +371,7 @@ void QYEdit::guiDrawCell( YCursor pos , const YDrawCell& cell, QPainter* p )
             p->setBackground( QColor(cell.backgroundColor().rgb()) );
         }
     }
-    QRect r( pos.x()*fontMetrics().maxWidth(), pos.y()*fontMetrics().lineSpacing(), cell.content().length()*fontMetrics().maxWidth(), fontMetrics().lineSpacing() );
+    QRect r( pos.x()*charWidth(), pos.y()*fontMetrics().lineSpacing(), cell.content().length()*charWidth(), fontMetrics().lineSpacing() );
 
     //dbg() << "guiDrawCell: r=" << r.topLeft() << "," << r.bottomRight() << " has_bg=" << has_bg << endl;
     //dbg() << "guiDrawCell: fg=" << p->pen().color().name() << endl;

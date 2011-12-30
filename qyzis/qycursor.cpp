@@ -59,6 +59,8 @@ void QYCursor::setCursorShape( CursorShape shape )
         return ;
     mCursorShape = shape;
     int w = parentWidget()->fontMetrics().maxWidth();
+    if (w == 0)
+        w = parentWidget()->fontMetrics().width("W");
     int h = parentWidget()->fontMetrics().lineSpacing();
     if ( mCursorShape == CursorVbar )
         w = 2;

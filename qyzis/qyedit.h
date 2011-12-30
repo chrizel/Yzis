@@ -91,6 +91,8 @@ public :
     QVariant inputMethodQuery ( Qt::InputMethodQuery query ) const;
 
     QYView* view() const;
+    
+    int charWidth() const;
 
 public slots :
     void sendMappedKey( const QString& keys );

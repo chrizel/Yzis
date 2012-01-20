@@ -1,3 +1,4 @@
+.DS_Store
 tests\scripts/*.dll
 qrc_*cxx
 *.orig
@@ -38,4 +39,3 @@ doorzel.*
 .yzdebugrc
 tests/env_test.sh
 tests/scripts/env_test.sh
-

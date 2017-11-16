@@ -525,7 +525,7 @@ YCursor YModeCommand::percentCommand(const YMotionArgs &args, CmdState *state, M
     {
         newCursorPos.setLineColumn(cursorBefore.line(), pos);
         int nOpen=0 , nClose=0;
-        int maxLine , l = newCursorPos.line();  
+        int maxLine=0 , l = newCursorPos.line();
         int direction; // Match forward or backwards ?
         QChar ch = line[newCursorPos.column()] , correspondingCh;
         // If it is an opening character (like (, [ ...), go to the closing character

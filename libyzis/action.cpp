@@ -275,7 +275,7 @@ void YZAction::mergeNextLine( YView* pView, int y, bool stripSpaces )
     QString line2 = mBuffer->textline( y + 1 );
     if ( stripSpaces ) {
         QString space(" ");
-        if ( line.endsWith(" ") || line.endsWith(" ") )
+        if ( line.endsWith(" ") )
             space = "";
         line2.replace(QRegExp("^\\s*"), space);
     }

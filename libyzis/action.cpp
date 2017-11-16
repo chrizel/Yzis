@@ -29,7 +29,7 @@
 #define dbg()    yzDebug("YZAction")
 #define err()    yzError("YZAction")
 
-YZAction::YZAction( YBuffer* buffer )
+YZAction::YZAction( YBuffer* buffer ) : mPos(NULL)
 {
     dbg() << "YZAction(" << buffer->toString() << ")" << endl;
     mBuffer = buffer;
